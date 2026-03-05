@@ -132,7 +132,16 @@ async function main() {
   console.log(`Saved to: ${outputValue}`);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  getMimeType,
+  main,
+  MODEL_VERSION,
+  REPLICATE_API_URL,
+};
