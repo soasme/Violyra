@@ -9,3 +9,4 @@ Notes:
 List of skills:
 
 - [Transparent Image](.agent/skills/transparent-image/SKILL.md): extract foreground objects from images and produce transparent PNG cutouts.
+- [Text To Speech](.agent/skills/text-to-speech/SKILL.md): generate narration audio, then clean and normalize it for delivery-ready video voiceover.
