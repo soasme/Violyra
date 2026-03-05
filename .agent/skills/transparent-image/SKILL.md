@@ -9,5 +9,3 @@ Use `scripts/extract.js` to remove image backgrounds.
 
 Run:
 `REPLICATE_API_TOKEN=<token> node .agent/skills/transparent-image/scripts/extract.js --input <input-image> --output <output-image>`
-
-Provide `--input` and `--output` flags, or set `COLORSHOW_BUILD_TRANSPARENT_INPUT` and `COLORSHOW_BUILD_TRANSPARENT_OUTPUT`.

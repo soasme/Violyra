@@ -6,9 +6,7 @@
  *   --output   The output file path (required)
  *
  * Environment:
- *   REPLICATE_API_TOKEN                  Your Replicate API token (required)
- *   COLORSHOW_BUILD_TRANSPARENT_INPUT    Fallback for --input
- *   COLORSHOW_BUILD_TRANSPARENT_OUTPUT   Fallback for --output
+ *   REPLICATE_API_TOKEN   Your Replicate API token (required)
  *
  * Usage:
  *   node .agent/skills/transparent-image/scripts/extract.js --input public/bicycle.png --output public/bicycle-transparent.png
@@ -43,19 +41,15 @@ async function main() {
   });
 
   const { input, output } = values;
-  const inputValue = input ?? process.env.COLORSHOW_BUILD_TRANSPARENT_INPUT;
+  const inputValue = input;
   if (!inputValue) {
-    console.error(
-      "Error: --input is required (or set COLORSHOW_BUILD_TRANSPARENT_INPUT)"
-    );
+    console.error("Error: --input is required");
     process.exit(1);
   }
 
-  const outputValue = output ?? process.env.COLORSHOW_BUILD_TRANSPARENT_OUTPUT;
+  const outputValue = output;
   if (!outputValue) {
-    console.error(
-      "Error: --output is required (or set COLORSHOW_BUILD_TRANSPARENT_OUTPUT)"
-    );
+    console.error("Error: --output is required");
     process.exit(1);
   }
 
