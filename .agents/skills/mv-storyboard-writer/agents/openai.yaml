@@ -1,0 +1,4 @@
+interface:
+  display_name: "MV Storyboard Writer"
+  short_description: "Write lyric-driven storyboard scenes for music videos."
+  default_prompt: "Given lyrics, style, and constraints, write a storyboard object with scene prompts."

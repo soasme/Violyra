@@ -33,3 +33,6 @@ temp/
 Thumbs.db
 .vscode/
 .idea/
+
+assets/*
+!assets/.gitkeep
