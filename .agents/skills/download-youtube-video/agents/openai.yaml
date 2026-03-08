@@ -1,0 +1,4 @@
+interface:
+  display_name: "Download YouTube Video"
+  short_description: "Download YouTube videos locally with uvx yt-dlp"
+  default_prompt: "Use $download-youtube-video to download this YouTube URL locally with the JS-challenge-safe yt-dlp flags."
