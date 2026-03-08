@@ -6,6 +6,8 @@ const { basename, dirname, extname, join, resolve } = require("node:path");
 const { execFileSync } = require("node:child_process");
 const { parseArgs } = require("node:util");
 
+const { upscaleVideo, parseTargetResolution } = require("../../video-upscale/scripts/upscale.js");
+
 const CLI_SCRIPT_PATH = ".agents/skills/mv-compilation/scripts/compile.js";
 const DEFAULT_STORYBOARD_PATH = "assets/storyboard.json";
 const DEFAULT_ALIGNED_PATH = "assets/aligned_lyrics.json";
@@ -16,6 +18,8 @@ const DEFAULT_OUTPUT_DIR = "assets/final";
 const DEFAULT_OUTPUT_WIDTH = 1920;
 const DEFAULT_OUTPUT_HEIGHT = 1080;
 const DEFAULT_FPS = 24;
+const DEFAULT_TARGET_FPS = 24;
+const DEFAULT_POLL_INTERVAL_MS = 1000;
 const DEFAULT_FIT_MODE = "fill-crop";
 const ALLOWED_FIT_MODES = new Set(["fill-crop", "contain"]);
 
@@ -27,6 +31,7 @@ Options:
   --storyboard            Storyboard JSON path (default: ${DEFAULT_STORYBOARD_PATH})
   --aligned               Aligned lyric JSON path (default: ${DEFAULT_ALIGNED_PATH})
   --song                  Song audio path (default: ${DEFAULT_SONG_PATH})
+  --manifest              Optional generation manifest JSON path (uses scene prediction.output_urls for upscale input)
   --scenes-dir            Scene clips directory (default: ${DEFAULT_SCENES_DIR})
   --work-dir              Working directory for intermediates (default: ${DEFAULT_WORK_DIR})
   --output, -o            Final output mp4 path (default: assets/final/<song>.full-song.1080p.mp4)
@@ -34,6 +39,11 @@ Options:
   --height                Output height (default: ${DEFAULT_OUTPUT_HEIGHT})
   --fps                   Output fps (default: ${DEFAULT_FPS})
   --fit-mode              Frame fit mode: fill-crop | contain (default: ${DEFAULT_FIT_MODE})
+  --target-resolution     Upscale target: 720p | 1080p | 4k (default: 1080p)
+  --target-fps            Upscale target fps (default: ${DEFAULT_TARGET_FPS})
+  --poll-interval-ms      Replicate poll interval in ms (default: ${DEFAULT_POLL_INTERVAL_MS})
+  --no-upscale            Disable auto-upscale (always skip Replicate)
+  --force-upscale         Re-run upscaler even if cached upscaled clip exists
   --help, -h              Show this help
 `);
 }
@@ -80,6 +90,19 @@ async function ensureParentDirectory(filePath) {
   await mkdir(dirname(filePath), { recursive: true });
 }
 
+async function fileExists(filePath) {
+  try {
+    await access(filePath, constants.R_OK);
+    return true;
+  } catch (error) {
+    if (error && typeof error === "object" && error.code === "ENOENT") {
+      return false;
+    }
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to check file "${filePath}": ${message}`);
+  }
+}
+
 function execRead(command, args) {
   return execFileSync(command, args, { encoding: "utf8" }).trim();
 }
@@ -112,6 +135,27 @@ function getMediaDuration(filePath) {
     throw new Error(`Could not read media duration for ${filePath}`);
   }
   return duration;
+}
+
+function getVideoDimensions(filePath) {
+  const output = execRead("ffprobe", [
+    "-v",
+    "error",
+    "-select_streams",
+    "v:0",
+    "-show_entries",
+    "stream=width,height",
+    "-of",
+    "csv=p=0:s=x",
+    filePath,
+  ]);
+  const [widthRaw, heightRaw] = output.split("x");
+  const width = Number.parseInt(widthRaw, 10);
+  const height = Number.parseInt(heightRaw, 10);
+  if (!Number.isInteger(width) || !Number.isInteger(height)) {
+    throw new Error(`Could not read video dimensions for ${filePath}`);
+  }
+  return { width, height };
 }
 
 function resolveSceneId(scene, index) {
@@ -165,6 +209,27 @@ function computeSceneTimings({ scenes, alignedLines, songDuration }) {
   }
 
   return timings;
+}
+
+function buildManifestOutputUrlMap(manifest) {
+  if (!manifest || typeof manifest !== "object" || !Array.isArray(manifest.scenes)) {
+    return new Map();
+  }
+
+  const map = new Map();
+  for (let index = 0; index < manifest.scenes.length; index += 1) {
+    const scene = manifest.scenes[index];
+    const sceneId = resolveSceneId(scene, index);
+    const outputUrl = scene?.prediction?.output_urls?.[0];
+    if (typeof outputUrl === "string" && outputUrl.trim()) {
+      map.set(String(sceneId), outputUrl.trim());
+    }
+  }
+  return map;
+}
+
+function shouldUpscale({ width, height, targetWidth, targetHeight }) {
+  return width < targetWidth || height < targetHeight;
 }
 
 function buildFrameFilter({ setptsFactor, width, height, fps, fitMode }) {
@@ -277,6 +342,7 @@ async function main() {
       storyboard: { type: "string" },
       aligned: { type: "string" },
       song: { type: "string" },
+      manifest: { type: "string" },
       "scenes-dir": { type: "string" },
       "work-dir": { type: "string" },
       output: { type: "string", short: "o" },
@@ -284,6 +350,11 @@ async function main() {
       height: { type: "string" },
       fps: { type: "string" },
       "fit-mode": { type: "string" },
+      "target-resolution": { type: "string" },
+      "target-fps": { type: "string" },
+      "poll-interval-ms": { type: "string" },
+      "no-upscale": { type: "boolean" },
+      "force-upscale": { type: "boolean" },
       help: { type: "boolean", short: "h" },
     },
     strict: true,
@@ -298,6 +369,7 @@ async function main() {
   const storyboardPath = values.storyboard || DEFAULT_STORYBOARD_PATH;
   const alignedPath = values.aligned || DEFAULT_ALIGNED_PATH;
   const songPath = values.song || DEFAULT_SONG_PATH;
+  const manifestPath = values.manifest || "";
   const scenesDir = values["scenes-dir"] || DEFAULT_SCENES_DIR;
   const workDir = values["work-dir"] || DEFAULT_WORK_DIR;
   const outputPath = values.output || buildDefaultOutputPath(songPath);
@@ -305,13 +377,35 @@ async function main() {
   const outputHeight = parsePositiveInteger(values.height, "--height", DEFAULT_OUTPUT_HEIGHT);
   const fps = parseIntegerInRange(values.fps, "--fps", 1, 120, DEFAULT_FPS);
   const fitMode = parseFitMode(values["fit-mode"]);
+  const targetResolution = parseTargetResolution(values["target-resolution"] || "1080p");
+  const targetFps = parseIntegerInRange(
+    values["target-fps"],
+    "--target-fps",
+    15,
+    120,
+    DEFAULT_TARGET_FPS
+  );
+  const pollIntervalMs = parseIntegerInRange(
+    values["poll-interval-ms"],
+    "--poll-interval-ms",
+    100,
+    60000,
+    DEFAULT_POLL_INTERVAL_MS
+  );
+  const disableUpscale = values["no-upscale"] === true;
+  const forceUpscale = values["force-upscale"] === true;
 
   await assertReadableFile(storyboardPath, "--storyboard");
   await assertReadableFile(alignedPath, "--aligned");
   await assertReadableFile(songPath, "--song");
+  if (manifestPath) {
+    await assertReadableFile(manifestPath, "--manifest");
+  }
 
   const storyboard = await loadJsonFile(storyboardPath);
   const alignedLines = await loadJsonFile(alignedPath);
+  const manifest = manifestPath ? await loadJsonFile(manifestPath) : null;
+  const manifestOutputUrlMap = buildManifestOutputUrlMap(manifest);
   const songDuration = getMediaDuration(songPath);
   const scenes = Array.isArray(storyboard?.scenes) ? storyboard.scenes : [];
 
@@ -321,15 +415,18 @@ async function main() {
     songDuration,
   });
 
+  const upscaledDir = join(workDir, "upscaled");
   const stretchedDir = join(workDir, "stretched");
   const concatPath = join(workDir, "scenes.concat.txt");
   const planPath = join(workDir, "compile-plan.json");
 
+  await mkdir(upscaledDir, { recursive: true });
   await mkdir(stretchedDir, { recursive: true });
   await ensureParentDirectory(outputPath);
 
   const concatLines = [];
   const scenePlan = [];
+  let apiToken = process.env.REPLICATE_API_TOKEN || "";
 
   for (let index = 0; index < scenes.length; index += 1) {
     const scene = scenes[index];
@@ -338,12 +435,68 @@ async function main() {
     await assertReadableFile(sourcePath, `scene ${sceneId}`);
 
     const timing = timings[index];
+    const originalDimensions = getVideoDimensions(sourcePath);
+    let inputPathForStretch = sourcePath;
+    let upscaledPath = null;
+
+    const needsUpscale = shouldUpscale({
+      width: originalDimensions.width,
+      height: originalDimensions.height,
+      targetWidth: outputWidth,
+      targetHeight: outputHeight,
+    });
+
+    let upscaleInput = sourcePath;
+    if (!disableUpscale && needsUpscale) {
+      if (!apiToken) {
+        throw new Error(
+          `Scene ${sceneId} needs upscale but REPLICATE_API_TOKEN is not set`
+        );
+      }
+
+      const manifestOutputUrl = manifestOutputUrlMap.get(String(sceneId));
+      if (manifestOutputUrl) {
+        upscaleInput = manifestOutputUrl;
+      }
+
+      upscaledPath = join(upscaledDir, `${sceneId}.mp4`);
+      const canReuseUpscaled = !forceUpscale && (await fileExists(upscaledPath));
+      if (canReuseUpscaled) {
+        console.log(`Reusing upscaled scene ${sceneId}: ${upscaledPath}`);
+      } else {
+        console.log(
+          `Upscaling scene ${sceneId} (${originalDimensions.width}x${originalDimensions.height}) -> ${targetResolution}`
+        );
+        try {
+          await upscaleVideo({
+            inputPath: upscaleInput,
+            outputPath: upscaledPath,
+            targetResolution,
+            targetFps,
+            pollIntervalMs,
+            apiToken,
+          });
+        } catch (error) {
+          if (upscaleInput !== sourcePath) {
+            throw error;
+          }
+          const message = error instanceof Error ? error.message : String(error);
+          throw new Error(
+            `Upscale failed for scene ${sceneId} with local file input. ` +
+              `If this scene came from Replicate generation, rerun with --manifest <manifest.json> so upscale uses original scene URLs. ` +
+              `Underlying error: ${message}`
+          );
+        }
+      }
+      inputPathForStretch = upscaledPath;
+    }
+
     const stretchedPath = join(stretchedDir, `${sceneId}.mp4`);
     console.log(
       `Stretching scene ${sceneId} to ${timing.duration.toFixed(3)}s (${fitMode}, ${outputWidth}x${outputHeight})`
     );
     const stretchResult = stretchSceneToTarget({
-      inputPath: sourcePath,
+      inputPath: inputPathForStretch,
       outputPath: stretchedPath,
       targetDuration: timing.duration,
       width: outputWidth,
@@ -358,6 +511,10 @@ async function main() {
     scenePlan.push({
       scene_id: sceneId,
       source_file: sourcePath,
+      source_dimensions: originalDimensions,
+      upscale_input: !disableUpscale && needsUpscale ? upscaleInput : null,
+      upscaled_file: upscaledPath,
+      stretch_input_file: inputPathForStretch,
       stretched_file: stretchedPath,
       timing,
       stretch: {
@@ -384,6 +541,7 @@ async function main() {
     storyboard: storyboardPath,
     aligned: alignedPath,
     song: songPath,
+    manifest: manifestPath || null,
     scenes_dir: scenesDir,
     output: outputPath,
     output_settings: {
@@ -391,6 +549,9 @@ async function main() {
       height: outputHeight,
       fps,
       fit_mode: fitMode,
+      upscale_enabled: !disableUpscale,
+      upscale_target_resolution: targetResolution,
+      upscale_target_fps: targetFps,
     },
     song_duration: Number(songDuration.toFixed(6)),
     output_duration: Number(outputDuration.toFixed(6)),
@@ -414,19 +575,24 @@ module.exports = {
   DEFAULT_ALIGNED_PATH,
   DEFAULT_FIT_MODE,
   DEFAULT_FPS,
+  DEFAULT_POLL_INTERVAL_MS,
   DEFAULT_OUTPUT_HEIGHT,
   DEFAULT_OUTPUT_WIDTH,
   DEFAULT_SCENES_DIR,
   DEFAULT_SONG_PATH,
   DEFAULT_STORYBOARD_PATH,
+  DEFAULT_TARGET_FPS,
   DEFAULT_WORK_DIR,
   buildDefaultOutputPath,
+  buildManifestOutputUrlMap,
   buildFrameFilter,
   computeSceneTimings,
   getMediaDuration,
+  getVideoDimensions,
   main,
   muxVideoWithSong,
   parseFitMode,
   resolveSceneId,
+  shouldUpscale,
   stretchSceneToTarget,
 };

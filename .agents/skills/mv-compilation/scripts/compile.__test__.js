@@ -3,8 +3,10 @@ import { describe, expect, it } from "vitest";
 const {
   buildDefaultOutputPath,
   buildFrameFilter,
+  buildManifestOutputUrlMap,
   computeSceneTimings,
   parseFitMode,
+  shouldUpscale,
 } = require("./compile.js");
 
 describe(".agents/skills/mv-compilation/scripts/compile.js", () => {
@@ -29,6 +31,38 @@ describe(".agents/skills/mv-compilation/scripts/compile.js", () => {
       expect(() => parseFitMode("stretch")).toThrow(
         "--fit-mode must be one of: fill-crop | contain"
       );
+    });
+  });
+
+  describe("shouldUpscale", () => {
+    it("returns true when clip is below target dimensions", () => {
+      expect(
+        shouldUpscale({
+          width: 1280,
+          height: 720,
+          targetWidth: 1920,
+          targetHeight: 1080,
+        })
+      ).toBe(true);
+    });
+
+    it("returns false when clip already meets or exceeds target dimensions", () => {
+      expect(
+        shouldUpscale({
+          width: 1920,
+          height: 1080,
+          targetWidth: 1920,
+          targetHeight: 1080,
+        })
+      ).toBe(false);
+      expect(
+        shouldUpscale({
+          width: 2560,
+          height: 1440,
+          targetWidth: 1920,
+          targetHeight: 1080,
+        })
+      ).toBe(false);
     });
   });
 
@@ -107,6 +141,30 @@ describe(".agents/skills/mv-compilation/scripts/compile.js", () => {
           songDuration: 10,
         })
       ).toThrow("Aligned lyrics JSON must contain lines");
+    });
+  });
+
+  describe("buildManifestOutputUrlMap", () => {
+    it("indexes first prediction output URL by scene id", () => {
+      const map = buildManifestOutputUrlMap({
+        scenes: [
+          {
+            scene_id: 1,
+            prediction: {
+              output_urls: ["https://example.com/1.mp4"],
+            },
+          },
+          {
+            scene_id: 2,
+            prediction: {
+              output_urls: ["https://example.com/2.mp4"],
+            },
+          },
+        ],
+      });
+
+      expect(map.get("1")).toBe("https://example.com/1.mp4");
+      expect(map.get("2")).toBe("https://example.com/2.mp4");
     });
   });
 });
