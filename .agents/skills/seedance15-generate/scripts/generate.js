@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { access, mkdir, readFile, writeFile } = require("node:fs/promises");
+const { mkdir, readFile, writeFile } = require("node:fs/promises");
 const { basename, dirname, extname, join } = require("node:path");
 const { parseArgs } = require("node:util");
 
@@ -281,19 +281,6 @@ function buildSceneVideoPath(scene, index, scenesDir) {
   return join(scenesDir, buildSceneFilename(sceneId, index));
 }
 
-async function fileExists(filePath) {
-  try {
-    await access(filePath);
-    return true;
-  } catch (error) {
-    if (error && typeof error === "object" && error.code === "ENOENT") {
-      return false;
-    }
-    const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to check file "${filePath}": ${message}`);
-  }
-}
-
 async function downloadToFile(url, outputPath) {
   const response = await fetch(url);
   if (!response.ok) {
@@ -445,9 +432,8 @@ function mergeScenesByStoryboardOrder({
   return orderedScenes;
 }
 
-async function splitScenesByExistingVideo({
+function splitScenesByCachedManifest({
   scenes,
-  scenesDir,
   existingScenes = [],
   fallbackDuration = DEFAULT_DURATION,
 }) {
@@ -469,31 +455,16 @@ async function splitScenesByExistingVideo({
       sceneId,
       fallbackDuration
     );
-    const videoPath = buildSceneVideoPath(scene, index, scenesDir);
-    if (!(await fileExists(videoPath))) {
+    const existingScene = existingScenesById.get(String(sceneId));
+    if (!existingScene) {
       scenesToGenerate.push(scene);
       continue;
     }
 
-    const existingScene = existingScenesById.get(String(sceneId));
-    if (existingScene) {
-      skippedScenes.push({
-        ...existingScene,
-        duration: existingScene.duration ?? sceneDuration,
-        video_file: videoPath,
-      });
-    } else {
-      const prompt = typeof scene?.prompt === "string" ? scene.prompt.trim() : "";
-      skippedScenes.push({
-        scene_id: sceneId,
-        section: scene?.section ?? null,
-        character: scene?.character ?? null,
-        duration: sceneDuration,
-        prompt,
-        prediction: null,
-        video_file: videoPath,
-      });
-    }
+    skippedScenes.push({
+      ...existingScene,
+      duration: existingScene.duration ?? sceneDuration,
+    });
   }
 
   return {
@@ -679,16 +650,15 @@ async function main() {
   const selectedScenes = selectScenes(storyboard.scenes, requestedSceneIds);
   const existingManifest = await readExistingOutputManifest(outputPath);
   const existingScenes = existingManifest?.scenes ?? [];
-  const { scenesToGenerate, skippedScenes } = await splitScenesByExistingVideo({
+  const { scenesToGenerate, skippedScenes } = splitScenesByCachedManifest({
     scenes: selectedScenes,
-    scenesDir,
     existingScenes,
     fallbackDuration: generationInput.duration,
   });
   for (let index = 0; index < skippedScenes.length; index += 1) {
     const skippedScene = skippedScenes[index];
     const skippedSceneId = resolveSceneId(skippedScene, index);
-    console.log(`Skipping scene ${skippedSceneId}: local video already exists`);
+    console.log(`Skipping scene ${skippedSceneId}: cached in manifest`);
   }
 
   if (scenesToGenerate.length > 0 && generationInput.image) {
@@ -774,7 +744,7 @@ module.exports = {
   resolveImageInput,
   resolveSceneId,
   selectScenes,
-  splitScenesByExistingVideo,
+  splitScenesByCachedManifest,
   mergeScenesByStoryboardOrder,
   uploadFileToReplicate,
   waitForPrediction,

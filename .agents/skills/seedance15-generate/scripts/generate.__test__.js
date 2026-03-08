@@ -23,7 +23,7 @@ const {
   readExistingOutputManifest,
   resolveImageInput,
   selectScenes,
-  splitScenesByExistingVideo,
+  splitScenesByCachedManifest,
 } = require("./generate.js");
 
 describe(".agents/skills/seedance15-generate/scripts/generate.js", () => {
@@ -222,25 +222,18 @@ describe(".agents/skills/seedance15-generate/scripts/generate.js", () => {
     });
   });
 
-  describe("splitScenesByExistingVideo", () => {
-    it("splits scenes into to-generate vs skipped based on local video file", async () => {
-      const dir = await mkdtemp(join(tmpdir(), "seedance-skip-split-"));
-      const scenesDir = join(dir, "scenes");
-      await mkdir(scenesDir, { recursive: true });
-      await writeFile(join(scenesDir, "1.mp4"), Buffer.from([1, 2, 3]));
-
-      const result = await splitScenesByExistingVideo({
+  describe("splitScenesByCachedManifest", () => {
+    it("splits scenes into to-generate vs skipped based on cached manifest", () => {
+      const result = splitScenesByCachedManifest({
         scenes: [
           { scene_id: 1, prompt: "scene one" },
           { scene_id: 2, prompt: "scene two" },
         ],
-        scenesDir,
         existingScenes: [
           {
             scene_id: 1,
             prompt: "scene one",
             prediction: { id: "pred_existing_1" },
-            video_file: "old/path.mp4",
           },
         ],
       });
@@ -252,7 +245,6 @@ describe(".agents/skills/seedance15-generate/scripts/generate.js", () => {
           prompt: "scene one",
           duration: 5,
           prediction: { id: "pred_existing_1" },
-          video_file: join(scenesDir, "1.mp4"),
         },
       ]);
     });
@@ -764,14 +756,11 @@ describe(".agents/skills/seedance15-generate/scripts/generate.js", () => {
       }
     });
 
-    it("skips generation when requested scene video already exists", async () => {
-      const dir = await mkdtemp(join(tmpdir(), "seedance-generate-skip-existing-video-"));
+    it("skips generation when requested scene is cached in output manifest", async () => {
+      const dir = await mkdtemp(join(tmpdir(), "seedance-generate-skip-cached-scene-"));
       const inputPath = join(dir, "storyboard.json");
       const outputPath = join(dir, "seedance15.json");
       const scenesDir = join(dir, "scenes");
-
-      await mkdir(scenesDir, { recursive: true });
-      await writeFile(join(scenesDir, "2.mp4"), Buffer.from([0, 1, 2]));
 
       await writeFile(
         inputPath,
@@ -780,6 +769,38 @@ describe(".agents/skills/seedance15-generate/scripts/generate.js", () => {
           scenes: [
             { scene_id: 1, prompt: "first prompt" },
             { scene_id: 2, prompt: "second prompt" },
+          ],
+        }),
+        "utf8"
+      );
+
+      await writeFile(
+        outputPath,
+        JSON.stringify({
+          model: "bytedance/seedance-1.5-pro",
+          generated_at: "2026-03-06T00:00:00.000Z",
+          input_file: inputPath,
+          source_storyboard_model: "seedance15",
+          song_title: null,
+          generation_input: {
+            duration: 5,
+            resolution: "720p",
+            aspect_ratio: "16:9",
+            fps: 24,
+            generate_audio: false,
+          },
+          requested_scene_ids: [2],
+          scenes_dir: scenesDir,
+          scene_count: 1,
+          scenes: [
+            {
+              scene_id: 2,
+              prompt: "second prompt",
+              prediction: {
+                id: "pred_existing_2",
+                output_urls: ["https://example.com/scene-2.mp4"],
+              },
+            },
           ],
         }),
         "utf8"
@@ -815,9 +836,8 @@ describe(".agents/skills/seedance15-generate/scripts/generate.js", () => {
         expect(result.requested_scene_ids).toEqual([2]);
         expect(result.scene_count).toBe(1);
         expect(result.scenes[0].scene_id).toBe(2);
-        expect(result.scenes[0].prediction).toBeNull();
+        expect(result.scenes[0].prediction.id).toBe("pred_existing_2");
         expect(result.scenes[0].duration).toBe(5);
-        expect(result.scenes[0].video_file).toBe(join(scenesDir, "2.mp4"));
       } finally {
         logSpy.mockRestore();
         global.fetch = previousFetch;

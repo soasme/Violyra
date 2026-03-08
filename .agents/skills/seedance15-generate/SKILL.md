@@ -24,7 +24,7 @@ Always run commands through dotenv so `REPLICATE_API_TOKEN` is loaded from `.env
 
 By default, output is `<input>.manifest.json` (for example `assets/storyboard.manifest.json`).
 The script merges newly generated scenes with the existing manifest, keeping a single combined file.
-It also skips any requested scene whose local video file already exists in `--scenes-dir`.
+It also skips any requested scene that already exists in the cached manifest.
 
 ## Key Options
 
