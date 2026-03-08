@@ -20,3 +20,4 @@ List of skills:
 - [Text To Speech](.agents/skills/text-to-speech/SKILL.md): generate narration audio, then clean and normalize it for delivery-ready video voiceover.
 - [MV Storyboard Writer](.agents/skills/mv-storyboard-writer/SKILL.md): write lyric-driven music video storyboard scenes from lyrics, style, and user requirements.
 - [Lyrics Force Alignment](.agents/skills/lyrics-force-alignment/SKILL.md): align ground-truth lyric lines to audio using Replicate WhisperX word timestamps, then output aligned JSON and optional SRT/LRC.
+- [Video Upscale](.agents/skills/video-upscale/SKILL.md): upscale scene clips with Replicate `topazlabs/video-upscale` and compile full-song videos to default `1920x1080` with fill-and-crop framing (no black bars).
