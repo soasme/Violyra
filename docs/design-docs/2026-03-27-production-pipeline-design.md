@@ -1,7 +1,7 @@
 # Production Pipeline Design
 
 **Date:** 2026-03-27
-**Status:** Draft
+**Status:** Active
 
 ## Overview
 
@@ -255,6 +255,7 @@ An actor is a global, reusable physical appearance reference — the "look" of a
 
 `viewAngle`: `"FRONT" | "LEFT" | "RIGHT" | "BACK" | "THREE_QUARTER" | "TOP" | "DETAIL"`.
 `qualityLevel`: `"LOW" | "MEDIUM" | "HIGH" | "ULTRA"`.
+`viewCount`: the planned number of view-angle images to generate for this asset (e.g. `1` = front only, `4` = front/left/right/back). Used by image-generation steps to know how many slots to fill. Does not enforce a constraint — it is advisory.
 
 ---
 
@@ -285,6 +286,19 @@ A character is project-scoped. It composes one actor (appearance) + one optional
 ```
 
 `actorId` is required; `costumeId` and `propIds` are optional. Images here are character-specific renders (actor + costume + props composed together, distinct from the actor's standalone images).
+
+Image sub-schema (same as actor images):
+```json
+{
+  "viewAngle": "FRONT",
+  "qualityLevel": "LOW",
+  "path": "./images/front.jpg",
+  "width": null,
+  "height": null,
+  "format": "jpg",
+  "isPrimary": true
+}
+```
 
 ---
 
@@ -461,8 +475,11 @@ Shot details are written after `entity-extraction` completes, so `sceneIds` can 
 `angle`: `"EYE_LEVEL" | "HIGH_ANGLE" | "LOW_ANGLE" | "BIRD_EYE" | "DUTCH" | "OVER_SHOULDER"`.
 `movement`: `"STATIC" | "PAN" | "TILT" | "DOLLY_IN" | "DOLLY_OUT" | "TRACK" | "CRANE" | "HANDHELD" | "STEADICAM" | "ZOOM_IN" | "ZOOM_OUT"`.
 `vfxType`: `"NONE" | "PARTICLES" | "VOLUMETRIC_FOG" | "CG_DOUBLE" | "DIGITAL_ENVIRONMENT" | "MATTE_PAINTING" | "FIRE_SMOKE" | "WATER_SIM" | "DESTRUCTION" | "ENERGY_MAGIC" | "COMPOSITING_CLEANUP" | "SLOW_MOTION_TIME" | "OTHER"`.
+`duration`: integer, unit is **seconds**.
+`followAtmosphere`: when `true`, the agent inherits the `atmosphere` value from the previous shot that has `followAtmosphere: false` (the atmosphere "source" shot). When `false`, this shot defines a new atmosphere that subsequent shots may inherit. This is how consistent visual atmosphere is propagated across a sequence without repeating it in every shot.
+`moodTags`: free-form strings. Suggested vocabulary: `"melancholic" | "energetic" | "tense" | "romantic" | "mysterious" | "playful" | "hopeful" | "desperate" | "triumphant" | "serene"`. Not enum-enforced — agents may add domain-specific tags.
 
-`dialogLines` array schema:
+`dialogLines` array schema — placed in `shot-details.json` (not `shot-list.json`) because dialog belongs to the cinematic enrichment pass, not the initial breakdown. Breakdown only extracts character names; dialog text is added by the agent during `shot-detail`.
 ```json
 {
   "index": 0,
@@ -535,7 +552,24 @@ Consistency check reads `shot-list.json` + `shot-details.json` + `extraction-rep
     "$schemaVersion": "1.0",
     "chapterId": "chap_lz4xd",
     "generatedAt": "2026-03-27T00:00:00Z",
-    "shots": []
+    "shots": [
+      {
+        "index": 1,
+        "title": "Opening — empty stage",
+        "scriptExcerpt": "The lights go down, the crowd goes silent.",
+        "characterNames": ["Mia"],
+        "sceneNames": ["Empty Stage"],
+        "status": "pending"
+      },
+      {
+        "index": 3,
+        "title": "Mia enters spotlight",
+        "scriptExcerpt": "She steps forward, short black hair catching the light.",
+        "characterNames": ["Mia"],
+        "sceneNames": ["Empty Stage"],
+        "status": "pending"
+      }
+    ]
   }
 }
 ```
@@ -553,12 +587,37 @@ Every Layer 1 pack script follows this interface:
 ```bash
 pnpm exec dotenv -- node skills/<pack-name>/scripts/<pack-name>.js <subcommand> [options]
 
-# Subcommands
+# Subcommands (all packs)
 create   --base-dir <path> --name <str> [--description <str>] [--tags <json-array>]
 read     --base-dir <path> --id <id>
 update   --base-dir <path> --id <id> [--name <str>] [--description <str>] [--tags <json-array>]
 delete   --base-dir <path> --id <id>
 list     --base-dir <path> [--filter <keyword>]
+```
+
+`--base-dir` is always the project root directory (same value passed to all commands). Scripts resolve global asset paths as `<base-dir>/global/<entity-type>/<id>/` and project-scoped paths as `<base-dir>/characters/<id>/`.
+
+**Entity-specific extra flags:**
+
+`character-pack create/update`:
+```bash
+--actor-id <id>          # required on create; references global/actors/<id>/pack.json
+--costume-id <id>        # optional; references global/costumes/<id>/pack.json
+--prop-ids <json-array>  # optional; e.g. '["prop_lz4xb"]'
+```
+
+`prompt-template create/update`:
+```bash
+--category <category>    # required on create; one of the PromptCategory values
+--content <str>          # required on create; template string with {{variable}} slots
+--variables <json-array> # required on create; e.g. '["character","cameraMovement"]'
+--preview <str>          # optional; short human-readable description
+--is-default             # flag; marks this as the default template for its category
+```
+
+`actor-pack / scene-pack create/update`:
+```bash
+--appearance <str>       # actor-pack only; free-form appearance description
 ```
 
 Output is always a JSON object to stdout. Errors go to stderr with a non-zero exit code and a `{ "error": "<message>" }` JSON body.
@@ -667,7 +726,7 @@ script-breakdown
                 │                             global/props/, global/costumes/,
                 └─► extraction-report.json    characters/
                           │
-                          │  (+ shot-list.json)
+                          │  (+ shot-list.json + extraction-report.json)
                           ▼
                     shot-detail
                           │
@@ -720,15 +779,19 @@ download-youtube-video
   → [post-production assembly]
 ```
 
-**`seedance15-prompt-writer` integration:** Shot detail fields map to prompt-writer inputs as follows:
-- `cameraShot` → framing descriptor (e.g. `"MS"` → `"medium shot"`)
-- `angle` → camera angle descriptor
-- `movement` → camera movement descriptor
-- `atmosphere` → environment/lighting context
-- `moodTags` → emotional tone modifiers
-- `firstFramePrompt` → image-to-video start frame prompt
-- `lastFramePrompt` → image-to-video end frame prompt
-- `sceneIds` → resolved scene pack `description` + `name` for location context
+**`seedance15-prompt-writer` integration:** `seedance15-prompt-writer` is an existing Violyra skill (see `skills/seedance15-prompt-writer/SKILL.md`) that writes motion-focused prompts for Seedance text-to-video and image-to-video generation. Shot detail fields feed into it as follows:
+
+| Shot detail field | Prompt-writer input |
+|---|---|
+| `cameraShot` | framing descriptor (e.g. `"MS"` → `"medium shot"`) |
+| `angle` | camera angle descriptor |
+| `movement` | camera movement descriptor |
+| `atmosphere` | environment/lighting context |
+| `moodTags` | emotional tone modifiers |
+| `firstFramePrompt` | image-to-video start frame prompt |
+| `lastFramePrompt` | image-to-video end frame prompt |
+| `sceneIds` → scene pack `name` + `description` | location context |
+| `description` | shot overview / supplement |
 
 ---
 
@@ -754,6 +817,26 @@ download-youtube-video
 | newEntities omits characters? | By design — character creation is a deliberate agent step, not auto-extraction. |
 | Single sceneId per shot? | No — `sceneIds` is an array to support multi-location shots. |
 | Schema versioning? | `"$schemaVersion": "1.0"` on every file; pack scripts validate on read. |
+
+---
+
+## Operational Conventions
+
+### Re-running entity-extraction
+
+When `entity-extraction` runs again on the same chapter (e.g. after the shot list is updated):
+1. For each entity name in the new shot list, first call `list --filter <name>` on the relevant pack script to check for an existing pack (fuzzy match by name).
+2. If a matching pack is found, reuse its ID — do not create a duplicate.
+3. Update `extraction-report.json` in full (overwrite, not merge). The report always reflects the current shot list.
+4. Packs already created in a previous run are never deleted by re-extraction. Only `extraction-report.json` and new pack entries are affected.
+
+### Multi-chapter projects and shared character packs
+
+Characters and global assets (actors, scenes, props, costumes) live at the project level (`<base-dir>/characters/` and `<base-dir>/global/`), not inside chapter directories. All chapters in a project share the same pack files. When two chapters reference the same character name, `entity-extraction` reuses the same pack ID (via the fuzzy name match above). This is the mechanism for cross-chapter consistency.
+
+### `production-pipeline/references/workflow.md`
+
+This file must be created as part of implementing the `production-pipeline` skill. It is a numbered step checklist (format defined in the `production-pipeline/references/workflow.md Format` section above) committed at `skills/production-pipeline/references/workflow.md`. The `production-pipeline` SKILL.md references it directly.
 
 ---
 

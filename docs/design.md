@@ -31,11 +31,13 @@ violyra/
 download-youtube-video
   → lyrics-force-alignment
   → mv-storyboard-writer
-  → mv-production-pipeline
-      → script-breakdown
-      → entity-extraction
-      → shot-detail
-      → consistency-check
+  → mv-production-pipeline        # Layer 3: invokes production-pipeline internally
+      → production-pipeline       # Layer 2 orchestrator
+          → script-breakdown
+          → entity-extraction
+          → shot-detail
+          → consistency-check
+  → seedance15-prompt-writer
   → seedance15-generate (per scene)
   → video-upscale (optional)
   → mv-compilation
@@ -44,11 +46,12 @@ download-youtube-video
 **Short drama (sequential):**
 ```
 [screenplay or story brief]
-  → shorts-production-pipeline
-      → script-breakdown
-      → entity-extraction
-      → shot-detail
-      → consistency-check
+  → shorts-production-pipeline    # Layer 3: invokes production-pipeline internally
+      → production-pipeline       # Layer 2 orchestrator
+          → script-breakdown
+          → entity-extraction
+          → shot-detail
+          → consistency-check
   → [image/video generation per shot]
   → [post-production assembly]
 ```
