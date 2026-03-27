@@ -378,13 +378,9 @@ function deriveAudioInputKey({ forcedAudioInputKey, modelMetadata }) {
     return "audio";
   }
 
+  // First pass: key name itself contains "audio"
   for (const key of keys) {
-    const prop = properties[key];
-    const haystack = [key, prop?.title, prop?.description]
-      .filter((item) => typeof item === "string")
-      .join(" ")
-      .toLowerCase();
-    if (haystack.includes("audio")) {
+    if (key.toLowerCase().includes("audio")) {
       return key;
     }
   }
