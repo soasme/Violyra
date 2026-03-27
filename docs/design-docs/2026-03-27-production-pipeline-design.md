@@ -19,11 +19,11 @@ This document describes the design for adding short-form video production capabi
 
 ---
 
-## Three-Layer Architecture
+## Skill Groups
 
-### Layer 1 — Pack Management (Data Layer)
+### Pack Management Skills
 
-Seven skills that own the JSON schema and all file I/O. Each has a JS script exposing CRUD operations via CLI subcommands. No reasoning, no LLM.
+Seven skills that own the JSON schema and all file I/O for production assets. Each has a JS script exposing CRUD operations via CLI subcommands. No reasoning, no LLM calls.
 
 | Skill | Entity | Scope | Purpose |
 |---|---|---|---|
@@ -35,9 +35,9 @@ Seven skills that own the JSON schema and all file I/O. Each has a JS script exp
 | `costume-pack` | Costume | Global reusable | Clothing/appearance set reference |
 | `prompt-template` | PromptTemplate | Global reusable | Reusable prompt templates with `{{variable}}` slots |
 
-### Layer 2 — Reasoning (Agent Instruction Layer)
+### Reasoning Skills
 
-Five skills whose SKILL.md files instruct any agent on what to reason about and which Layer 1 scripts to call for persistence. Scripts handle only validation and file I/O — no LLM calls in code.
+Five skills whose SKILL.md files instruct any agent on what to reason about and which pack management scripts to call for persistence. Scripts handle only validation and file I/O — no LLM calls in code.
 
 | Skill | Purpose | Primary inputs | Primary output |
 |---|---|---|---|
@@ -45,16 +45,16 @@ Five skills whose SKILL.md files instruct any agent on what to reason about and 
 | `entity-extraction` | Shot list → populate packs | `shot-list.json` | pack files, `extraction-report.json` |
 | `shot-detail` | Enrich shots with cinematic parameters | `shot-list.json`, `extraction-report.json`, `shot-details.json` (existing, optional) | `shot-details.json` |
 | `consistency-check` | Detect entity/style drift across shots | `shot-list.json`, `shot-details.json`, `extraction-report.json`, packs | `consistency-report.json` |
-| `production-pipeline` | Orchestrate Layer 2 workflow for a chapter | any text or existing chapter | all Layer 2 outputs |
+| `production-pipeline` | Orchestrate reasoning skills for a chapter | any text or existing chapter | all reasoning skill outputs |
 
-### Layer 3 — Production Orchestration
+### Full Pipeline Skills
 
-Two skills that wire the full end-to-end workflow for a specific production type.
+Two skills that wire the complete end-to-end workflow for a specific production type. Each invokes `production-pipeline` internally as the chapter-level orchestrator.
 
 | Skill | Purpose |
 |---|---|
 | `shorts-production-pipeline` | Full short film/drama workflow: text → breakdown → extraction → shot-detail → consistency → video generation |
-| `mv-production-pipeline` | Full music video workflow: audio/lyrics → breakdown → extraction → shot-detail → consistency → seedance generation → compilation |
+| `mv-production-pipeline` | Full music video workflow: lyrics/audio → breakdown → extraction → shot-detail → consistency → seedance generation → compilation |
 
 ---
 
@@ -62,7 +62,20 @@ Two skills that wire the full end-to-end workflow for a specific production type
 
 ```
 skills/
-  # Layer 1 — Pack Management
+  # Workflow Skills (gates — mandatory before/between production work)
+  brainstorming/
+    SKILL.md
+  project-setup/
+    SKILL.md
+    scripts/
+      setup.js
+      setup.__test__.js
+  writing-plans/
+    SKILL.md
+  requesting-review/
+    SKILL.md
+
+  # Pack Management Skills
   project-config/
     SKILL.md
     scripts/
@@ -99,7 +112,7 @@ skills/
       prompt-template.js
       prompt-template.__test__.js
 
-  # Layer 2 — Reasoning
+  # Reasoning Skills
   script-breakdown/
     SKILL.md
     scripts/
@@ -125,7 +138,7 @@ skills/
     references/
       workflow.md
 
-  # Layer 3 — Production Orchestration
+  # Full Pipeline Skills
   shorts-production-pipeline/
     SKILL.md
   mv-production-pipeline/
@@ -582,7 +595,7 @@ Consistency check reads `shot-list.json` + `shot-details.json` + `extraction-rep
 
 ## Script CLI Contract
 
-Every Layer 1 pack script follows this interface:
+Every pack management script follows this interface:
 
 ```bash
 pnpm exec dotenv -- node skills/<pack-name>/scripts/<pack-name>.js <subcommand> [options]
@@ -632,9 +645,9 @@ Exits 0 on valid, 1 on invalid (with error details to stderr).
 
 ---
 
-## Layer 2 SKILL.md Format
+## Reasoning Skill SKILL.md Format
 
-Every Layer 2 skill's `SKILL.md` must include these sections:
+Every reasoning skill's `SKILL.md` must include these sections:
 
 ```markdown
 ---
@@ -753,17 +766,18 @@ The new pipeline slots between storyboard/script work and video generation.
 
 **`mv-production-pipeline` workflow (sequential):**
 ```
-download-youtube-video
-  → lyrics-force-alignment
-  → mv-storyboard-writer
+writing-lyrics              ← write song lyrics
+  → generating-song         ← generate audio from lyrics + style
+  → lyrics-force-alignment  ← align lyrics to generated audio
+  → mv-storyboard-writer    ← write lyric-driven storyboard
   → production-pipeline
-      → script-breakdown (lyrics → shot list)
-      → entity-extraction (shots → packs)
-      → shot-detail (cinematic parameters)
-      → consistency-check (drift detection)
-  → seedance15-prompt-writer (shot-details → generation prompts)
-  → seedance15-generate (per scene)
-  → video-upscale (optional)
+      → script-breakdown    ← lyrics/storyboard → shot list
+      → entity-extraction   ← shots → packs
+      → shot-detail         ← cinematic parameters
+      → consistency-check   ← drift detection
+  → seedance15-prompt-writer
+  → seedance15-generate     ← per scene
+  → video-upscale           ← optional
   → mv-compilation
 ```
 
@@ -797,8 +811,8 @@ download-youtube-video
 
 ## Testing Strategy
 
-- Every Layer 1 pack script has `__test__.js` covering: create, read, update, delete, list, invalid input, missing base-dir.
-- Every Layer 2 skill has a `validate-<file>.js` script with `__test__.js` covering: valid fixture, missing required fields, unknown `$schemaVersion`, wrong field types.
+- Every pack management script has `__test__.js` covering: create, read, update, delete, list, invalid input, missing base-dir.
+- Every reasoning skill has a `validate-<file>.js` script with `__test__.js` covering: valid fixture, missing required fields, unknown `$schemaVersion`, wrong field types.
 - Run all tests: `pnpm test`.
 
 ---
