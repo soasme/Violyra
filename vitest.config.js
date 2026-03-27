@@ -1,10 +1,14 @@
-const { defineConfig } = require("vitest/config");
+import { defineConfig } from 'vitest/config'
 
-module.exports = defineConfig({
+export default defineConfig({
   test: {
     include: [
-      "**/*.{test,spec}.?(c|m)[jt]s?(x)",
-      "**/*.__test__.?(c|m)[jt]s?(x)",
+      '**/*.{test,spec}.?(c|m)[jt]s?(x)',
+      '**/*.__test__.?(c|m)[jt]s?(x)',
+    ],
+    exclude: [
+      '**/node_modules/**',
+      '**/packages/**',
     ],
   },
-});
+})
