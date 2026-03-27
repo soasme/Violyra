@@ -9,7 +9,7 @@ This document describes the design for adding video production capabilities to V
 
 ### Inspirations
 
-The **workflow skills** (`brainstorming-video-idea`, `setup-video-project`, `writing-plans`, `executing-video-plan`, `requesting-video-review`) are a direct port of software development best practices from the [superpowers](https://github.com/anthropics/claude-code) skill system into video production. The same discipline that makes software projects ship — spec before code, review before merge, tasks before execution — applies equally to producing a video.
+The **workflow skills** (`brainstorming-video-idea`, `setup-video-project`, `writing-plans`, `executing-video-plan`, `requesting-video-review`) are a direct port of software development best practices from the superpowers skill system into video production. The same discipline that makes software projects ship — spec before code, review before merge, tasks before execution — applies equally to producing a video.
 
 **`retention-driven-development`** is inspired by Andrej Karpathy's [auto-research](https://karpathy.ai) concept: instead of checking loss curves, you simulate the audience. A subagent runs the "viewer experiment," scores retention, and drives iterative replacement of weak settings. Replace, don't tweak.
 
@@ -20,20 +20,32 @@ The **workflow skills** (`brainstorming-video-idea`, `setup-video-project`, `wri
 1. **No database, no UI.** All state lives in JSON files on disk. User specifies a base directory.
 2. **Agent-agnostic.** SKILL.md files contain instructions; any AI agent can follow them. No LLM calls in code.
 3. **CLI-first scripts.** JS scripts handle all file I/O, schema validation, and non-LLM transforms. Flags, defaults, `--help`.
-4. **Composable three-layer architecture.** Pack management (data) → reasoning (agent logic) → pipeline orchestration (workflow).
+4. **Composable three-tier architecture.** Pack management (data) → reasoning (agent logic) → pipeline orchestration (workflow).
 5. **Schemas derived from established production tooling.** See [References](#references).
 
 ---
 
 ## Skill Groups
 
+### Workflow Skills
+
+Six skills that govern the production process end-to-end. These are pure SKILL.md instructions — no scripts, no file I/O ownership. They mirror software development best practices (spec before code, review before merge, tasks before execution) applied to video production.
+
+| Skill | When to use |
+|---|---|
+| `brainstorming-video-idea` | Before making any video. Refines rough ideas, explores alternatives, saves design document. |
+| `setup-video-project` | After design approval. Creates isolated workspace, initializes `project.json` with global seed, style, and model defaults. |
+| `writing-plans` | With approved design in hand. Breaks work into bite-sized tasks with exact file paths and verification commands. |
+| `executing-video-plan` | With plan in hand. Dispatches subagents per task with two-stage review. |
+| `retention-driven-development` | After execution. Simulates 100 viewers, scores retention, replaces weak settings until threshold is met. |
+| `requesting-video-review` | Between tasks or after pipeline. Reviews progress against plan; critical issues block progress. |
+
 ### Pack Management Skills
 
-Seven skills that own the JSON schema and all file I/O for production assets. Each has a JS script exposing CRUD operations via CLI subcommands. No reasoning, no LLM calls.
+Six skills that own the JSON schema and all file I/O for production assets. Each has a JS script exposing CRUD operations via CLI subcommands. No reasoning, no LLM calls.
 
 | Skill | Entity | Scope | Purpose |
 |---|---|---|---|
-| `setup-video-project` | Project | Per-project | Workspace creation + `project.json` init (seed, style, model defaults) |
 | `generating-actor-pack` | Actor | Global reusable | Physical appearance reference (global across projects) |
 | `generating-character-pack` | Character | Project-scoped | Composition: one actor + one costume + zero or more props |
 | `generating-scene-pack` | Scene | Global reusable | Location/environment reference |
@@ -187,7 +199,7 @@ All files for a project live under a single user-specified `--base-dir` (default
     consistency-report.json            # drift issues (output of consistency-check)
 ```
 
-**Chapter directory convention:** the chapter ID is the directory name under `chapters/`. All Layer 2 inputs and outputs for a chapter are colocated there. Scripts that take a chapter as input accept `--chapter-dir <base-dir>/chapters/<chapter-id>`.
+**Chapter directory convention:** the chapter ID is the directory name under `chapters/`. All reasoning skill inputs and outputs for a chapter are colocated there. Scripts that take a chapter as input accept `--chapter-dir <base-dir>/chapters/<chapter-id>`.
 
 ---
 
@@ -336,6 +348,9 @@ Image sub-schema (same as actor images):
       "viewAngle": "FRONT",
       "qualityLevel": "LOW",
       "path": "./images/ref.jpg",
+      "width": null,
+      "height": null,
+      "format": "jpg",
       "isPrimary": true
     }
   ],
@@ -494,7 +509,7 @@ Shot details are written after `entity-extraction` completes, so `sceneIds` can 
 `movement`: `"STATIC" | "PAN" | "TILT" | "DOLLY_IN" | "DOLLY_OUT" | "TRACK" | "CRANE" | "HANDHELD" | "STEADICAM" | "ZOOM_IN" | "ZOOM_OUT"`.
 `vfxType`: `"NONE" | "PARTICLES" | "VOLUMETRIC_FOG" | "CG_DOUBLE" | "DIGITAL_ENVIRONMENT" | "MATTE_PAINTING" | "FIRE_SMOKE" | "WATER_SIM" | "DESTRUCTION" | "ENERGY_MAGIC" | "COMPOSITING_CLEANUP" | "SLOW_MOTION_TIME" | "OTHER"`.
 `duration`: integer, unit is **seconds**.
-`followAtmosphere`: when `true`, the agent inherits the `atmosphere` value from the previous shot that has `followAtmosphere: false` (the atmosphere "source" shot). When `false`, this shot defines a new atmosphere that subsequent shots may inherit. This is how consistent visual atmosphere is propagated across a sequence without repeating it in every shot.
+`followAtmosphere`: when `true`, the agent inherits the `atmosphere` value from the previous shot that has `followAtmosphere: false` (the atmosphere "source" shot). When `false`, this shot defines a new atmosphere that subsequent shots may inherit. This is how consistent visual atmosphere is propagated across a sequence without repeating it in every shot. If the first shot in a sequence has `followAtmosphere: true` and no preceding source shot exists, treat it as a source shot (use its own `atmosphere` value and set `followAtmosphere: false`).
 `moodTags`: free-form strings. Suggested vocabulary: `"melancholic" | "energetic" | "tense" | "romantic" | "mysterious" | "playful" | "hopeful" | "desperate" | "triumphant" | "serene"`. Not enum-enforced — agents may add domain-specific tags.
 
 `dialogLines` array schema — placed in `shot-details.json` (not `shot-list.json`) because dialog belongs to the cinematic enrichment pass, not the initial breakdown. Breakdown only extracts character names; dialog text is added by the agent during `shot-detail`.
@@ -519,7 +534,7 @@ Shot details are written after `entity-extraction` completes, so `sceneIds` can 
 - **`characterIds`**: project-scoped character pack IDs referenced in this shot. A character links one actor + costume + props. `characterIds` is populated only after the agent has created character packs that compose the relevant actors. It may be empty for a shot even if `actorIds` is non-empty — this is valid and expected early in a project.
 - **Relationship**: every character has exactly one actor. If `characterIds` is non-empty, the corresponding actor IDs will also appear in `actorIds`. `actorIds` may contain IDs not in `characterIds` (actors without a character composition yet).
 
-`newEntities` lists IDs of packs created during this extraction run. `characters` is omitted — character creation (composing actor + costume + props into a named role) is a deliberate separate step performed by the agent after reviewing extracted actors, not done automatically during extraction.
+`newEntities` lists IDs of packs created during this extraction run only — previously created packs are not re-listed even if they are referenced. `characters` is omitted — character creation (composing actor + costume + props into a named role) is a deliberate separate step performed by the agent after reviewing extracted actors, not done automatically during extraction.
 
 ```json
 {
@@ -594,7 +609,7 @@ Consistency check reads `shot-list.json` + `shot-details.json` + `extraction-rep
 
 `type`: `"character_drift" | "scene_drift" | "prop_mismatch" | "costume_change_unintended" | "style_deviation"`.
 
-`optimizedShotList` is `null` when no optimization was run. When present, it is a complete `shot-list.json`-compatible object (same schema, same `$schemaVersion`). The agent may write it directly to `shot-list.json` after user review.
+`optimizedShotList` is `null` when no optimization was run. When present, it is a complete `shot-list.json`-compatible object (same schema, same `$schemaVersion`) containing all shots — modified and unmodified — with stable original indices. The agent may write it directly to `shot-list.json` after user review.
 
 ---
 
@@ -640,7 +655,7 @@ list     --base-dir <path> [--filter <keyword>]
 
 Output is always a JSON object to stdout. Errors go to stderr with a non-zero exit code and a `{ "error": "<message>" }` JSON body.
 
-Layer 2 validator scripts follow:
+Reasoning skill validator scripts follow:
 
 ```bash
 pnpm exec dotenv -- node skills/<skill-name>/scripts/validate-<file>.js --file <path>
@@ -675,7 +690,7 @@ Other skills that must run before this one, and what outputs they produce that t
 ## Workflow
 
 Numbered steps the agent follows. Each step either:
-- Calls a Layer 1 script (show the exact command)
+- Calls a pack management script (show the exact command)
 - Performs a reasoning step (describe what to think/decide)
 - Writes an output file (describe the schema section to follow)
 
@@ -778,9 +793,9 @@ brainstorming-video-idea
       → generating-lyrics
       → generating-song
       → lyrics-force-alignment
-      → mv-storyboard-writer
+      → mv-storyboard-writer          ← produces storyboard.json
       → production-pipeline
-          → script-breakdown
+          → script-breakdown          ← agent provides storyboard.json content as raw text input
           → entity-extraction
           → shot-detail
           → consistency-check
@@ -872,6 +887,6 @@ This file must be created as part of implementing the `production-pipeline` skil
 
 ## References
 
-- [superpowers](https://github.com/anthropics/claude-code) — skill repository structure and agent-agnostic SKILL.md pattern
+- superpowers — skill repository structure and agent-agnostic SKILL.md pattern
 - [Jellyfish](https://github.com/Forget-C/Jellyfish) — production pipeline feature set and data model
 - [huobao-drama](https://github.com/chatfire-AI/huobao-drama) — short drama production feature set

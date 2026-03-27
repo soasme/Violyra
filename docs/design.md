@@ -30,7 +30,7 @@ violyra/
 
 **Agent-agnostic.** SKILL.md files contain instructions any agent can follow. Scripts handle file I/O and validation — no LLM calls in code.
 
-**CLI-first and testable.** Every script has flags, defaults, `--help`, and a `__test__.js` companion.
+**CLI-first and testable.** Every script has flags, defaults, `--help`, and a `__test__.js` companion. Always run scripts via `pnpm exec dotenv -- <command>` to load environment variables from `.env`.
 
 ## Skill Library
 
@@ -43,7 +43,7 @@ violyra/
 | `writing-plans` | With approved design in hand. Breaks work into bite-sized tasks (2–5 min each) with exact file paths, complete steps, and verification commands. |
 | `executing-video-plan` | With plan in hand. Dispatches a fresh subagent per task with two-stage review (spec compliance, then spec/asset quality), or executes in batches with human checkpoints. |
 | `retention-driven-development` | After execution. Dispatches a subagent to simulate 100 viewers reacting to the current settings and scores retention; repeats until score meets threshold or no improvement remains. Replace, don't patch. |
-| `requesting-video-review` | Between tasks. Reviews progress against plan, reports issues by severity. Critical issues block progress. |
+| `requesting-video-review` | Between tasks or after the full pipeline. Reviews progress against plan, reports issues by severity. Critical issues block progress. |
 
 ### Music Production Skills
 

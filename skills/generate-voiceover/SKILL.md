@@ -1,9 +1,9 @@
 ---
-name: text-to-speech
+name: generate-voiceover
 description: Produce clean, consistent, delivery-ready TTS audio for video tasks. Use when asked to generate narration or voiceover, choose a local or cloud TTS engine, clean artifacts, normalize loudness, and export segment-ready audio files.
 ---
 
-# Text To Speech
+# Generate Voiceover
 
 Choose engine by need:
 
@@ -35,7 +35,7 @@ Prototyping example:
 `espeak-ng -v en-us -s 165 -w draft.wav "Your script text"`
 
 Cloud example (requires `REPLICATE_API_TOKEN`):
-`REPLICATE_API_TOKEN=<token> node .agent/skills/text-to-speech/scripts/chatterbox_tts.js --prompt "Your script text" --output narration.wav --audio-ref ref.wav`
+`REPLICATE_API_TOKEN=<token> node .agent/skills/generate-voiceover/scripts/chatterbox_tts.js --prompt "Your script text" --output narration.wav --audio-ref ref.wav`
 
 Cleanup guidance:
 
