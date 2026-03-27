@@ -4,7 +4,7 @@ import { rmSync } from 'node:fs'
 import { parseArgs } from 'node:util'
 import {
   SCHEMA_VERSION, generateId, readPack, writePack,
-  errorExit, successOutput, listPacksInDir,
+  errorExit, successOutput, listPacksInDir, safeParseJson,
 } from '../../lib/pack-utils.js'
 
 const ENTITY = 'scenes'
@@ -20,7 +20,7 @@ function create(v) {
   const now = new Date().toISOString()
   const pack = {
     $schemaVersion: SCHEMA_VERSION, id, name: v.name,
-    description: v.description ?? '', tags: v.tags ? JSON.parse(v.tags) : [],
+    description: v.description ?? '', tags: v.tags ? safeParseJson(v.tags, '--tags') : [],
     viewCount: 1, promptTemplateId: null, images: [],
     createdAt: now, updatedAt: now,
   }
@@ -43,7 +43,7 @@ function update(v) {
   catch (e) { errorExit(e.message) }
   if (v.name !== undefined) pack.name = v.name
   if (v.description !== undefined) pack.description = v.description
-  if (v.tags !== undefined) pack.tags = JSON.parse(v.tags)
+  if (v.tags !== undefined) pack.tags = safeParseJson(v.tags, '--tags')
   pack.updatedAt = new Date().toISOString()
   writePack(packPath(v['base-dir'], v.id), pack)
   successOutput(pack)

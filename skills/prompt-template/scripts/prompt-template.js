@@ -4,7 +4,7 @@ import { rmSync, existsSync, readdirSync, readFileSync } from 'node:fs'
 import { parseArgs } from 'node:util'
 import {
   SCHEMA_VERSION, generateId, readPack, writePack,
-  errorExit, successOutput,
+  errorExit, successOutput, safeParseJson,
 } from '../../lib/pack-utils.js'
 
 function tmplPath(baseDir, id) { return join(resolve(baseDir), 'global', 'templates', id, 'template.json') }
@@ -35,7 +35,7 @@ function create(v) {
     category: v.category, name: v.name,
     preview: v.preview ?? '',
     content: v.content,
-    variables: JSON.parse(v.variables),
+    variables: safeParseJson(v.variables, '--variables'),
     isDefault: v['is-default'] === true || v['is-default'] === 'true',
     isSystem: false,
     createdAt: now, updatedAt: now,
@@ -54,12 +54,13 @@ function read(v) {
 function update(v) {
   if (!v['base-dir']) errorExit('Missing required flag: --base-dir')
   if (!v.id) errorExit('Missing required flag: --id')
+  if (v.category !== undefined) errorExit('--category cannot be changed after creation')
   let tmpl
   try { tmpl = readPack(tmplPath(v['base-dir'], v.id)) }
   catch (e) { errorExit(e.message) }
   if (v.name !== undefined) tmpl.name = v.name
   if (v.content !== undefined) tmpl.content = v.content
-  if (v.variables !== undefined) tmpl.variables = JSON.parse(v.variables)
+  if (v.variables !== undefined) tmpl.variables = safeParseJson(v.variables, '--variables')
   if (v.preview !== undefined) tmpl.preview = v.preview
   if (v['is-default'] !== undefined) tmpl.isDefault = v['is-default'] === true || v['is-default'] === 'true'
   tmpl.updatedAt = new Date().toISOString()

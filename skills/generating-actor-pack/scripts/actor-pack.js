@@ -4,7 +4,7 @@ import { rmSync } from 'node:fs'
 import { parseArgs } from 'node:util'
 import {
   SCHEMA_VERSION, generateId, readPack, writePack,
-  errorExit, successOutput, listPacksInDir,
+  errorExit, successOutput, listPacksInDir, safeParseJson,
 } from '../../lib/pack-utils.js'
 
 function packPath(baseDir, id) {
@@ -25,7 +25,7 @@ function create(v) {
     name: v.name,
     description: v.description ?? '',
     appearance: v.appearance ?? '',
-    tags: v.tags ? JSON.parse(v.tags) : [],
+    tags: v.tags ? safeParseJson(v.tags, '--tags') : [],
     viewCount: 1, promptTemplateId: null, images: [],
     createdAt: now, updatedAt: now,
   }
@@ -49,7 +49,7 @@ function update(v) {
   if (v.name !== undefined) pack.name = v.name
   if (v.description !== undefined) pack.description = v.description
   if (v.appearance !== undefined) pack.appearance = v.appearance
-  if (v.tags !== undefined) pack.tags = JSON.parse(v.tags)
+  if (v.tags !== undefined) pack.tags = safeParseJson(v.tags, '--tags')
   pack.updatedAt = new Date().toISOString()
   writePack(packPath(v['base-dir'], v.id), pack)
   successOutput(pack)

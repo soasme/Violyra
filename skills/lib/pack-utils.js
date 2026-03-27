@@ -23,7 +23,7 @@ export function readPack(filePath) {
   if (!existsSync(filePath)) throw new Error(`Pack not found: ${filePath}`)
   const data = JSON.parse(readFileSync(filePath, 'utf8'))
   if (data.$schemaVersion !== SCHEMA_VERSION) {
-    throw new Error(`Unknown schemaVersion: ${data.$schemaVersion}`)
+    throw new Error(`Unknown $schemaVersion: ${data.$schemaVersion}`)
   }
   return data
 }
@@ -40,6 +40,14 @@ export function errorExit(msg) {
 
 export function successOutput(data) {
   process.stdout.write(JSON.stringify(data, null, 2) + '\n')
+}
+
+export function safeParseJson(str, flagName) {
+  try {
+    return JSON.parse(str)
+  } catch {
+    errorExit(`Invalid JSON for ${flagName}: expected a valid JSON value`)
+  }
 }
 
 export function listPacksInDir(dir) {

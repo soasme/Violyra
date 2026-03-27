@@ -41,7 +41,7 @@ describe('writePack / readPack', () => {
   it('throws on unknown schemaVersion', () => {
     const path = join(tmpDir, 'pack.json')
     writePack(path, { $schemaVersion: '99.0', id: 'x' })
-    expect(() => readPack(path)).toThrow('Unknown schemaVersion')
+    expect(() => readPack(path)).toThrow('Unknown $schemaVersion')
   })
   it('throws when file does not exist', () => {
     expect(() => readPack(join(tmpDir, 'missing.json'))).toThrow('not found')

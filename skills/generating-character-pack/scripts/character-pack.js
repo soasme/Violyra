@@ -4,7 +4,7 @@ import { rmSync, existsSync } from 'node:fs'
 import { parseArgs } from 'node:util'
 import {
   SCHEMA_VERSION, generateId, readPack, writePack,
-  errorExit, successOutput, listPacksInDir,
+  errorExit, successOutput, listPacksInDir, safeParseJson,
 } from '../../lib/pack-utils.js'
 
 function packPath(baseDir, id) { return join(resolve(baseDir), 'characters', id, 'pack.json') }
@@ -25,7 +25,7 @@ function create(v) {
     description: v.description ?? '',
     actorId: v['actor-id'],
     costumeId: v['costume-id'] ?? null,
-    propIds: v['prop-ids'] ? JSON.parse(v['prop-ids']) : [],
+    propIds: v['prop-ids'] ? safeParseJson(v['prop-ids'], '--prop-ids') : [],
     images: [], createdAt: now, updatedAt: now,
   }
   writePack(packPath(v['base-dir'], id), pack)
@@ -49,7 +49,7 @@ function update(v) {
   if (v.description !== undefined) pack.description = v.description
   if (v['actor-id'] !== undefined) pack.actorId = v['actor-id']
   if (v['costume-id'] !== undefined) pack.costumeId = v['costume-id']
-  if (v['prop-ids'] !== undefined) pack.propIds = JSON.parse(v['prop-ids'])
+  if (v['prop-ids'] !== undefined) pack.propIds = safeParseJson(v['prop-ids'], '--prop-ids')
   pack.updatedAt = new Date().toISOString()
   writePack(packPath(v['base-dir'], v.id), pack)
   successOutput(pack)
