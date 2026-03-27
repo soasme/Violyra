@@ -5,7 +5,13 @@
 
 ## Overview
 
-This document describes the design for adding short-form video production capabilities to Violyra: structured asset management (actor, character, scene, prop, costume packs), reusable prompt templates, fine-grained shot control, entity extraction from raw text, cross-scene consistency checking, and full-pipeline orchestration — all as CLI-first, agent-agnostic skills with no database and no UI.
+This document describes the design for adding video production capabilities to Violyra: structured asset management (actor, character, scene, prop, costume packs), reusable prompt templates, fine-grained shot control, entity extraction from raw text, cross-scene consistency checking, and full-pipeline orchestration — all as CLI-first, agent-agnostic skills with no database and no UI.
+
+### Inspirations
+
+The **workflow skills** (`brainstorming-video-idea`, `setup-video-project`, `writing-plans`, `executing-video-plan`, `requesting-video-review`) are a direct port of software development best practices from the [superpowers](https://github.com/anthropics/claude-code) skill system into video production. The same discipline that makes software projects ship — spec before code, review before merge, tasks before execution — applies equally to producing a video.
+
+**`retention-driven-development`** is inspired by Andrej Karpathy's [auto-research](https://karpathy.ai) concept: instead of checking loss curves, you simulate the audience. A subagent runs the "viewer experiment," scores retention, and drives iterative replacement of weak settings. Replace, don't tweak.
 
 ---
 
@@ -73,6 +79,8 @@ skills/
   writing-plans/
     SKILL.md
   requesting-video-review/
+    SKILL.md
+  executing-video-plan/
     SKILL.md
   retention-driven-development/
     SKILL.md
@@ -765,21 +773,22 @@ The new pipeline slots between storyboard/script work and video generation.
 ```
 brainstorming-video-idea
   → setup-video-project
-  → retention-driven-development  ← validate concept
   → writing-plans
-  → generating-lyrics
-  → generating-song
-  → lyrics-force-alignment
-  → mv-storyboard-writer
-  → production-pipeline
-      → script-breakdown
-      → entity-extraction
-      → shot-detail
-      → consistency-check
-  → seedance15-prompt-writer
-  → seedance15-generate     ← per scene
-  → upscale-video           ← optional
-  → mv-compilation
+  → executing-video-plan
+      → generating-lyrics
+      → generating-song
+      → lyrics-force-alignment
+      → mv-storyboard-writer
+      → production-pipeline
+          → script-breakdown
+          → entity-extraction
+          → shot-detail
+          → consistency-check
+      → seedance15-prompt-writer
+      → seedance15-generate   ← per scene
+      → upscale-video         ← optional
+      → mv-compilation
+  → retention-driven-development
   → requesting-video-review
 ```
 
@@ -787,15 +796,16 @@ brainstorming-video-idea
 ```
 brainstorming-video-idea
   → setup-video-project
-  → retention-driven-development  ← validate concept
   → writing-plans
-  → production-pipeline
-      → script-breakdown
-      → entity-extraction
-      → shot-detail
-      → consistency-check
-  → [image/video generation per shot]
-  → [post-production assembly]
+  → executing-video-plan
+      → production-pipeline
+          → script-breakdown
+          → entity-extraction
+          → shot-detail
+          → consistency-check
+      → [image/video generation per shot]
+      → [post-production assembly]
+  → retention-driven-development
   → requesting-video-review
 ```
 

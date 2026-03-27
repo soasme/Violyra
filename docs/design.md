@@ -41,8 +41,9 @@ violyra/
 | `brainstorming-video-idea` | Before making any video. Refines rough ideas through questions, explores alternatives, presents design in sections for validation, saves design document. |
 | `setup-video-project` | After design approval. Creates isolated workspace for base dir, initializes `project.json` with global seed, style, and model defaults. |
 | `writing-plans` | With approved design in hand. Breaks work into bite-sized tasks (2–5 min each) with exact file paths, complete steps, and verification commands. |
+| `executing-video-plan` | With plan in hand. Dispatches a fresh subagent per task with two-stage review (spec compliance, then spec/asset quality), or executes in batches with human checkpoints. |
+| `retention-driven-development` | After execution. Dispatches a subagent to simulate 100 viewers reacting to the current settings and scores retention; repeats until score meets threshold or no improvement remains. Replace, don't patch. |
 | `requesting-video-review` | Between tasks. Reviews progress against plan, reports issues by severity. Critical issues block progress. |
-| `retention-driven-development` | To validate or optimize any production setting (concept, storyboard, scene, style). Dispatches a subagent to simulate 100 viewers reacting to the current settings and scores retention; repeats until score meets threshold or no improvement remains. Replace, don't patch. |
 
 ### Music Production Skills
 
@@ -111,30 +112,32 @@ violyra/
 ```
 brainstorming-video-idea      ← define concept, style, characters
   → setup-video-project       ← create workspace, initialize project.json
-  → retention-driven-development ← validate concept against simulated audience
   → writing-plans             ← break production into tasks
-  → generating-lyrics         ← write song lyrics
-  → generating-song           ← generate audio from lyrics + style
-  → lyrics-force-alignment    ← align lyrics to generated audio
-  → mv-storyboard-writer      ← write lyric-driven storyboard
-  → production-pipeline       ← breakdown → extraction → shot-detail → consistency
-  → seedance15-prompt-writer
-  → seedance15-generate       ← per scene
-  → upscale-video             ← optional
-  → mv-compilation
-  → requesting-video-review   ← review against plan
+  → executing-video-plan      ← dispatch subagents per task with two-stage review
+      → generating-lyrics
+      → generating-song
+      → lyrics-force-alignment
+      → mv-storyboard-writer
+      → production-pipeline   ← breakdown → extraction → shot-detail → consistency
+      → seedance15-prompt-writer
+      → seedance15-generate   ← per scene
+      → upscale-video         ← optional
+      → mv-compilation
+  → retention-driven-development ← simulate audience, replace weak scenes
+  → requesting-video-review   ← review against plan, block on critical issues
 ```
 
 **Short drama (sequential):**
 ```
 brainstorming-video-idea      ← define story, characters, visual style
   → setup-video-project       ← create workspace, initialize project.json
-  → retention-driven-development ← validate concept against simulated audience
   → writing-plans             ← break production into tasks
-  → production-pipeline       ← breakdown → extraction → shot-detail → consistency
-  → [image/video generation per shot]
-  → [post-production assembly]
-  → requesting-video-review   ← review against plan
+  → executing-video-plan      ← dispatch subagents per task with two-stage review
+      → production-pipeline   ← breakdown → extraction → shot-detail → consistency
+      → [image/video generation per shot]
+      → [post-production assembly]
+  → retention-driven-development ← simulate audience, replace weak scenes
+  → requesting-video-review   ← review against plan, block on critical issues
 ```
 
 ## Multi-Agent Support
