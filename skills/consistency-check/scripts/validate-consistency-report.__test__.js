@@ -37,6 +37,12 @@ it('rejects issue with invalid type', () => {
 it('rejects issue with non-array shotIndices', () => {
   expect(validate({ ...VALID, issues: [{ ...VALID_ISSUE, shotIndices: 3 }] }).status).toBe(1)
 })
+it('rejects issue with non-string entityType', () => {
+  expect(validate({ ...VALID, issues: [{ ...VALID_ISSUE, entityType: 123 }] }).status).toBe(1)
+})
+it('rejects issue with non-string suggestion', () => {
+  expect(validate({ ...VALID, issues: [{ ...VALID_ISSUE, suggestion: null }] }).status).toBe(1)
+})
 it('exits 1 when --file missing', () => {
   expect(spawnSync('node', [SCRIPT], { encoding: 'utf8' }).status).toBe(1)
 })

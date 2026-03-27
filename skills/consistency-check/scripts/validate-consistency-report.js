@@ -18,6 +18,8 @@ function validate(data) {
     if (!Array.isArray(issue.shotIndices)) throw new Error(`issues[${i}].shotIndices must be an array`)
     if (typeof issue.entityId !== 'string') throw new Error(`issues[${i}].entityId must be a string`)
     if (typeof issue.description !== 'string') throw new Error(`issues[${i}].description must be a string`)
+    if (typeof issue.entityType !== 'string') throw new Error(`issues[${i}].entityType must be a string`)
+    if (typeof issue.suggestion !== 'string') throw new Error(`issues[${i}].suggestion must be a string`)
   }
   // optimizedShotList is null or a shot-list-compatible object — just check it's not undefined
   if (!('optimizedShotList' in data)) throw new Error('Missing optimizedShotList (use null if no optimization)')

@@ -25,6 +25,13 @@ function validate(data) {
     if (typeof d.followAtmosphere !== 'boolean') throw new Error(`details[${i}].followAtmosphere must be a boolean`)
     if (!VFX_TYPES.includes(d.vfxType)) throw new Error(`details[${i}].vfxType must be one of: ${VFX_TYPES.join(', ')}`)
     if (!Array.isArray(d.dialogLines)) throw new Error(`details[${i}].dialogLines must be an array`)
+    if (typeof d.atmosphere !== 'string') throw new Error(`details[${i}].atmosphere must be a string`)
+    if (typeof d.hasBgm !== 'boolean') throw new Error(`details[${i}].hasBgm must be a boolean`)
+    if (typeof d.vfxNote !== 'string') throw new Error(`details[${i}].vfxNote must be a string`)
+    if (typeof d.description !== 'string') throw new Error(`details[${i}].description must be a string`)
+    if (typeof d.firstFramePrompt !== 'string') throw new Error(`details[${i}].firstFramePrompt must be a string`)
+    if (typeof d.lastFramePrompt !== 'string') throw new Error(`details[${i}].lastFramePrompt must be a string`)
+    if (typeof d.keyFramePrompt !== 'string') throw new Error(`details[${i}].keyFramePrompt must be a string`)
   }
 }
 

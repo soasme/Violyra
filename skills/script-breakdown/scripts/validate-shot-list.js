@@ -12,11 +12,13 @@ function validate(data) {
   if (!data.generatedAt || typeof data.generatedAt !== 'string') throw new Error('Missing generatedAt')
   if (!Array.isArray(data.shots)) throw new Error('shots must be an array')
   for (const [i, shot] of data.shots.entries()) {
-    if (typeof shot.index !== 'number') throw new Error(`shots[${i}].index must be a number`)
+    if (!Number.isInteger(shot.index)) throw new Error(`shots[${i}].index must be an integer`)
     if (typeof shot.title !== 'string') throw new Error(`shots[${i}].title must be a string`)
     if (typeof shot.scriptExcerpt !== 'string') throw new Error(`shots[${i}].scriptExcerpt must be a string`)
     if (!Array.isArray(shot.characterNames)) throw new Error(`shots[${i}].characterNames must be an array`)
+    if (!shot.characterNames.every(n => typeof n === 'string')) throw new Error(`shots[${i}].characterNames must be an array of strings`)
     if (!Array.isArray(shot.sceneNames)) throw new Error(`shots[${i}].sceneNames must be an array`)
+    if (!shot.sceneNames.every(n => typeof n === 'string')) throw new Error(`shots[${i}].sceneNames must be an array of strings`)
     if (!VALID_STATUSES.includes(shot.status)) {
       throw new Error(`shots[${i}].status must be one of: ${VALID_STATUSES.join(', ')}`)
     }

@@ -43,8 +43,8 @@ it('rejects missing chapterId', () => {
 it('rejects non-array shots', () => {
   expect(validate({ ...VALID, shots: 'bad' }).status).toBe(1)
 })
-it('rejects shot with non-number index', () => {
-  expect(validate({ ...VALID, shots: [{ ...VALID.shots[0], index: 'one' }] }).status).toBe(1)
+it('rejects shot with non-integer index', () => {
+  expect(validate({ ...VALID, shots: [{ ...VALID.shots[0], index: 1.5 }] }).status).toBe(1)
 })
 it('rejects shot with invalid status', () => {
   expect(validate({ ...VALID, shots: [{ ...VALID.shots[0], status: 'unknown' }] }).status).toBe(1)

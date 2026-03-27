@@ -43,6 +43,15 @@ it('rejects detail with non-integer duration', () => {
 it('rejects detail with non-array sceneIds', () => {
   expect(validate({ ...VALID, details: [{ ...VALID_DETAIL, sceneIds: 'bad' }] }).status).toBe(1)
 })
+it('rejects detail with non-boolean hasBgm', () => {
+  expect(validate({ ...VALID, details: [{ ...VALID_DETAIL, hasBgm: 'yes' }] }).status).toBe(1)
+})
+it('rejects detail with non-string atmosphere', () => {
+  expect(validate({ ...VALID, details: [{ ...VALID_DETAIL, atmosphere: 123 }] }).status).toBe(1)
+})
+it('rejects detail with non-string firstFramePrompt', () => {
+  expect(validate({ ...VALID, details: [{ ...VALID_DETAIL, firstFramePrompt: null }] }).status).toBe(1)
+})
 it('exits 1 when --file missing', () => {
   expect(spawnSync('node', [SCRIPT], { encoding: 'utf8' }).status).toBe(1)
 })

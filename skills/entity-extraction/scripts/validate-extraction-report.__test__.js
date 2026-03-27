@@ -36,8 +36,8 @@ it('rejects missing $schemaVersion', () => { const d = { ...VALID }; delete d.$s
 it('rejects unknown $schemaVersion', () => { expect(validate({ ...VALID, $schemaVersion: '2.0' }).status).toBe(1) })
 it('rejects missing chapterId', () => { const d = { ...VALID }; delete d.chapterId; expect(validate(d).status).toBe(1) })
 it('rejects non-array shotEntityRefs', () => { expect(validate({ ...VALID, shotEntityRefs: null }).status).toBe(1) })
-it('rejects ref with non-number shotIndex', () => {
-  expect(validate({ ...VALID, shotEntityRefs: [{ ...VALID.shotEntityRefs[0], shotIndex: 'one' }] }).status).toBe(1)
+it('rejects ref with non-integer shotIndex', () => {
+  expect(validate({ ...VALID, shotEntityRefs: [{ ...VALID.shotEntityRefs[0], shotIndex: 1.5 }] }).status).toBe(1)
 })
 it('rejects ref with non-array actorIds', () => {
   expect(validate({ ...VALID, shotEntityRefs: [{ ...VALID.shotEntityRefs[0], actorIds: 'bad' }] }).status).toBe(1)

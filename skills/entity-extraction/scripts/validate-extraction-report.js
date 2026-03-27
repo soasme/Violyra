@@ -11,14 +11,16 @@ function validate(data) {
   if (!data.generatedAt || typeof data.generatedAt !== 'string') throw new Error('Missing generatedAt')
   if (!Array.isArray(data.shotEntityRefs)) throw new Error('shotEntityRefs must be an array')
   for (const [i, ref] of data.shotEntityRefs.entries()) {
-    if (typeof ref.shotIndex !== 'number') throw new Error(`shotEntityRefs[${i}].shotIndex must be a number`)
+    if (!Number.isInteger(ref.shotIndex)) throw new Error(`shotEntityRefs[${i}].shotIndex must be an integer`)
     for (const field of ['actorIds', 'characterIds', 'sceneIds', 'propIds', 'costumeIds']) {
       if (!Array.isArray(ref[field])) throw new Error(`shotEntityRefs[${i}].${field} must be an array`)
+      if (!ref[field].every(id => typeof id === 'string')) throw new Error(`shotEntityRefs[${i}].${field} must be an array of strings`)
     }
   }
   if (!data.newEntities || typeof data.newEntities !== 'object') throw new Error('Missing newEntities')
   for (const field of ['actors', 'scenes', 'props', 'costumes']) {
     if (!Array.isArray(data.newEntities[field])) throw new Error(`newEntities.${field} must be an array`)
+    if (!data.newEntities[field].every(id => typeof id === 'string')) throw new Error(`newEntities.${field} must be an array of strings`)
   }
 }
 
