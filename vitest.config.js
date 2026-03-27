@@ -9,6 +9,14 @@ export default defineConfig({
     exclude: [
       '**/node_modules/**',
       '**/packages/**',
+      // Pre-existing POC skills using CJS require() — not yet migrated to ESM
+      'skills/extract-foreground/**',
+      'skills/generate-thumbnail/**',
+      'skills/generate-voiceover/**',
+      'skills/mv-compilation/**',
+      'skills/lyrics-force-alignment/**',
+      'skills/seedance15-generate/**',
+      'skills/upscale-video/**',
     ],
   },
 })
