@@ -5,9 +5,7 @@
 
 ## Overview
 
-This document describes the design for bringing Jellyfish-inspired production pipeline capabilities into Violyra. The goal is to add structured asset management (character, scene, prop, costume, actor packs), fine-grained shot control, entity extraction from raw text, cross-scene consistency checking, and full-pipeline orchestration — all as CLI-first, agent-agnostic skills with no database and no UI.
-
-Reference: [Jellyfish](https://github.com/Forget-C/Jellyfish) — an AI short drama studio with entity lifecycle management, shot fine control, and consistency enforcement.
+This document describes the design for adding short-form video production capabilities to Violyra: structured asset management (actor, character, scene, prop, costume packs), reusable prompt templates, fine-grained shot control, entity extraction from raw text, cross-scene consistency checking, and full-pipeline orchestration — all as CLI-first, agent-agnostic skills with no database and no UI.
 
 ---
 
@@ -16,38 +14,47 @@ Reference: [Jellyfish](https://github.com/Forget-C/Jellyfish) — an AI short dr
 1. **No database, no UI.** All state lives in JSON files on disk. User specifies a base directory.
 2. **Agent-agnostic.** SKILL.md files contain instructions; any AI agent can follow them. No LLM calls in code.
 3. **CLI-first scripts.** JS scripts handle all file I/O, schema validation, and non-LLM transforms. Flags, defaults, `--help`.
-4. **Composable two-layer architecture.** Pack management (data layer) + reasoning skills (agent instruction layer).
-5. **Jellyfish-informed schemas.** JSON schemas derived from Jellyfish's SQLAlchemy models, adapted for flat-file storage.
+4. **Composable three-layer architecture.** Pack management (data) → reasoning (agent logic) → pipeline orchestration (workflow).
+5. **Schemas derived from established production tooling.** See [References](#references).
 
 ---
 
-## Two-Layer Architecture
+## Three-Layer Architecture
 
 ### Layer 1 — Pack Management (Data Layer)
 
-Seven skills that own the JSON schema and all file I/O. Each has a JS script exposing CRUD operations via CLI subcommands.
+Seven skills that own the JSON schema and all file I/O. Each has a JS script exposing CRUD operations via CLI subcommands. No reasoning, no LLM.
 
-| Skill | Entity | Scope | Maps to Jellyfish |
+| Skill | Entity | Scope | Purpose |
 |---|---|---|---|
-| `project-config` | Project | Per-project | `Project` |
-| `actor-pack` | Actor | Global reusable | `Actor` |
-| `character-pack` | Character | Project-scoped | `Character` (Actor + Costume + Props) |
-| `scene-pack` | Scene | Global reusable | `Scene` |
-| `prop-pack` | Prop | Global reusable | `Prop` |
-| `costume-pack` | Costume | Global reusable | `Costume` |
-| `prompt-template` | PromptTemplate | Global reusable | `PromptTemplate` |
+| `project-config` | Project | Per-project | Global seed, style, and project metadata |
+| `actor-pack` | Actor | Global reusable | Physical appearance reference (global across projects) |
+| `character-pack` | Character | Project-scoped | Composition: one actor + one costume + zero or more props |
+| `scene-pack` | Scene | Global reusable | Location/environment reference |
+| `prop-pack` | Prop | Global reusable | Physical object reference |
+| `costume-pack` | Costume | Global reusable | Clothing/appearance set reference |
+| `prompt-template` | PromptTemplate | Global reusable | Reusable prompt templates with `{{variable}}` slots |
 
 ### Layer 2 — Reasoning (Agent Instruction Layer)
 
-Five skills that tell the agent what to think and which Layer 1 scripts to invoke for persistence. No LLM calls in code.
+Five skills whose SKILL.md files instruct any agent on what to reason about and which Layer 1 scripts to call for persistence. Scripts handle only validation and file I/O — no LLM calls in code.
 
-| Skill | Purpose | Maps to Jellyfish |
-|---|---|---|
-| `script-breakdown` | Any text → indexed shot list + condensed script | Chapter (raw_text → condensed_text → shots) |
-| `shot-detail` | Enrich each shot with cinematic parameters | `ShotDetail` |
-| `entity-extraction` | Shot list → populate packs (actors, scenes, props, costumes) | ImportDraft pipeline |
-| `consistency-check` | Detect character/scene drift across shots | Script consistency + optimization |
-| `production-pipeline` | Orchestrate the full workflow | Full chapter workflow |
+| Skill | Purpose | Primary inputs | Primary output |
+|---|---|---|---|
+| `script-breakdown` | Any text → chapter + indexed shot list | raw text | `chapter.json`, `shot-list.json` |
+| `entity-extraction` | Shot list → populate packs | `shot-list.json` | pack files, `extraction-report.json` |
+| `shot-detail` | Enrich shots with cinematic parameters | `shot-list.json`, `extraction-report.json`, `shot-details.json` (existing, optional) | `shot-details.json` |
+| `consistency-check` | Detect entity/style drift across shots | `shot-list.json`, `shot-details.json`, `extraction-report.json`, packs | `consistency-report.json` |
+| `production-pipeline` | Orchestrate Layer 2 workflow for a chapter | any text or existing chapter | all Layer 2 outputs |
+
+### Layer 3 — Production Orchestration
+
+Two skills that wire the full end-to-end workflow for a specific production type.
+
+| Skill | Purpose |
+|---|---|
+| `shorts-production-pipeline` | Full short film/drama workflow: text → breakdown → extraction → shot-detail → consistency → video generation |
+| `mv-production-pipeline` | Full music video workflow: audio/lyrics → breakdown → extraction → shot-detail → consistency → seedance generation → compilation |
 
 ---
 
@@ -100,49 +107,94 @@ skills/
       validate-shot-list.__test__.js
   shot-detail/
     SKILL.md
+    scripts/
+      validate-shot-details.js
+      validate-shot-details.__test__.js
   entity-extraction/
     SKILL.md
+    scripts/
+      validate-extraction-report.js
+      validate-extraction-report.__test__.js
   consistency-check/
     SKILL.md
+    scripts/
+      validate-consistency-report.js
+      validate-consistency-report.__test__.js
   production-pipeline/
     SKILL.md
     references/
       workflow.md
+
+  # Layer 3 — Production Orchestration
+  shorts-production-pipeline/
+    SKILL.md
+  mv-production-pipeline/
+    SKILL.md
 ```
 
 ---
 
 ## File System Layout at Runtime
 
+All files for a project live under a single user-specified `--base-dir` (defaults to `assets/`).
+
 ```
-<base-dir>/                          # user-specified, defaults to assets/
-  project.json                       # project config (seed, style, etc.)
-  global/
-    actors/<id>/
+<base-dir>/
+  project.json                         # project config (seed, style, etc.)
+
+  global/                              # global assets — reusable across projects
+    actors/<actor-id>/
       pack.json
-      images/                        # reference images (user-managed)
-    scenes/<id>/
-      pack.json
-      images/
-    props/<id>/
+      images/                          # reference images (user-managed, not generated)
+    scenes/<scene-id>/
       pack.json
       images/
-    costumes/<id>/
+    props/<prop-id>/
       pack.json
       images/
-    templates/<id>/
+    costumes/<costume-id>/
+      pack.json
+      images/
+    templates/<template-id>/
       template.json
-  characters/<id>/
-    pack.json                        # project-scoped: actor_id + costume_id + prop_ids
-  chapters/<chapter-id>/
-    chapter.json                     # chapter metadata + raw/condensed text
-    shot-list.json                   # indexed shot array
-    shot-details.json                # per-shot cinematic detail (parallel array by shot index)
-    extraction-report.json           # entity refs per shot (output of entity-extraction)
-    consistency-report.json          # drift issues (output of consistency-check)
+
+  characters/<character-id>/           # project-scoped: actor + costume + props composition
+    pack.json
+
+  chapters/<chapter-id>/               # all files for a chapter share this directory
+    chapter.json                       # chapter metadata + raw/condensed text
+    shot-list.json                     # indexed shot array (output of script-breakdown)
+    shot-details.json                  # per-shot cinematic detail (output of shot-detail)
+    extraction-report.json             # entity refs per shot (output of entity-extraction)
+    consistency-report.json            # drift issues (output of consistency-check)
 ```
 
-Global assets (`global/`) are reusable across projects. Characters are project-scoped (they compose global actors, costumes, props).
+**Chapter directory convention:** the chapter ID is the directory name under `chapters/`. All Layer 2 inputs and outputs for a chapter are colocated there. Scripts that take a chapter as input accept `--chapter-dir <base-dir>/chapters/<chapter-id>`.
+
+---
+
+## ID Generation
+
+All IDs follow the pattern `<prefix>_<timestamp_base36>`, generated by pack scripts. If two IDs are generated within the same millisecond, a counter suffix is appended (`<prefix>_<timestamp_base36>_<n>`).
+
+**Canonical prefix list:**
+
+| Prefix | Entity |
+|---|---|
+| `proj_` | Project |
+| `chap_` | Chapter |
+| `actor_` | Actor |
+| `char_` | Character |
+| `scene_` | Scene |
+| `prop_` | Prop |
+| `costume_` | Costume |
+| `tmpl_` | PromptTemplate |
+
+---
+
+## Schema Versioning
+
+Every JSON file includes a `"$schemaVersion": "1.0"` field at the top level. Pack scripts validate this field on read and reject files with unknown versions. Version increments are additive (new optional fields) until a breaking change requires a major bump.
 
 ---
 
@@ -152,31 +204,35 @@ Global assets (`global/`) are reusable across projects. Characters are project-s
 
 ```json
 {
-  "id": "proj_001",
-  "title": "Song Title",
+  "$schemaVersion": "1.0",
+  "id": "proj_lz4x7",
+  "title": "Song or Film Title",
   "description": "",
-  "style": "cinematic",
+  "style": "cinematic noir, urban, gritty",
   "visualStyle": "live_action",
   "seed": 42,
   "unifyStyle": true,
   "defaultModel": "seedance15",
-  "aspectRatio": "16:9",
+  "aspectRatio": "9:16",
   "createdAt": "2026-03-27T00:00:00Z",
   "updatedAt": "2026-03-27T00:00:00Z"
 }
 ```
 
-`style` is a free-form string (not an enum, unlike Jellyfish — music videos span more genres). `visualStyle`: `"live_action" | "anime"`. `seed` + `unifyStyle` are the anti-drift anchor inherited by all shots unless overridden.
+`style` is a free-form string (not an enum — production genres are too varied). `visualStyle`: `"live_action" | "anime"`. `seed` and `unifyStyle` are the anti-drift anchor inherited by all shots unless overridden at the shot level.
 
 ---
 
 ### `global/actors/<id>/pack.json`
 
+An actor is a global, reusable physical appearance reference — the "look" of a performer, independent of any project role.
+
 ```json
 {
-  "id": "actor_001",
+  "$schemaVersion": "1.0",
+  "id": "actor_lz4x7",
   "name": "Mia",
-  "description": "Lead vocalist, rebellious energy",
+  "description": "Lead performer, rebellious energy",
   "appearance": "short black hair, slim build, ~20s, distinctive freckles",
   "tags": ["lead", "female"],
   "viewCount": 1,
@@ -204,14 +260,17 @@ Global assets (`global/`) are reusable across projects. Characters are project-s
 
 ### `characters/<id>/pack.json`
 
+A character is project-scoped. It composes one actor (appearance) + one optional costume + zero or more props into a named role for a specific production.
+
 ```json
 {
-  "id": "char_001",
-  "name": "Mia (MV Lead)",
-  "description": "Project-specific appearance for this MV",
-  "actorId": "actor_001",
-  "costumeId": "costume_001",
-  "propIds": ["prop_001"],
+  "$schemaVersion": "1.0",
+  "id": "char_lz4x8",
+  "name": "Mia — Stage Role",
+  "description": "Project-specific role description",
+  "actorId": "actor_lz4x7",
+  "costumeId": "costume_lz4xa",
+  "propIds": ["prop_lz4xb"],
   "images": [
     {
       "viewAngle": "FRONT",
@@ -225,7 +284,7 @@ Global assets (`global/`) are reusable across projects. Characters are project-s
 }
 ```
 
-`actorId`, `costumeId`, `propIds` reference global assets by ID. `images` are character-specific renders (actor + costume + props composed).
+`actorId` is required; `costumeId` and `propIds` are optional. Images here are character-specific renders (actor + costume + props composed together, distinct from the actor's standalone images).
 
 ---
 
@@ -233,9 +292,10 @@ Global assets (`global/`) are reusable across projects. Characters are project-s
 
 ```json
 {
-  "id": "scene_001",
+  "$schemaVersion": "1.0",
+  "id": "scene_lz4x9",
   "name": "Rooftop at Sunset",
-  "description": "Urban rooftop, haze, golden hour light",
+  "description": "Urban rooftop, haze, golden hour light, graffiti walls",
   "tags": ["exterior", "urban", "dusk"],
   "viewCount": 1,
   "promptTemplateId": null,
@@ -258,7 +318,8 @@ Global assets (`global/`) are reusable across projects. Characters are project-s
 
 ```json
 {
-  "id": "prop_001",
+  "$schemaVersion": "1.0",
+  "id": "prop_lz4xb",
   "name": "Vintage Guitar",
   "description": "Worn sunburst Telecaster, scratched body",
   "tags": ["instrument", "music"],
@@ -276,9 +337,10 @@ Global assets (`global/`) are reusable across projects. Characters are project-s
 
 ```json
 {
-  "id": "costume_001",
+  "$schemaVersion": "1.0",
+  "id": "costume_lz4xa",
   "name": "Stage Outfit — Black Leather",
-  "description": "Black leather jacket, torn jeans, boots",
+  "description": "Black leather jacket, torn jeans, worn boots",
   "tags": ["stage", "rock"],
   "viewCount": 1,
   "promptTemplateId": null,
@@ -294,10 +356,11 @@ Global assets (`global/`) are reusable across projects. Characters are project-s
 
 ```json
 {
-  "id": "tmpl_001",
+  "$schemaVersion": "1.0",
+  "id": "tmpl_lz4xc",
   "category": "video_prompt",
-  "name": "Chorus Energy Shot",
-  "preview": "High-energy performance shot with dynamic lighting",
+  "name": "High-Energy Performance",
+  "preview": "Performance shot with dynamic lighting and intense energy",
   "content": "{{character}} performing with intense energy, {{cameraMovement}}, {{lighting}}, cinematic 35mm",
   "variables": ["character", "cameraMovement", "lighting"],
   "isDefault": false,
@@ -307,9 +370,9 @@ Global assets (`global/`) are reusable across projects. Characters are project-s
 }
 ```
 
-`category` values (from Jellyfish `PromptCategory`): `"video_prompt" | "storyboard_prompt" | "bgm" | "sfx" | "character_image_front" | "character_image_other" | "actor_image_front" | "actor_image_other" | "prop_image_front" | "prop_image_other" | "scene_image_front" | "scene_image_other" | "costume_image_front" | "costume_image_other" | "frame_head_image" | "frame_tail_image" | "frame_key_image" | "frame_head_prompt" | "frame_tail_prompt" | "frame_key_prompt" | "combined"`.
+`category` values: `"video_prompt" | "storyboard_prompt" | "bgm" | "sfx" | "character_image_front" | "character_image_other" | "actor_image_front" | "actor_image_other" | "prop_image_front" | "prop_image_other" | "scene_image_front" | "scene_image_other" | "costume_image_front" | "costume_image_other" | "frame_head_image" | "frame_tail_image" | "frame_key_image" | "frame_head_prompt" | "frame_tail_prompt" | "frame_key_prompt" | "combined"`.
 
-`{{variable}}` syntax for agent interpolation.
+`{{variable}}` syntax; agents substitute values when applying a template to a shot.
 
 ---
 
@@ -317,19 +380,20 @@ Global assets (`global/`) are reusable across projects. Characters are project-s
 
 ```json
 {
-  "id": "chap_001",
+  "$schemaVersion": "1.0",
+  "id": "chap_lz4xd",
   "index": 1,
-  "title": "Verse 1",
+  "title": "Act 1 — The Meeting",
   "summary": "",
-  "rawText": "Full original lyrics / script text for this chapter",
-  "condensedText": "Model-simplified version used for shot extraction",
+  "rawText": "Full original script/lyric text for this chapter (unmodified)",
+  "condensedText": "Agent-simplified version used for shot extraction (shorter, cleaner)",
   "status": "draft",
   "createdAt": "2026-03-27T00:00:00Z",
   "updatedAt": "2026-03-27T00:00:00Z"
 }
 ```
 
-`status`: `"draft" | "shooting" | "done"`.
+`status`: `"draft" | "shooting" | "done"`. `condensedText` is produced by the agent during `script-breakdown`; it is the version used by downstream skills.
 
 ---
 
@@ -337,48 +401,55 @@ Global assets (`global/`) are reusable across projects. Characters are project-s
 
 ```json
 {
-  "chapterId": "chap_001",
+  "$schemaVersion": "1.0",
+  "chapterId": "chap_lz4xd",
   "generatedAt": "2026-03-27T00:00:00Z",
   "shots": [
     {
       "index": 1,
       "title": "Opening — empty stage",
-      "scriptExcerpt": "The lights go down...",
+      "scriptExcerpt": "The lights go down, the crowd goes silent.",
       "characterNames": ["Mia"],
-      "sceneName": "Empty Stage",
+      "sceneNames": ["Empty Stage"],
       "status": "pending"
     }
   ]
 }
 ```
 
-`status` per shot: `"pending" | "generating" | "ready"`. `characterNames` and `sceneName` are raw strings from extraction — resolved to pack IDs in `extraction-report.json`.
+`characterNames` and `sceneNames` are raw name strings extracted from the condensed text. They are resolved to pack IDs by `entity-extraction` and stored in `extraction-report.json`. Shot status: `"pending" | "generating" | "ready"`.
+
+Note: `sceneNames` is an array to handle shots that span multiple locations (e.g. a cross-cut or split-screen).
 
 ---
 
 ### `chapters/<id>/shot-details.json`
 
+Shot details are written after `entity-extraction` completes, so `sceneIds` can reference valid pack IDs. Character and actor references per shot live in `extraction-report.json`, not here — that separation avoids duplication and keeps shot-details focused on cinematic parameters.
+
 ```json
 {
-  "chapterId": "chap_001",
+  "$schemaVersion": "1.0",
+  "chapterId": "chap_lz4xd",
+  "generatedAt": "2026-03-27T00:00:00Z",
   "details": [
     {
       "shotIndex": 1,
       "cameraShot": "MS",
       "angle": "EYE_LEVEL",
       "movement": "STATIC",
-      "sceneId": "scene_001",
+      "sceneIds": ["scene_lz4x9"],
       "duration": 4,
       "moodTags": ["melancholic", "anticipation"],
-      "atmosphere": "dim stage lights, dust particles in air",
+      "atmosphere": "dim stage lights, dust particles in air, slow fog machine haze",
       "followAtmosphere": true,
       "hasBgm": true,
-      "vfxType": "NONE",
-      "vfxNote": "",
-      "description": "Wide shot of empty stage, single spotlight",
+      "vfxType": "VOLUMETRIC_FOG",
+      "vfxNote": "low-lying fog across stage floor",
+      "description": "Wide shot of empty stage, single spotlight center stage",
       "promptTemplateId": null,
-      "firstFramePrompt": "Empty stage, single spotlight center, dust particles",
-      "lastFramePrompt": "Character enters from stage left, spotlight follows",
+      "firstFramePrompt": "Empty stage, single spotlight center, dust particles, no people",
+      "lastFramePrompt": "Character enters stage left into spotlight, silhouette",
       "keyFramePrompt": "",
       "dialogLines": []
     }
@@ -391,27 +462,48 @@ Global assets (`global/`) are reusable across projects. Characters are project-s
 `movement`: `"STATIC" | "PAN" | "TILT" | "DOLLY_IN" | "DOLLY_OUT" | "TRACK" | "CRANE" | "HANDHELD" | "STEADICAM" | "ZOOM_IN" | "ZOOM_OUT"`.
 `vfxType`: `"NONE" | "PARTICLES" | "VOLUMETRIC_FOG" | "CG_DOUBLE" | "DIGITAL_ENVIRONMENT" | "MATTE_PAINTING" | "FIRE_SMOKE" | "WATER_SIM" | "DESTRUCTION" | "ENERGY_MAGIC" | "COMPOSITING_CLEANUP" | "SLOW_MOTION_TIME" | "OTHER"`.
 
+`dialogLines` array schema:
+```json
+{
+  "index": 0,
+  "text": "I've been waiting for this moment.",
+  "lineMode": "DIALOGUE",
+  "speakerName": "Mia",
+  "targetName": null
+}
+```
+`lineMode`: `"DIALOGUE" | "VOICE_OVER" | "OFF_SCREEN" | "PHONE"`.
+
 ---
 
 ### `chapters/<id>/extraction-report.json`
 
+#### actorIds vs characterIds per shot
+
+- **`actorIds`**: global actor pack IDs referenced in this shot. Populated whenever an actor's physical appearance is relevant (whether or not a project-scoped character exists yet).
+- **`characterIds`**: project-scoped character pack IDs referenced in this shot. A character links one actor + costume + props. `characterIds` is populated only after the agent has created character packs that compose the relevant actors. It may be empty for a shot even if `actorIds` is non-empty — this is valid and expected early in a project.
+- **Relationship**: every character has exactly one actor. If `characterIds` is non-empty, the corresponding actor IDs will also appear in `actorIds`. `actorIds` may contain IDs not in `characterIds` (actors without a character composition yet).
+
+`newEntities` lists IDs of packs created during this extraction run. `characters` is omitted — character creation (composing actor + costume + props into a named role) is a deliberate separate step performed by the agent after reviewing extracted actors, not done automatically during extraction.
+
 ```json
 {
-  "chapterId": "chap_001",
+  "$schemaVersion": "1.0",
+  "chapterId": "chap_lz4xd",
   "generatedAt": "2026-03-27T00:00:00Z",
   "shotEntityRefs": [
     {
       "shotIndex": 1,
-      "actorIds": ["actor_001"],
-      "characterIds": ["char_001"],
-      "sceneIds": ["scene_001"],
-      "propIds": ["prop_001"],
-      "costumeIds": ["costume_001"]
+      "actorIds": ["actor_lz4x7"],
+      "characterIds": [],
+      "sceneIds": ["scene_lz4x9"],
+      "propIds": ["prop_lz4xb"],
+      "costumeIds": []
     }
   ],
   "newEntities": {
-    "actors": ["actor_001"],
-    "scenes": ["scene_001"],
+    "actors": ["actor_lz4x7"],
+    "scenes": ["scene_lz4x9"],
     "props": [],
     "costumes": []
   }
@@ -422,79 +514,140 @@ Global assets (`global/`) are reusable across projects. Characters are project-s
 
 ### `chapters/<id>/consistency-report.json`
 
+Consistency check reads `shot-list.json` + `shot-details.json` + `extraction-report.json` + referenced pack files. `shot-details.json` is required for `style_deviation` detection (atmosphere, VFX, and mood-tag drift across shots).
+
 ```json
 {
-  "chapterId": "chap_001",
+  "$schemaVersion": "1.0",
+  "chapterId": "chap_lz4xd",
   "generatedAt": "2026-03-27T00:00:00Z",
   "issues": [
     {
       "type": "character_drift",
       "shotIndices": [3, 7],
-      "entityId": "actor_001",
+      "entityId": "actor_lz4x7",
       "entityType": "actor",
       "description": "Mia described with 'red hair' in shot 3 but 'black hair' in shot 7",
-      "suggestion": "Standardize to 'short black hair' per actor pack"
+      "suggestion": "Standardize to 'short black hair' per actor pack appearance field"
     }
   ],
-  "optimizedShotList": null
+  "optimizedShotList": {
+    "$schemaVersion": "1.0",
+    "chapterId": "chap_lz4xd",
+    "generatedAt": "2026-03-27T00:00:00Z",
+    "shots": []
+  }
 }
 ```
 
 `type`: `"character_drift" | "scene_drift" | "prop_mismatch" | "costume_change_unintended" | "style_deviation"`.
-`optimizedShotList`: if the agent ran the optimization step, this contains the corrected shot list inline.
+
+`optimizedShotList` is `null` when no optimization was run. When present, it is a complete `shot-list.json`-compatible object (same schema, same `$schemaVersion`). The agent may write it directly to `shot-list.json` after user review.
 
 ---
 
 ## Script CLI Contract
 
-Every pack script follows this interface:
+Every Layer 1 pack script follows this interface:
 
 ```bash
-node skills/<pack-name>/scripts/<pack-name>.js <subcommand> [options]
+pnpm exec dotenv -- node skills/<pack-name>/scripts/<pack-name>.js <subcommand> [options]
 
 # Subcommands
-create   --base-dir <path> --name <str> [--description <str>] [--tags <json>]
+create   --base-dir <path> --name <str> [--description <str>] [--tags <json-array>]
 read     --base-dir <path> --id <id>
-update   --base-dir <path> --id <id> [--name <str>] [--description <str>]
+update   --base-dir <path> --id <id> [--name <str>] [--description <str>] [--tags <json-array>]
 delete   --base-dir <path> --id <id>
 list     --base-dir <path> [--filter <keyword>]
 ```
 
-Output is always JSON to stdout. Errors go to stderr with non-zero exit code.
+Output is always a JSON object to stdout. Errors go to stderr with a non-zero exit code and a `{ "error": "<message>" }` JSON body.
 
-ID generation: `<prefix>_<timestamp_base36>` (e.g. `actor_lz4x7`, `scene_lz4x8`). Deterministic within the same millisecond via counter suffix if needed.
+Layer 2 validator scripts follow:
+
+```bash
+pnpm exec dotenv -- node skills/<skill-name>/scripts/validate-<file>.js --file <path>
+```
+
+Exits 0 on valid, 1 on invalid (with error details to stderr).
 
 ---
 
-## Skill Descriptions
+## Layer 2 SKILL.md Format
 
-### Layer 1 — Pack Management
+Every Layer 2 skill's `SKILL.md` must include these sections:
 
-**`project-config`** — Initialize or update a project config file at `<base-dir>/project.json`. Contains the global seed and style that all shots inherit. Run first before any other skill.
+```markdown
+---
+name: <skill-name>
+description: <one-line trigger description, max 200 chars>
+---
 
-**`actor-pack`** — Manage global reusable actor appearance packs. An actor is a physical appearance reference (name, appearance text, reference images). Global across projects.
+# <Skill Title>
 
-**`character-pack`** — Manage project-scoped character compositions. A character links an actor + costume + props into a named role for a specific project.
+<One paragraph: what this skill does and when to use it.>
 
-**`scene-pack`** — Manage global reusable scene/environment packs. A scene is a location reference (name, description, lighting, mood, reference images).
+## Inputs
 
-**`prop-pack`** — Manage global reusable prop packs. Props are physical objects that appear in shots.
+List of required and optional inputs with their file paths and formats.
 
-**`costume-pack`** — Manage global reusable costume packs. Costumes are clothing/appearance sets that can be assigned to characters.
+## Dependencies
 
-**`prompt-template`** — Manage reusable prompt templates with `{{variable}}` slots. Templates are categorized by use (video_prompt, storyboard_prompt, character_image_front, etc.).
+Other skills that must run before this one, and what outputs they produce that this skill needs.
 
-### Layer 2 — Reasoning
+## Workflow
 
-**`script-breakdown`** — Takes any text input (lyrics, screenplay, story brief) and produces a `chapter.json` + `shot-list.json`. The agent condenses the raw text, segments it into indexed shots, and identifies character/scene names per shot.
+Numbered steps the agent follows. Each step either:
+- Calls a Layer 1 script (show the exact command)
+- Performs a reasoning step (describe what to think/decide)
+- Writes an output file (describe the schema section to follow)
 
-**`shot-detail`** — Takes a `shot-list.json` + `extraction-report.json` and enriches each shot with cinematic parameters: camera shot type, angle, movement, mood tags, atmosphere, duration, VFX, and first/last/key frame prompts. Produces `shot-details.json`. Must run after `entity-extraction` so that `sceneId` references in the output resolve to valid pack IDs. Character/actor references per shot remain in `extraction-report.json` (not duplicated into shot-details).
+## Output
 
-**`entity-extraction`** — Takes a `shot-list.json` and creates/updates actor, scene, prop, and costume packs for all entities mentioned. Links shots to pack IDs in `extraction-report.json`. Calls Layer 1 pack scripts for persistence.
+File(s) produced, their paths relative to `--chapter-dir` or `--base-dir`, and their schema.
 
-**`consistency-check`** — Reads `shot-list.json` + `extraction-report.json` + relevant packs. Detects character drift, scene drift, prop mismatches, and style deviations. Outputs `consistency-report.json`. Optionally produces an optimized shot list.
+## Validation
 
-**`production-pipeline`** — Orchestrates the full workflow in order: `script-breakdown` → `entity-extraction` → `shot-detail` → `consistency-check` → optional optimization. References `references/workflow.md` for the step-by-step agent guide.
+Command to validate the output after writing.
+
+## Error Handling
+
+What to do if a step fails or produces unexpected results.
+```
+
+---
+
+## `production-pipeline/references/workflow.md` Format
+
+This file is a numbered checklist used by the `production-pipeline` skill SKILL.md. Format:
+
+```markdown
+# Chapter Production Workflow
+
+## Step 1 — Script Breakdown
+- Skill: `script-breakdown`
+- Input: raw text (provided by user or from `chapter.json#rawText`)
+- Output: `chapters/<id>/chapter.json`, `chapters/<id>/shot-list.json`
+- Decision: if condensedText changes meaning significantly, flag for user review before continuing
+
+## Step 2 — Entity Extraction
+- Skill: `entity-extraction`
+- Input: `shot-list.json`
+- Output: pack files under `global/` and `characters/`, `extraction-report.json`
+- Decision: for each new entity name, check if a matching pack already exists before creating a new one (fuzzy name match)
+
+## Step 3 — Shot Detail
+- Skill: `shot-detail`
+- Input: `shot-list.json`, `extraction-report.json`
+- Output: `shot-details.json`
+- Decision: for shots with multiple sceneIds, pick the dominant scene for atmosphere inheritance
+
+## Step 4 — Consistency Check
+- Skill: `consistency-check`
+- Input: `shot-list.json`, `shot-details.json`, `extraction-report.json`, relevant pack files
+- Output: `consistency-report.json`
+- Decision: if issues found, present to user; if optimizedShotList is produced, ask before overwriting shot-list.json
+```
 
 ---
 
@@ -505,48 +658,84 @@ ID generation: `<prefix>_<timestamp_base36>` (e.g. `actor_lz4x7`, `scene_lz4x8`)
       │
       ▼
 script-breakdown
-      │ chapter.json + shot-list.json
-      ▼
-entity-extraction ──────────────────► actor/scene/prop/costume packs (Layer 1)
-      │ extraction-report.json
-      ▼
-shot-detail
-      │ shot-details.json
-      ▼
-consistency-check ──────────────────► reads packs (Layer 1)
-      │ consistency-report.json
-      ▼
-[optimized shot-list.json] (optional)
       │
-      ▼
-[existing skills: seedance15-generate, mv-compilation, etc.]
+      ├─► chapter.json
+      └─► shot-list.json
+                │
+                ▼
+        entity-extraction ──────────────────► global/actors/, global/scenes/,
+                │                             global/props/, global/costumes/,
+                └─► extraction-report.json    characters/
+                          │
+                          │  (+ shot-list.json)
+                          ▼
+                    shot-detail
+                          │
+                          └─► shot-details.json
+                                    │
+                                    │  (+ shot-list.json + extraction-report.json + packs)
+                                    ▼
+                            consistency-check
+                                    │
+                                    └─► consistency-report.json
+                                              │
+                                              ▼
+                                    [optimized shot-list.json] (optional, user-reviewed)
+                                              │
+                                              ▼
+                               [video generation skills]
 ```
 
 ---
 
-## Integration with Existing Violyra Skills
+## Integration with Existing Skills
 
-The new skills slot into the existing workflow between `mv-storyboard-writer` and `seedance15-generate`:
+The new pipeline slots between storyboard/script work and video generation.
 
+**`mv-production-pipeline` workflow (sequential):**
 ```
 download-youtube-video
   → lyrics-force-alignment
   → mv-storyboard-writer
-  → [NEW] production-pipeline (script-breakdown → entity-extraction → shot-detail → consistency-check)
-  → seedance15-generate (per scene, using enriched shot-details)
+  → production-pipeline
+      → script-breakdown (lyrics → shot list)
+      → entity-extraction (shots → packs)
+      → shot-detail (cinematic parameters)
+      → consistency-check (drift detection)
+  → seedance15-prompt-writer (shot-details → generation prompts)
+  → seedance15-generate (per scene)
   → video-upscale (optional)
   → mv-compilation
 ```
 
-Shot details (camera_shot, angle, movement, atmosphere, frame prompts) feed directly into `seedance15-prompt-writer` to produce richer, more consistent generation prompts.
+**`shorts-production-pipeline` workflow (sequential):**
+```
+[screenplay or story brief]
+  → production-pipeline
+      → script-breakdown (script → shot list)
+      → entity-extraction (shots → packs)
+      → shot-detail (cinematic parameters)
+      → consistency-check (drift detection)
+  → [image/video generation per shot]
+  → [post-production assembly]
+```
+
+**`seedance15-prompt-writer` integration:** Shot detail fields map to prompt-writer inputs as follows:
+- `cameraShot` → framing descriptor (e.g. `"MS"` → `"medium shot"`)
+- `angle` → camera angle descriptor
+- `movement` → camera movement descriptor
+- `atmosphere` → environment/lighting context
+- `moodTags` → emotional tone modifiers
+- `firstFramePrompt` → image-to-video start frame prompt
+- `lastFramePrompt` → image-to-video end frame prompt
+- `sceneIds` → resolved scene pack `description` + `name` for location context
 
 ---
 
 ## Testing Strategy
 
 - Every Layer 1 pack script has `__test__.js` covering: create, read, update, delete, list, invalid input, missing base-dir.
-- `validate-shot-list.js` (under `script-breakdown`) validates shot-list.json schema with test fixtures.
-- Layer 2 skills have no scripts to test directly — their correctness is validated by checking the JSON outputs they produce against schemas.
+- Every Layer 2 skill has a `validate-<file>.js` script with `__test__.js` covering: valid fixture, missing required fields, unknown `$schemaVersion`, wrong field types.
 - Run all tests: `pnpm test`.
 
 ---
@@ -558,7 +747,18 @@ Shot details (camera_shot, angle, movement, atmosphere, frame prompts) feed dire
 | Database? | No. JSON files only. |
 | LLM calls in scripts? | No. Agent-agnostic SKILL.md instructions only. |
 | UI? | No. CLI-first. |
-| Actor vs Character split? | Yes, mirrors Jellyfish. Actor = global appearance; Character = project composition. |
-| Costume separate from Prop? | Yes, separate packs (Jellyfish schema precedent). |
+| Actor vs Character split? | Yes. Actor = global reusable appearance; Character = project-scoped composition. |
+| Costume separate from Prop? | Yes, separate packs. |
 | ID format | `<prefix>_<timestamp_base36>` generated by pack scripts. |
 | Base dir default | `assets/` — consistent with existing Violyra convention. |
+| newEntities omits characters? | By design — character creation is a deliberate agent step, not auto-extraction. |
+| Single sceneId per shot? | No — `sceneIds` is an array to support multi-location shots. |
+| Schema versioning? | `"$schemaVersion": "1.0"` on every file; pack scripts validate on read. |
+
+---
+
+## References
+
+- [superpowers](https://github.com/anthropics/claude-code) — skill repository structure and agent-agnostic SKILL.md pattern
+- [Jellyfish](https://github.com/Forget-C/Jellyfish) — production pipeline feature set and data model
+- [huobao-drama](https://github.com/chatfire-AI/huobao-drama) — short drama production feature set

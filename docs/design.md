@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Violyra is a skill repository for AI coding agents focused on music video production. It provides composable, CLI-first skills that chain together to produce complete music videos from raw inputs (audio, lyrics, style).
+Violyra is a skill repository for AI coding agents focused on short-form video production — music videos and short dramas. It provides composable, CLI-first skills that chain together to produce complete productions from raw inputs (audio, lyrics, screenplay, or story brief).
 
 ## Architecture
 
@@ -24,25 +24,38 @@ violyra/
 4. **Testable** — scripts have `__test__.js` companions; run with `pnpm test`.
 5. **Frontmatter-driven** — every `SKILL.md` starts with `name` and `description` fields.
 
-## Typical Workflow
+## Typical Workflows
 
+**Music video (sequential):**
 ```
 download-youtube-video
   → lyrics-force-alignment
   → mv-storyboard-writer
-  → production-pipeline          # NEW: breakdown → entity extraction → shot detail → consistency check
-      ├── script-breakdown       # any text → chapter + shot list
-      ├── entity-extraction      # shots → populate actor/scene/prop/costume packs
-      ├── shot-detail            # enrich shots with cinematic parameters
-      └── consistency-check      # detect character/scene drift, output consistency report
-  → seedance15-generate (per scene, using enriched shot details)
+  → mv-production-pipeline
+      → script-breakdown
+      → entity-extraction
+      → shot-detail
+      → consistency-check
+  → seedance15-generate (per scene)
   → video-upscale (optional)
   → mv-compilation
 ```
 
+**Short drama (sequential):**
+```
+[screenplay or story brief]
+  → shorts-production-pipeline
+      → script-breakdown
+      → entity-extraction
+      → shot-detail
+      → consistency-check
+  → [image/video generation per shot]
+  → [post-production assembly]
+```
+
 ## Skill Layers
 
-Skills are organized in two layers:
+Skills are organized in three layers:
 
 **Layer 1 — Pack Management (data layer):** JSON-on-disk CRUD for all production assets. No LLM calls.
 
@@ -61,12 +74,19 @@ Skills are organized in two layers:
 | Skill | Purpose |
 |---|---|
 | `script-breakdown` | Any text → indexed shot list + condensed chapter |
-| `shot-detail` | Enrich shots with cinematic parameters (framing, angle, movement, mood) |
 | `entity-extraction` | Shot list → create/update packs for all entities mentioned |
+| `shot-detail` | Enrich shots with cinematic parameters (framing, angle, movement, mood) |
 | `consistency-check` | Detect character/scene drift across shots; produce consistency report |
-| `production-pipeline` | Orchestrate the full Layer 2 workflow |
+| `production-pipeline` | Orchestrate the full Layer 2 workflow for a single chapter |
 
-See [docs/design-docs/2026-03-27-production-pipeline-design.md](design-docs/2026-03-27-production-pipeline-design.md) for full schema and data flow details.
+**Layer 3 — Production Orchestration:** End-to-end workflow for a specific production type.
+
+| Skill | Purpose |
+|---|---|
+| `mv-production-pipeline` | Full music video workflow (audio → compilation) |
+| `shorts-production-pipeline` | Full short drama workflow (script → final assembly) |
+
+See [docs/design-docs/2026-03-27-production-pipeline-design.md](design-docs/2026-03-27-production-pipeline-design.md) for full schema, data flow, and Layer 2 SKILL.md format.
 
 ## Multi-Agent Support
 
