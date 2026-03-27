@@ -9,10 +9,10 @@ Violyra is a skill repository for music video production. It provides composable
 - [MV Storyboard Writer](skills/mv-storyboard-writer/SKILL.md): write lyric-driven music video storyboard scenes from lyrics, style, and user requirements.
 - [MV Compilation](skills/mv-compilation/SKILL.md): compile scene clips into a full-song MV with ffmpeg using optional auto-upscale, lyric-timing stretch, frame-fit, concat, and song audio mux.
 - [Lyrics Force Alignment](skills/lyrics-force-alignment/SKILL.md): align ground-truth lyric lines to audio using Replicate WhisperX word timestamps.
-- [Text To Speech](skills/text-to-speech/SKILL.md): generate narration audio, then clean and normalize it for delivery-ready video voiceover.
-- [Video Upscale](skills/video-upscale/SKILL.md): upscale scene clips with Replicate `topazlabs/video-upscale`.
-- [Transparent Image](skills/transparent-image/SKILL.md): extract foreground objects from images and produce transparent PNG cutouts.
-- [YouTube Thumbnail Generator](skills/youtube-thumbnail-generator/SKILL.md): generate YouTube thumbnail images with Replicate `google/nano-banana-pro`.
+- [Generate Voiceover](skills/generate-voiceover/SKILL.md): generate narration audio, then clean and normalize it for delivery-ready video voiceover.
+- [Upscale Video](skills/upscale-video/SKILL.md): upscale scene clips with Replicate `topazlabs/video-upscale`.
+- [Extract Foreground](skills/extract-foreground/SKILL.md): extract foreground objects from images and produce transparent PNG cutouts.
+- [Generate Thumbnail](skills/generate-thumbnail/SKILL.md): generate YouTube thumbnail images with Replicate `google/nano-banana-pro`.
 - [Download YouTube Video](skills/download-youtube-video/SKILL.md): download a YouTube URL to local files using `uvx yt-dlp`.
 - [Replicate](skills/replicate/SKILL.md): discover and run Replicate models through API-first workflow.
 
