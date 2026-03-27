@@ -38,30 +38,30 @@ violyra/
 
 | Skill | When to use |
 |---|---|
-| `brainstorming` | Before making any video. Refines rough ideas through questions, explores alternatives, presents design in sections for validation, saves design document. |
-| `project-setup` | After design approval. Creates isolated workspace for base dir, runs project initialization. |
+| `brainstorming-video-idea` | Before making any video. Refines rough ideas through questions, explores alternatives, presents design in sections for validation, saves design document. |
+| `setup-video-project` | After design approval. Creates isolated workspace for base dir, initializes `project.json` with global seed, style, and model defaults. |
 | `writing-plans` | With approved design in hand. Breaks work into bite-sized tasks (2–5 min each) with exact file paths, complete steps, and verification commands. |
-| `requesting-review` | Between tasks. Reviews progress against plan, reports issues by severity. Critical issues block progress. |
+| `requesting-video-review` | Between tasks. Reviews progress against plan, reports issues by severity. Critical issues block progress. |
+| `retention-driven-development` | To validate or optimize any production setting (concept, storyboard, scene, style). Dispatches a subagent to simulate 100 viewers reacting to the current settings and scores retention; repeats until score meets threshold or no improvement remains. Replace, don't patch. |
 
 ### Music Production Skills
 
 | Skill | When to use |
 |---|---|
-| `writing-lyrics` | To write or refine song lyrics for a music video. |
+| `generating-lyrics` | To write or refine song lyrics for a music video. |
 | `generating-song` | To generate AI music/song audio from lyrics and a style description. |
 | `lyrics-force-alignment` | To align ground-truth lyric lines to audio using WhisperX word timestamps. |
-| `text-to-speech` | To generate narration audio and normalize it for video voiceover. |
+| `generate-voiceover` | To generate narration audio and normalize it for delivery-ready video voiceover. |
 
 ### Asset Management Skills
 
 | Skill | When to use |
 |---|---|
-| `project-config` | To initialize or update `project.json` with global seed, style, and model defaults. |
-| `actor-pack` | To manage global actor appearance references (name, appearance text, reference images). |
-| `character-pack` | To manage project-scoped character compositions (actor + costume + props). |
-| `scene-pack` | To manage global scene/environment references. |
-| `prop-pack` | To manage global prop references. |
-| `costume-pack` | To manage global costume references. |
+| `generating-actor-pack` | To manage global actor appearance references (name, appearance text, reference images). |
+| `generating-character-pack` | To manage project-scoped character compositions (actor + costume + props). |
+| `generating-scene-pack` | To manage global scene/environment references. |
+| `generating-prop-pack` | To manage global prop references. |
+| `generating-costume-pack` | To manage global costume references. |
 | `prompt-template` | To manage reusable prompt templates with `{{variable}}` slots. |
 
 ### Production Pipeline Skills
@@ -81,9 +81,9 @@ violyra/
 | `mv-storyboard-writer` | To write a lyric-driven storyboard from lyrics, style, and requirements. |
 | `seedance15-prompt-writer` | To write motion-focused Seedance prompts from shot details. |
 | `seedance15-generate` | To generate scene videos with Seedance 1.5 via Replicate. |
-| `video-upscale` | To upscale scene clips with Topaz via Replicate. |
-| `transparent-image` | To extract foreground objects as transparent PNG cutouts. |
-| `youtube-thumbnail-generator` | To generate YouTube thumbnails via Replicate. |
+| `upscale-video` | To upscale scene clips with Topaz via Replicate. |
+| `extract-foreground` | To extract foreground objects from images and produce transparent PNG cutouts. |
+| `generate-thumbnail` | To generate video thumbnails via Replicate. |
 
 ### Post-Production Skills
 
@@ -109,30 +109,32 @@ violyra/
 
 **Music video (sequential):**
 ```
-brainstorming               ← define concept, style, characters
-  → project-setup           ← create workspace, initialize project.json
-  → writing-plans           ← break production into tasks
-  → writing-lyrics          ← write song lyrics
-  → generating-song         ← generate audio from lyrics + style
-  → lyrics-force-alignment  ← align lyrics to generated audio
-  → mv-storyboard-writer    ← write lyric-driven storyboard
-  → production-pipeline     ← breakdown → extraction → shot-detail → consistency
+brainstorming-video-idea      ← define concept, style, characters
+  → setup-video-project       ← create workspace, initialize project.json
+  → retention-driven-development ← validate concept against simulated audience
+  → writing-plans             ← break production into tasks
+  → generating-lyrics         ← write song lyrics
+  → generating-song           ← generate audio from lyrics + style
+  → lyrics-force-alignment    ← align lyrics to generated audio
+  → mv-storyboard-writer      ← write lyric-driven storyboard
+  → production-pipeline       ← breakdown → extraction → shot-detail → consistency
   → seedance15-prompt-writer
-  → seedance15-generate     ← per scene
-  → video-upscale           ← optional
+  → seedance15-generate       ← per scene
+  → upscale-video             ← optional
   → mv-compilation
-  → requesting-review       ← review against plan
+  → requesting-video-review   ← review against plan
 ```
 
 **Short drama (sequential):**
 ```
-brainstorming               ← define story, characters, visual style
-  → project-setup           ← create workspace, initialize project.json
-  → writing-plans           ← break production into tasks
-  → production-pipeline     ← breakdown → extraction → shot-detail → consistency
+brainstorming-video-idea      ← define story, characters, visual style
+  → setup-video-project       ← create workspace, initialize project.json
+  → retention-driven-development ← validate concept against simulated audience
+  → writing-plans             ← break production into tasks
+  → production-pipeline       ← breakdown → extraction → shot-detail → consistency
   → [image/video generation per shot]
   → [post-production assembly]
-  → requesting-review       ← review against plan
+  → requesting-video-review   ← review against plan
 ```
 
 ## Multi-Agent Support

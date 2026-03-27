@@ -27,12 +27,12 @@ Seven skills that own the JSON schema and all file I/O for production assets. Ea
 
 | Skill | Entity | Scope | Purpose |
 |---|---|---|---|
-| `project-config` | Project | Per-project | Global seed, style, and project metadata |
-| `actor-pack` | Actor | Global reusable | Physical appearance reference (global across projects) |
-| `character-pack` | Character | Project-scoped | Composition: one actor + one costume + zero or more props |
-| `scene-pack` | Scene | Global reusable | Location/environment reference |
-| `prop-pack` | Prop | Global reusable | Physical object reference |
-| `costume-pack` | Costume | Global reusable | Clothing/appearance set reference |
+| `setup-video-project` | Project | Per-project | Workspace creation + `project.json` init (seed, style, model defaults) |
+| `generating-actor-pack` | Actor | Global reusable | Physical appearance reference (global across projects) |
+| `generating-character-pack` | Character | Project-scoped | Composition: one actor + one costume + zero or more props |
+| `generating-scene-pack` | Scene | Global reusable | Location/environment reference |
+| `generating-prop-pack` | Prop | Global reusable | Physical object reference |
+| `generating-costume-pack` | Costume | Global reusable | Clothing/appearance set reference |
 | `prompt-template` | PromptTemplate | Global reusable | Reusable prompt templates with `{{variable}}` slots |
 
 ### Reasoning Skills
@@ -62,46 +62,43 @@ Two skills that wire the complete end-to-end workflow for a specific production 
 
 ```
 skills/
-  # Workflow Skills (gates — mandatory before/between production work)
-  brainstorming/
+  # Workflow Skills
+  brainstorming-video-idea/
     SKILL.md
-  project-setup/
+  setup-video-project/
     SKILL.md
     scripts/
       setup.js
       setup.__test__.js
   writing-plans/
     SKILL.md
-  requesting-review/
+  requesting-video-review/
+    SKILL.md
+  retention-driven-development/
     SKILL.md
 
   # Pack Management Skills
-  project-config/
-    SKILL.md
-    scripts/
-      project-config.js
-      project-config.__test__.js
-  actor-pack/
+  generating-actor-pack/
     SKILL.md
     scripts/
       actor-pack.js
       actor-pack.__test__.js
-  character-pack/
+  generating-character-pack/
     SKILL.md
     scripts/
       character-pack.js
       character-pack.__test__.js
-  scene-pack/
+  generating-scene-pack/
     SKILL.md
     scripts/
       scene-pack.js
       scene-pack.__test__.js
-  prop-pack/
+  generating-prop-pack/
     SKILL.md
     scripts/
       prop-pack.js
       prop-pack.__test__.js
-  costume-pack/
+  generating-costume-pack/
     SKILL.md
     scripts/
       costume-pack.js
@@ -598,7 +595,7 @@ Consistency check reads `shot-list.json` + `shot-details.json` + `extraction-rep
 Every pack management script follows this interface:
 
 ```bash
-pnpm exec dotenv -- node skills/<pack-name>/scripts/<pack-name>.js <subcommand> [options]
+pnpm exec dotenv -- node skills/<skill-name>/scripts/<entity-name>.js <subcommand> [options]
 
 # Subcommands (all packs)
 create   --base-dir <path> --name <str> [--description <str>] [--tags <json-array>]
@@ -612,7 +609,7 @@ list     --base-dir <path> [--filter <keyword>]
 
 **Entity-specific extra flags:**
 
-`character-pack create/update`:
+`generating-character-pack create/update`:
 ```bash
 --actor-id <id>          # required on create; references global/actors/<id>/pack.json
 --costume-id <id>        # optional; references global/costumes/<id>/pack.json
@@ -628,9 +625,9 @@ list     --base-dir <path> [--filter <keyword>]
 --is-default             # flag; marks this as the default template for its category
 ```
 
-`actor-pack / scene-pack create/update`:
+`generating-actor-pack / generating-scene-pack create/update`:
 ```bash
---appearance <str>       # actor-pack only; free-form appearance description
+--appearance <str>       # generating-actor-pack only; free-form appearance description
 ```
 
 Output is always a JSON object to stdout. Errors go to stderr with a non-zero exit code and a `{ "error": "<message>" }` JSON body.
@@ -766,31 +763,40 @@ The new pipeline slots between storyboard/script work and video generation.
 
 **`mv-production-pipeline` workflow (sequential):**
 ```
-writing-lyrics              ← write song lyrics
-  → generating-song         ← generate audio from lyrics + style
-  → lyrics-force-alignment  ← align lyrics to generated audio
-  → mv-storyboard-writer    ← write lyric-driven storyboard
+brainstorming-video-idea
+  → setup-video-project
+  → retention-driven-development  ← validate concept
+  → writing-plans
+  → generating-lyrics
+  → generating-song
+  → lyrics-force-alignment
+  → mv-storyboard-writer
   → production-pipeline
-      → script-breakdown    ← lyrics/storyboard → shot list
-      → entity-extraction   ← shots → packs
-      → shot-detail         ← cinematic parameters
-      → consistency-check   ← drift detection
+      → script-breakdown
+      → entity-extraction
+      → shot-detail
+      → consistency-check
   → seedance15-prompt-writer
   → seedance15-generate     ← per scene
-  → video-upscale           ← optional
+  → upscale-video           ← optional
   → mv-compilation
+  → requesting-video-review
 ```
 
 **`shorts-production-pipeline` workflow (sequential):**
 ```
-[screenplay or story brief]
+brainstorming-video-idea
+  → setup-video-project
+  → retention-driven-development  ← validate concept
+  → writing-plans
   → production-pipeline
-      → script-breakdown (script → shot list)
-      → entity-extraction (shots → packs)
-      → shot-detail (cinematic parameters)
-      → consistency-check (drift detection)
+      → script-breakdown
+      → entity-extraction
+      → shot-detail
+      → consistency-check
   → [image/video generation per shot]
   → [post-production assembly]
+  → requesting-video-review
 ```
 
 **`seedance15-prompt-writer` integration:** `seedance15-prompt-writer` is an existing Violyra skill (see `skills/seedance15-prompt-writer/SKILL.md`) that writes motion-focused prompts for Seedance text-to-video and image-to-video generation. Shot detail fields feed into it as follows:
