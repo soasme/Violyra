@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Violyra is a skill repository for AI coding agents focused on short-form video production — music videos and short dramas. It provides composable, CLI-first skills that any agent can follow to produce complete productions from raw inputs (lyrics, screenplay, or story brief).
+Violyra is a skill repository for AI coding agents focused on video production — music videos, shorts, dramas, anime, etc. It provides composable, CLI-first skills that any agent can follow to produce complete productions from raw inputs (lyrics, screenplay, story brief, a youtube url).
 
 ## Architecture
 
@@ -18,13 +18,13 @@ violyra/
 
 ## Philosophy
 
-**Skills are mandatory workflows, not suggestions.** Before starting any task, the agent checks whether a relevant skill exists and follows it exactly. This is what makes productions consistent and repeatable.
+**Retention over opinion.** Audience behavior is the test. A scene that holds attention is right; a scene that loses it gets replaced, not argued over.
 
-**Every production follows the same gates:**
-```
-brainstorming → project-setup → writing-plans → [execute tasks] → requesting-review
-```
-These gates apply regardless of production type. Skipping them is not allowed.
+**Regenerate over patch.** Replace weak scenes rather than tweaking them. Iteration speed beats incremental polish.
+
+**Harness over ad-hoc.** Every character, costume, behavior, and scene is defined in a pack before it appears on screen. Nothing is invented in the moment.
+
+**Spec-driven pipeline.** Define the spec first. Clarity always wins over improvisation.
 
 **Pack management before reasoning.** Asset packs (actors, scenes, props, costumes) are populated before cinematic decisions are made. You cannot consistently direct what you have not catalogued.
 
