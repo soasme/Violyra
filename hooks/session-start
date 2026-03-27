@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Inject violyra skill context at session start
+
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+SKILLS_DIR="$PLUGIN_ROOT/skills"
+
+if [ ! -d "$SKILLS_DIR" ]; then
+  exit 0
+fi
+
+echo "Violyra skills are available in this session:"
+for skill_dir in "$SKILLS_DIR"/*/; do
+  skill_name=$(basename "$skill_dir")
+  skill_md="$skill_dir/SKILL.md"
+  if [ -f "$skill_md" ]; then
+    description=$(awk '/^description:/{p=1; next} p && /^---/{p=0; exit} p' "$skill_md" | head -1 | sed 's/^[ \t]*//')
+    if [ -z "$description" ]; then
+      description=$(grep -m1 '^description:' "$skill_md" | sed 's/^description: *//')
+    fi
+    echo "  - $skill_name: $description"
+  fi
+done

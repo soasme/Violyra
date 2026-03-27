@@ -1,0 +1,15 @@
+{
+  "name": "violyra",
+  "description": "Video making agent skills: music video production, scene generation, storyboarding, lyrics alignment, TTS, and compilation",
+  "version": "1.0.0",
+  "author": {
+    "name": "soasme"
+  },
+  "homepage": "https://github.com/soasme/violyra",
+  "repository": "https://github.com/soasme/violyra",
+  "license": "MIT",
+  "keywords": ["video", "music-video", "skills", "replicate", "ffmpeg", "seedance", "lyrics"],
+  "skills": "./skills/",
+  "agents": "./agents/",
+  "hooks": "./hooks/hooks.json"
+}
