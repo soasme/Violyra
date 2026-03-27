@@ -488,7 +488,7 @@ ID generation: `<prefix>_<timestamp_base36>` (e.g. `actor_lz4x7`, `scene_lz4x8`)
 
 **`script-breakdown`** — Takes any text input (lyrics, screenplay, story brief) and produces a `chapter.json` + `shot-list.json`. The agent condenses the raw text, segments it into indexed shots, and identifies character/scene names per shot.
 
-**`shot-detail`** — Takes a `shot-list.json` and enriches each shot with cinematic parameters: camera shot type, angle, movement, mood tags, atmosphere, duration, VFX, and first/last/key frame prompts. Produces `shot-details.json`.
+**`shot-detail`** — Takes a `shot-list.json` + `extraction-report.json` and enriches each shot with cinematic parameters: camera shot type, angle, movement, mood tags, atmosphere, duration, VFX, and first/last/key frame prompts. Produces `shot-details.json`. Must run after `entity-extraction` so that `sceneId` references in the output resolve to valid pack IDs. Character/actor references per shot remain in `extraction-report.json` (not duplicated into shot-details).
 
 **`entity-extraction`** — Takes a `shot-list.json` and creates/updates actor, scene, prop, and costume packs for all entities mentioned. Links shots to pack IDs in `extraction-report.json`. Calls Layer 1 pack scripts for persistence.
 
