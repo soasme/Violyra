@@ -13,7 +13,6 @@ export default defineConfig({
       'skills/generate-thumbnail/**',
       'skills/mv-compilation/**',
       'skills/lyrics-force-alignment/**',
-      'skills/seedance15-generate/**',
       'skills/upscale-video/**',
     ],
   },
