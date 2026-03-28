@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-const { mkdir, readFile, writeFile } = require("node:fs/promises");
-const { basename, dirname, extname } = require("node:path");
-const { parseArgs } = require("node:util");
+import { fileURLToPath } from "node:url";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { basename, dirname, extname } from "node:path";
+import { parseArgs } from "node:util";
 
 const MODEL_ID = "google/nano-banana-pro";
 const MODEL_PREDICTIONS_URL = `https://api.replicate.com/v1/models/${MODEL_ID}/predictions`;
@@ -348,14 +349,14 @@ async function main() {
   console.log(`Saved thumbnail: ${outputPath}`);
 }
 
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch((error) => {
     console.error(error.message || error);
     process.exit(1);
   });
 }
 
-module.exports = {
+export {
   ALLOWED_ASPECT_RATIOS,
   ALLOWED_OUTPUT_FORMATS,
   ALLOWED_RESOLUTIONS,

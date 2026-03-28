@@ -10,7 +10,6 @@ export default defineConfig({
       '**/node_modules/**',
       '**/packages/**',
       // Pre-existing POC skills using CJS require() — not yet migrated to ESM
-      'skills/generate-thumbnail/**',
       'skills/mv-compilation/**',
       'skills/lyrics-force-alignment/**',
       'skills/upscale-video/**',

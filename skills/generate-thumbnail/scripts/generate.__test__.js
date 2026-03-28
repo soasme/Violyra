@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-
-const {
+import {
   ALLOWED_ASPECT_RATIOS,
   DEFAULT_ASPECT_RATIO,
   DEFAULT_OUTPUT_FORMAT,
@@ -12,7 +11,7 @@ const {
   extractOutputUrl,
   parseImageInputs,
   resolveImageInput,
-} = require("./generate.js");
+} from "./generate.js";
 
 describe(".agents/skills/youtube-thumbnail-generator/scripts/generate.js", () => {
   describe("parseImageInputs", () => {
