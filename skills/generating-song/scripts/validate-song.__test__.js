@@ -1,6 +1,6 @@
 // skills/generating-song/scripts/validate-song.__test__.js
 import { it, expect, beforeEach, afterEach } from 'vitest'
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -39,6 +39,11 @@ it('accepts ogg extension', () => {
   const f = join(tmpDir, 'song.ogg')
   writeFileSync(f, 'fake audio content', 'utf8')
   expect(run(['--file', f]).status).toBe(0)
+})
+it('rejects a directory with valid extension', () => {
+  const d = join(tmpDir, 'song.mp3')
+  mkdirSync(d)
+  expect(run(['--file', d]).status).toBe(1)
 })
 it('rejects file that does not exist', () => {
   expect(run(['--file', join(tmpDir, 'missing.mp3')]).status).toBe(1)

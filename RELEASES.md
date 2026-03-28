@@ -33,7 +33,7 @@
 
 ---
 
-## v1.0.0 — 2026-03-28
+## v1.0.0 — 2026-03-26
 
 ### Features
 - 6 pack management skills: `generating-actor-pack`, `generating-character-pack`, `generating-scene-pack`, `generating-prop-pack`, `generating-costume-pack`, `prompt-template`

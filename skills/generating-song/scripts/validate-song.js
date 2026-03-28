@@ -9,6 +9,7 @@ function validate(filePath) {
   let stat
   try { stat = statSync(filePath) }
   catch { throw new Error(`File not found: ${filePath}`) }
+  if (!stat.isFile()) throw new Error(`Not a file: ${filePath}`)
   const ext = extname(filePath).toLowerCase()
   if (!VALID_EXTENSIONS.has(ext))
     throw new Error(`Unsupported extension: ${ext}. Expected one of: ${[...VALID_EXTENSIONS].join(', ')}`)
