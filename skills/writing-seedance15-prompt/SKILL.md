@@ -1,5 +1,5 @@
 ---
-name: seedance15-prompt-writer
+name: writing-seedance15-prompt
 description: Generate high-quality Seedance 1.5 video prompts for image-to-video or text-to-video with clear motion, camera language, and temporal action.
 ---
 

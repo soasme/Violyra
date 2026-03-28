@@ -1,5 +1,5 @@
 ---
-name: mv-storyboard-writer
+name: writing-video-plan
 description: Generate or revise music-video storyboard files from lyrics, user requirements, and visual style. Use when asked to write scene-by-scene storyboard output for `assets/storyboard.js` or `assets/storyboard.json`, including section labels, lyric mapping, character focus, duration, and motion-ready prompts.
 ---
 

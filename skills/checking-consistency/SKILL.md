@@ -1,6 +1,6 @@
 ---
-name: consistency-check
-description: Use when detecting character/scene drift across shots after shot-detail is complete. Produces a consistency report and optional optimized shot list.
+name: checking-consistency
+description: Use when detecting character/scene drift across shots after enriching-shot-details is complete. Produces a consistency report and optional optimized shot list.
 ---
 
 # Consistency Check
@@ -17,7 +17,7 @@ Reads shot-list, shot-details, extraction-report, and referenced pack files to d
 
 ## Dependencies
 
-- `script-breakdown`, `entity-extraction`, `shot-detail` must all be complete.
+- `breaking-down-video-script`, `extracting-video-entities`, `enriching-shot-details` must all be complete.
 
 ## Workflow
 
@@ -40,7 +40,7 @@ Reads shot-list, shot-details, extraction-report, and referenced pack files to d
 ## Validation
 
 ```bash
-pnpm exec dotenv -- node skills/consistency-check/scripts/validate-consistency-report.js --file <path>
+source .env && node skills/checking-consistency/scripts/validate-consistency-report.js --file <path>
 ```
 
 ## Error Handling

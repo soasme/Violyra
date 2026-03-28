@@ -1,5 +1,5 @@
 ---
-name: extract-foreground
+name: extracting-foreground
 description: Remove image backgrounds and produce transparent PNG outputs with Replicate 851-labs/background-remover. Use when asked to cut out subjects, remove backgrounds, or generate alpha-channel PNGs from images.
 ---
 
@@ -8,4 +8,4 @@ description: Remove image backgrounds and produce transparent PNG outputs with R
 Use `scripts/extract.js` to remove image backgrounds.
 
 Run:
-`REPLICATE_API_TOKEN=<token> node .agent/skills/extract-foreground/scripts/extract.js --input <input-image> --output <output-image>`
+`REPLICATE_API_TOKEN=<token> node .agent/skills/extracting-foreground/scripts/extract.js --input <input-image> --output <output-image>`

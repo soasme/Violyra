@@ -1,6 +1,6 @@
 ---
-name: shot-detail
-description: Use when enriching shots with cinematic parameters (framing, angle, movement, mood, frame prompts). Runs after entity-extraction.
+name: enriching-shot-details
+description: Use when enriching shots with cinematic parameters (framing, angle, movement, mood, frame prompts). Runs after extracting-video-entities.
 ---
 
 # Shot Detail
@@ -9,15 +9,15 @@ Enriches each shot in a `shot-list.json` with cinematic parameters: camera shot 
 
 ## Inputs
 
-- `<chapter-dir>/shot-list.json` — from `script-breakdown`
-- `<chapter-dir>/extraction-report.json` — from `entity-extraction` (provides sceneIds)
+- `<chapter-dir>/shot-list.json` — from `breaking-down-video-script`
+- `<chapter-dir>/extraction-report.json` — from `extracting-video-entities` (provides sceneIds)
 - `<chapter-dir>/shot-details.json` — optional, existing details to preserve/update
 - `--chapter-dir <path>`
 
 ## Dependencies
 
-- `script-breakdown` (shot-list.json)
-- `entity-extraction` (extraction-report.json, for sceneIds)
+- `breaking-down-video-script` (shot-list.json)
+- `extracting-video-entities` (extraction-report.json, for sceneIds)
 
 ## Workflow
 
@@ -44,7 +44,7 @@ Enriches each shot in a `shot-list.json` with cinematic parameters: camera shot 
 ## Validation
 
 ```bash
-pnpm exec dotenv -- node skills/shot-detail/scripts/validate-shot-details.js --file <path>
+source .env && node skills/enriching-shot-details/scripts/validate-shot-details.js --file <path>
 ```
 
 ## Error Handling

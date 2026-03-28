@@ -10,12 +10,12 @@ Manages project-scoped character compositions. A character pack links one actor 
 ## Subcommands
 
 ```bash
-pnpm exec dotenv -- node skills/generating-character-pack/scripts/character-pack.js <subcommand> [options]
+source .env && node skills/generating-character-pack/scripts/character-pack.js <subcommand> [options]
 ```
 
 ### create
 ```bash
-pnpm exec dotenv -- node skills/generating-character-pack/scripts/character-pack.js create \
+source .env && node skills/generating-character-pack/scripts/character-pack.js create \
   --base-dir assets/ --name "Mia — Stage Role" \
   --actor-id actor_lz4x7 \
   --costume-id costume_lz4xa \

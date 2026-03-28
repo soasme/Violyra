@@ -1,5 +1,5 @@
 ---
-name: mv-compilation
+name: compiling-video
 description: Compile scene clips into a full-song music video with ffmpeg using storyboard + aligned lyrics timing. Use when you need deterministic final assembly (optional auto-upscale, scene stretch, frame fit, concat, audio mux) and a default 1920x1080 output.
 ---
 
@@ -16,12 +16,12 @@ The script handles:
 5. Scene concatenation and full-song audio mux.
 
 Always run commands through dotenv:
-`pnpm exec dotenv -- <command>`
+`source .env && <command>`
 
 ## Compile Full Song
 
 ```bash
-pnpm exec dotenv -- node .agents/skills/mv-compilation/scripts/compile.js \
+source .env && node .agents/skills/compiling-video/scripts/compile.js \
   --storyboard assets/storyboard.json \
   --aligned assets/aligned_lyrics.json \
   --song assets/song.mp3 \

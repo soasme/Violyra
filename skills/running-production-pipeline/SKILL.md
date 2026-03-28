@@ -1,6 +1,6 @@
 ---
-name: production-pipeline
-description: Use when orchestrating script-breakdown → entity-extraction → shot-detail → consistency-check for a chapter. Runs all four reasoning skills in sequence.
+name: running-production-pipeline
+description: Use when orchestrating breaking-down-video-script → extracting-video-entities → enriching-shot-details → checking-consistency for a chapter. Runs all four reasoning skills in sequence.
 ---
 
 # Production Pipeline
@@ -15,7 +15,7 @@ Orchestrates the four reasoning skills for a single chapter. Call this skill ins
 
 ## Workflow
 
-Follow `skills/production-pipeline/references/workflow.md` step by step.
+Follow `skills/running-production-pipeline/references/workflow.md` step by step.
 
 ## Output
 
@@ -26,4 +26,4 @@ All four reasoning skill outputs for the chapter:
 ## Error Handling
 
 - Stop between steps if any validator exits non-zero. Show the error and ask the user how to proceed.
-- After consistency-check: if `optimizedShotList` is non-null, present it to the user and ask before overwriting `shot-list.json`. If user approves, re-run shot-detail and consistency-check on the updated shot list.
+- After checking-consistency: if `optimizedShotList` is non-null, present it to the user and ask before overwriting `shot-list.json`. If user approves, re-run enriching-shot-details and checking-consistency on the updated shot list.

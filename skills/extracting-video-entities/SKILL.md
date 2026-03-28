@@ -1,6 +1,6 @@
 ---
-name: entity-extraction
-description: Use when populating actor, scene, prop, and costume packs from a shot list. Runs after script-breakdown, before shot-detail.
+name: extracting-video-entities
+description: Use when populating actor, scene, prop, and costume packs from a shot list. Runs after breaking-down-video-script, before enriching-shot-details.
 ---
 
 # Entity Extraction
@@ -9,13 +9,13 @@ Reads a `shot-list.json`, identifies all named entities (characters, scenes, pro
 
 ## Inputs
 
-- `<chapter-dir>/shot-list.json` — produced by `script-breakdown`
+- `<chapter-dir>/shot-list.json` — produced by `breaking-down-video-script`
 - `--base-dir <path>` — project root
 - `--chapter-dir <path>` — e.g. `<base-dir>/chapters/chap_abc`
 
 ## Dependencies
 
-- `script-breakdown` must have run first (produces `shot-list.json`)
+- `breaking-down-video-script` must have run first (produces `shot-list.json`)
 - Pack management scripts must be available for creating new packs
 
 ## Workflow
@@ -32,7 +32,7 @@ Reads a `shot-list.json`, identifies all named entities (characters, scenes, pro
 6. Write `extraction-report.json` to `--chapter-dir`.
 7. Validate:
    ```bash
-   pnpm exec dotenv -- node skills/entity-extraction/scripts/validate-extraction-report.js \
+   source .env && node skills/extracting-video-entities/scripts/validate-extraction-report.js \
      --file <chapter-dir>/extraction-report.json
    ```
 
@@ -44,7 +44,7 @@ Reads a `shot-list.json`, identifies all named entities (characters, scenes, pro
 ## Validation
 
 ```bash
-pnpm exec dotenv -- node skills/entity-extraction/scripts/validate-extraction-report.js --file <path>
+source .env && node skills/extracting-video-entities/scripts/validate-extraction-report.js --file <path>
 ```
 
 ## Error Handling

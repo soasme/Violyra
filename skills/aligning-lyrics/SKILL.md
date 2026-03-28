@@ -1,5 +1,5 @@
 ---
-name: lyrics-force-alignment
+name: aligning-lyrics
 description: Force-align ground-truth lyric lines to audio using Replicate dashed/whisperx-subtitles-replicate word timestamps as noisy hints, then output aligned JSON and optional SRT/LRC.
 ---
 
@@ -9,7 +9,7 @@ Use `scripts/align.js` to align exact lyric lines against a song audio file.
 The script treats WhisperX word timestamps as approximate hints, then remaps timing back to your provided lyric lines.
 
 Always run through dotenv so `REPLICATE_API_TOKEN` is loaded:
-`pnpm exec dotenv -- <command>`
+`source .env && <command>`
 
 ## Dependencies
 
@@ -34,7 +34,7 @@ No additional npm packages are required.
 ## Workflow
 
 Run:
-`pnpm exec dotenv -- node .agents/skills/lyrics-force-alignment/scripts/align.js --audio song.mp3 --lyrics lyrics.txt --json --srt --lrc`
+`source .env && node .agents/skills/aligning-lyrics/scripts/align.js --audio song.mp3 --lyrics lyrics.txt --json --srt --lrc`
 
 Default outputs:
 

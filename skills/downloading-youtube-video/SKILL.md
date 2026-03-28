@@ -1,5 +1,5 @@
 ---
-name: download-youtube-video
+name: downloading-youtube-video
 description: Download YouTube videos to local files with uvx yt-dlp. Use when asked to save a YouTube URL (for example https://www.youtube.com/watch?v=pZ7H3XuEFkQ) as local media, choose output directory or filename, handle YouTube JS challenges, or export audio-only files.
 ---
 

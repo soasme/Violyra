@@ -1,5 +1,5 @@
 ---
-name: script-breakdown
+name: breaking-down-video-script
 description: Use when converting any raw text (lyrics, screenplay, brief) into an indexed shot list and chapter summary for a video production.
 ---
 
@@ -30,7 +30,7 @@ None. This is the first skill in the production pipeline.
 6. Write `shot-list.json` to `--chapter-dir`.
 7. Validate:
    ```bash
-   pnpm exec dotenv -- node skills/script-breakdown/scripts/validate-shot-list.js \
+   source .env && node skills/breaking-down-video-script/scripts/validate-shot-list.js \
      --file <chapter-dir>/shot-list.json
    ```
 
@@ -42,7 +42,7 @@ None. This is the first skill in the production pipeline.
 ## Validation
 
 ```bash
-pnpm exec dotenv -- node skills/script-breakdown/scripts/validate-shot-list.js --file <path>
+source .env && node skills/breaking-down-video-script/scripts/validate-shot-list.js --file <path>
 ```
 
 Exits 0 on valid, 1 on invalid (error to stderr).
