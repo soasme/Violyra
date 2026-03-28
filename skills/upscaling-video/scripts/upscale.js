@@ -6,7 +6,7 @@ import { basename, dirname, extname } from "node:path";
 import { parseArgs } from "node:util";
 import { fileURLToPath } from "node:url";
 
-const CLI_SCRIPT_PATH = ".agents/skills/video-upscale/scripts/upscale.js";
+const CLI_SCRIPT_PATH = ".agents/skills/upscaling-video/scripts/upscale.js";
 export const MODEL_ID = "topazlabs/video-upscale";
 const REPLICATE_API_BASE = "https://api.replicate.com/v1";
 export const MODEL_PREDICTIONS_URL = `${REPLICATE_API_BASE}/models/${MODEL_ID}/predictions`;
@@ -23,7 +23,7 @@ const TERMINAL_PREDICTION_STATUSES = new Set(["succeeded", "failed", "canceled"]
 
 function printUsage() {
   console.log(`Usage:
-  pnpm exec dotenv -- node ${CLI_SCRIPT_PATH} --input <video.mp4> [--output <upscaled.mp4>] [--target-resolution <720p|1080p|4k>] [--target-fps <15-120>] [--poll-interval-ms <ms>]
+  source .env && node ${CLI_SCRIPT_PATH} --input <video.mp4> [--output <upscaled.mp4>] [--target-resolution <720p|1080p|4k>] [--target-fps <15-120>] [--poll-interval-ms <ms>]
 
 Options:
   --input, -i             Input video path or URL (required)

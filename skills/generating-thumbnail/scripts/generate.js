@@ -8,7 +8,7 @@ import { parseArgs } from "node:util";
 const MODEL_ID = "google/nano-banana-pro";
 const MODEL_PREDICTIONS_URL = `https://api.replicate.com/v1/models/${MODEL_ID}/predictions`;
 const REPLICATE_FILES_URL = "https://api.replicate.com/v1/files";
-const CLI_SCRIPT_PATH = ".agents/skills/youtube-thumbnail-generator/scripts/generate.js";
+const CLI_SCRIPT_PATH = ".agents/skills/generating-thumbnail/scripts/generate.js";
 const DEFAULT_POLL_INTERVAL_MS = 1000;
 const DEFAULT_ASPECT_RATIO = "16:9";
 const DEFAULT_RESOLUTION = "2K";
@@ -38,7 +38,7 @@ const ALLOWED_SAFETY_FILTER_LEVELS = new Set([
 
 function printUsage() {
   console.log(`Usage:
-  pnpm exec dotenv -- node ${CLI_SCRIPT_PATH} --prompt "<text>" --output <path> [--image <path-or-url>] [--aspect-ratio <value>] [--resolution <value>] [--output-format <jpg|png>] [--safety-filter-level <value>] [--allow-fallback-model] [--poll-interval-ms <ms>]
+  source .env && node ${CLI_SCRIPT_PATH} --prompt "<text>" --output <path> [--image <path-or-url>] [--aspect-ratio <value>] [--resolution <value>] [--output-format <jpg|png>] [--safety-filter-level <value>] [--allow-fallback-model] [--poll-interval-ms <ms>]
 
 Options:
   --prompt, -p               Prompt text for the thumbnail (required)

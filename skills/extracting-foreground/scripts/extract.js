@@ -9,7 +9,7 @@
  *   REPLICATE_API_TOKEN   Your Replicate API token (required)
  *
  * Usage:
- *   node .agent/skills/transparent-image/scripts/extract.js --input public/bicycle.png --output public/bicycle-transparent.png
+ *   node .agents/skills/extracting-foreground/scripts/extract.js --input public/bicycle.png --output public/bicycle-transparent.png
  */
 
 import { fileURLToPath } from "node:url";

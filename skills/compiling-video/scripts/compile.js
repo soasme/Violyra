@@ -8,12 +8,12 @@ import { basename, extname, join, resolve } from "node:path";
 import { execFileSync } from "node:child_process";
 import { parseArgs } from "node:util";
 
-import { upscaleVideo, parseTargetResolution } from "../../upscale-video/scripts/upscale.js";
+import { upscaleVideo, parseTargetResolution } from "../../upscaling-video/scripts/upscale.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const CLI_SCRIPT_PATH = ".agents/skills/mv-compilation/scripts/compile.js";
+const CLI_SCRIPT_PATH = ".agents/skills/compiling-video/scripts/compile.js";
 const DEFAULT_STORYBOARD_PATH = "assets/storyboard.json";
 const DEFAULT_ALIGNED_PATH = "assets/aligned_lyrics.json";
 const DEFAULT_SONG_PATH = "assets/song.mp3";
@@ -30,7 +30,7 @@ const ALLOWED_FIT_MODES = new Set(["fill-crop", "contain"]);
 
 function printUsage() {
   console.log(`Usage:
-  pnpm exec dotenv -- node ${CLI_SCRIPT_PATH} [options]
+  source .env && node ${CLI_SCRIPT_PATH} [options]
 
 Options:
   --storyboard            Storyboard JSON path (default: ${DEFAULT_STORYBOARD_PATH})

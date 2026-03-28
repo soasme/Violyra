@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 const MODEL_ID = "bytedance/seedance-1.5-pro";
 const MODEL_PREDICTIONS_URL = `https://api.replicate.com/v1/models/${MODEL_ID}/predictions`;
 const REPLICATE_FILES_URL = "https://api.replicate.com/v1/files";
-const CLI_SCRIPT_PATH = ".agents/skills/seedance15-generate/scripts/generate.js";
+const CLI_SCRIPT_PATH = ".agents/skills/generating-seedance15-video/scripts/generate.js";
 const DEFAULT_INPUT_PATH = "assets/storyboard.json";
 const DEFAULT_OUTPUT_PATH = "assets/storyboard.manifest.json";
 const DEFAULT_SCENES_DIR = "assets/scenes";
@@ -34,7 +34,7 @@ const DEFAULT_GENERATE_AUDIO = false;
 
 function printUsage() {
   console.log(`Usage:
-  pnpm exec dotenv -- node ${CLI_SCRIPT_PATH} [--input <storyboard-json>] [--output <manifest-json>] [--scenes-dir <dir>] [--scene-id <id>] [--duration <seconds>] [--resolution <value>] [--aspect-ratio <value>] [--fps <value>] [--generate-audio] [--image <uri>] [--poll-interval-ms <ms>]
+  source .env && node ${CLI_SCRIPT_PATH} [--input <storyboard-json>] [--output <manifest-json>] [--scenes-dir <dir>] [--scene-id <id>] [--duration <seconds>] [--resolution <value>] [--aspect-ratio <value>] [--fps <value>] [--generate-audio] [--image <uri>] [--poll-interval-ms <ms>]
 
 Options:
   --input, -i              Input storyboard JSON path (default: ${DEFAULT_INPUT_PATH})

@@ -6,7 +6,7 @@ import { basename, dirname, extname } from "node:path";
 import { parseArgs } from "node:util";
 import { fileURLToPath } from "node:url";
 
-const CLI_SCRIPT_PATH = ".agents/skills/lyrics-force-alignment/scripts/align.js";
+const CLI_SCRIPT_PATH = ".agents/skills/aligning-lyrics/scripts/align.js";
 const DEFAULT_MODEL = "dashed/whisperx-subtitles-replicate";
 const REPLICATE_API_BASE = "https://api.replicate.com/v1";
 const REPLICATE_FILES_URL = `${REPLICATE_API_BASE}/files`;
@@ -65,7 +65,7 @@ const CONTRACTION_NORMALIZATION_MAP = new Map([
 
 function printUsage() {
   console.log(`Usage:
-  pnpm exec dotenv -- node ${CLI_SCRIPT_PATH} --audio <song.mp3> --lyrics <lyrics.txt> [--json] [--srt] [--lrc]
+  source .env && node ${CLI_SCRIPT_PATH} --audio <song.mp3> --lyrics <lyrics.txt> [--json] [--srt] [--lrc]
 
 Required:
   --audio, -a                 Local audio file path (mp3/wav/m4a/flac/ogg)

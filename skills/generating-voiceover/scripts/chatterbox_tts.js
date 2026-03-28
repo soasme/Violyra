@@ -11,7 +11,7 @@ const DEFAULT_POLL_INTERVAL_MS = 1000;
 
 function printUsage() {
   console.log(`Usage:
-  REPLICATE_API_TOKEN=<token> node .agent/skills/text-to-speech/scripts/chatterbox_tts.js --prompt "<text>" --output <output-audio-path> [--audio-ref <reference-audio-path>] [--poll-interval-ms <ms>]
+  source .env && node .agents/skills/generating-voiceover/scripts/chatterbox_tts.js --prompt "<text>" --output <output-audio-path> [--audio-ref <reference-audio-path>] [--poll-interval-ms <ms>]
 
 Options:
   --prompt, -p             Prompt text to speak (required)
