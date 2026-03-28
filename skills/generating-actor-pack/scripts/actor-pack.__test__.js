@@ -71,6 +71,11 @@ describe('actor-pack delete', () => {
     const readResult = run('read', '--base-dir', tmpDir, '--id', created.id)
     expect(readResult.status).toBe(1)
   })
+  it('exits 1 for non-existent id', () => {
+    const r = run('delete', '--base-dir', tmpDir, '--id', 'actor_notexist')
+    expect(r.status).toBe(1)
+    expect(JSON.parse(r.stderr).error).toContain('not found')
+  })
 })
 
 describe('actor-pack list', () => {

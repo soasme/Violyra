@@ -1,6 +1,6 @@
 // skills/generating-actor-pack/scripts/actor-pack.js
 import { join, resolve } from 'node:path'
-import { rmSync } from 'node:fs'
+import { rmSync, existsSync } from 'node:fs'
 import { parseArgs } from 'node:util'
 import {
   SCHEMA_VERSION, generateId, readPack, writePack,
@@ -58,8 +58,9 @@ function update(v) {
 function deletePack(v) {
   if (!v['base-dir']) errorExit('Missing required flag: --base-dir')
   if (!v.id) errorExit('Missing required flag: --id')
+  if (!existsSync(packDir(v['base-dir'], v.id))) errorExit(`Pack not found: ${v.id}`)
   try {
-    rmSync(packDir(v['base-dir'], v.id), { recursive: true, force: true })
+    rmSync(packDir(v['base-dir'], v.id), { recursive: true })
     successOutput({ id: v.id, deleted: true })
   } catch (e) { errorExit(e.message) }
 }

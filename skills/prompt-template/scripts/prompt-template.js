@@ -1,6 +1,6 @@
 // skills/prompt-template/scripts/prompt-template.js
 import { join, resolve } from 'node:path'
-import { rmSync, existsSync, readdirSync, readFileSync } from 'node:fs'
+import { rmSync, existsSync, readdirSync } from 'node:fs'
 import { parseArgs } from 'node:util'
 import {
   SCHEMA_VERSION, generateId, readPack, writePack,
@@ -18,7 +18,7 @@ function listTemplatesInDir(dir) {
     .flatMap(e => {
       const p = join(dir, e.name, 'template.json')
       if (!existsSync(p)) return []
-      try { return [JSON.parse(readFileSync(p, 'utf8'))] } catch { return [] }
+      try { return [readPack(p)] } catch { return [] }
     })
 }
 
@@ -71,7 +71,8 @@ function update(v) {
 function deleteTmpl(v) {
   if (!v['base-dir']) errorExit('Missing required flag: --base-dir')
   if (!v.id) errorExit('Missing required flag: --id')
-  try { rmSync(tmplDir(v['base-dir'], v.id), { recursive: true, force: true }); successOutput({ id: v.id, deleted: true }) }
+  if (!existsSync(tmplDir(v['base-dir'], v.id))) errorExit(`Template not found: ${v.id}`)
+  try { rmSync(tmplDir(v['base-dir'], v.id), { recursive: true }); successOutput({ id: v.id, deleted: true }) }
   catch (e) { errorExit(e.message) }
 }
 

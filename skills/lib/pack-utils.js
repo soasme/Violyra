@@ -7,6 +7,9 @@ export const SCHEMA_VERSION = '1.0'
 let _lastMs = 0
 let _idCounter = 0
 
+// Note: collision avoidance is per-process only. Parallel node invocations for the
+// same entity type within the same millisecond can produce duplicate IDs. In practice
+// this is extremely unlikely given typical filesystem I/O latency.
 export function generateId(prefix) {
   const ms = Date.now()
   if (ms === _lastMs) {
@@ -57,7 +60,7 @@ export function listPacksInDir(dir) {
     .flatMap(e => {
       const packPath = join(dir, e.name, 'pack.json')
       if (!existsSync(packPath)) return []
-      try { return [JSON.parse(readFileSync(packPath, 'utf8'))] }
+      try { return [readPack(packPath)] }
       catch { return [] }
     })
 }

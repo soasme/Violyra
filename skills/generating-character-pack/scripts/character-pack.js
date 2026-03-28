@@ -47,7 +47,12 @@ function update(v) {
   catch (e) { errorExit(e.message) }
   if (v.name !== undefined) pack.name = v.name
   if (v.description !== undefined) pack.description = v.description
-  if (v['actor-id'] !== undefined) pack.actorId = v['actor-id']
+  if (v['actor-id'] !== undefined) {
+    if (!existsSync(actorPackPath(v['base-dir'], v['actor-id']))) {
+      errorExit(`Actor pack not found: ${v['actor-id']}. Create it first with generating-actor-pack.`)
+    }
+    pack.actorId = v['actor-id']
+  }
   if (v['costume-id'] !== undefined) pack.costumeId = v['costume-id']
   if (v['prop-ids'] !== undefined) pack.propIds = safeParseJson(v['prop-ids'], '--prop-ids')
   pack.updatedAt = new Date().toISOString()
@@ -58,7 +63,8 @@ function update(v) {
 function deletePack(v) {
   if (!v['base-dir']) errorExit('Missing required flag: --base-dir')
   if (!v.id) errorExit('Missing required flag: --id')
-  try { rmSync(packDir(v['base-dir'], v.id), { recursive: true, force: true }); successOutput({ id: v.id, deleted: true }) }
+  if (!existsSync(packDir(v['base-dir'], v.id))) errorExit(`Pack not found: ${v.id}`)
+  try { rmSync(packDir(v['base-dir'], v.id), { recursive: true }); successOutput({ id: v.id, deleted: true }) }
   catch (e) { errorExit(e.message) }
 }
 

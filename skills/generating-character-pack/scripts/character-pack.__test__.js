@@ -55,6 +55,18 @@ describe('character-pack read/update/delete/list', () => {
     expect(run(CHAR_SCRIPT, 'delete', '--base-dir', tmpDir, '--id', id).status).toBe(0)
     expect(run(CHAR_SCRIPT, 'read', '--base-dir', tmpDir, '--id', id).status).toBe(1)
   })
+  it('update exits 1 when new actor-id does not exist', () => {
+    const actor = createActor()
+    const id = JSON.parse(run(CHAR_SCRIPT, 'create', '--base-dir', tmpDir, '--name', 'Role', '--actor-id', actor.id).stdout).id
+    const r = run(CHAR_SCRIPT, 'update', '--base-dir', tmpDir, '--id', id, '--actor-id', 'actor_notexist')
+    expect(r.status).toBe(1)
+    expect(JSON.parse(r.stderr).error).toContain('actor')
+  })
+  it('delete exits 1 for non-existent id', () => {
+    const r = run(CHAR_SCRIPT, 'delete', '--base-dir', tmpDir, '--id', 'char_notexist')
+    expect(r.status).toBe(1)
+    expect(JSON.parse(r.stderr).error).toContain('not found')
+  })
   it('list returns all characters', () => {
     const actor = createActor()
     run(CHAR_SCRIPT, 'create', '--base-dir', tmpDir, '--name', 'A', '--actor-id', actor.id)
