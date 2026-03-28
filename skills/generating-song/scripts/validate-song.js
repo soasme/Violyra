@@ -6,12 +6,12 @@ import { parseArgs } from 'node:util'
 const VALID_EXTENSIONS = new Set(['.mp3', '.wav', '.flac', '.m4a', '.ogg'])
 
 function validate(filePath) {
-  const ext = extname(filePath).toLowerCase()
-  if (!VALID_EXTENSIONS.has(ext))
-    throw new Error(`Unsupported extension: ${ext}. Expected one of: ${[...VALID_EXTENSIONS].join(', ')}`)
   let stat
   try { stat = statSync(filePath) }
   catch { throw new Error(`File not found: ${filePath}`) }
+  const ext = extname(filePath).toLowerCase()
+  if (!VALID_EXTENSIONS.has(ext))
+    throw new Error(`Unsupported extension: ${ext}. Expected one of: ${[...VALID_EXTENSIONS].join(', ')}`)
   if (stat.size === 0) throw new Error(`File is empty: ${filePath}`)
 }
 

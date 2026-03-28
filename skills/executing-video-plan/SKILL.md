@@ -9,7 +9,7 @@ Loads a production plan, reviews it critically, then executes tasks with two-sta
 
 ## Inputs
 
-- A written production plan (from `writing-plans`)
+- A written production plan (from `superpowers:writing-plans` or `writing-video-plan`)
 - `--base-dir <path>` — project root
 
 ## Workflow

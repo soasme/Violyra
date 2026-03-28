@@ -46,4 +46,4 @@ Creates the isolated workspace for a new video production after design approval.
 
 ## After Setup
 
-Transition to `writing-plans` for the full production breakdown.
+Transition to `writing-video-plan` (for music videos) or `executing-video-plan` (for short dramas) depending on the production type.
