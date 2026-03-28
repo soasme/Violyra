@@ -30,7 +30,7 @@ violyra/
 
 **Agent-agnostic.** SKILL.md files contain instructions any agent can follow. Scripts handle file I/O and validation — no LLM calls in code.
 
-**CLI-first and testable.** Every script has flags, defaults, `--help`, and a `__test__.js` companion. Always run scripts via `pnpm exec dotenv -- <command>` to load environment variables from `.env`.
+**CLI-first and testable.** Every script has flags, defaults, `--help`, and a `__test__.js` companion. Always run scripts via `source .env && <command>` to load environment variables from `.env`.
 
 ## Skill Library
 
@@ -51,8 +51,8 @@ violyra/
 |---|---|
 | `generating-lyrics` | To write or refine song lyrics for a music video. |
 | `generating-song` | To generate AI music/song audio from lyrics and a style description. |
-| `lyrics-force-alignment` | To align ground-truth lyric lines to audio using WhisperX word timestamps. |
-| `generate-voiceover` | To generate narration audio and normalize it for delivery-ready video voiceover. |
+| `aligning-lyrics` | To align ground-truth lyric lines to audio using WhisperX word timestamps. |
+| `generating-voiceover` | To generate narration audio and normalize it for delivery-ready video voiceover. |
 
 ### Asset Management Skills
 
@@ -69,28 +69,28 @@ violyra/
 
 | Skill | When to use |
 |---|---|
-| `script-breakdown` | To convert any text (lyrics, screenplay, brief) into an indexed shot list and condensed chapter. |
-| `entity-extraction` | To extract characters, scenes, and props from a shot list and populate asset packs. |
-| `shot-detail` | To enrich shots with cinematic parameters (framing, angle, movement, mood, frame prompts). |
-| `consistency-check` | To detect character/scene drift across shots and produce a consistency report. |
-| `production-pipeline` | To orchestrate script-breakdown → entity-extraction → shot-detail → consistency-check for a chapter. |
+| `breaking-down-video-script` | To convert any text (lyrics, screenplay, brief) into an indexed shot list and condensed chapter. |
+| `extracting-video-entities` | To extract characters, scenes, and props from a shot list and populate asset packs. |
+| `enriching-shot-details` | To enrich shots with cinematic parameters (framing, angle, movement, mood, frame prompts). |
+| `checking-consistency` | To detect character/scene drift across shots and produce a consistency report. |
+| `running-production-pipeline` | To orchestrate breaking-down-video-script → extracting-video-entities → enriching-shot-details → checking-consistency for a chapter. |
 
 ### Video Generation Skills
 
 | Skill | When to use |
 |---|---|
-| `mv-storyboard-writer` | To write a lyric-driven storyboard from lyrics, style, and requirements. |
-| `seedance15-prompt-writer` | To write motion-focused Seedance prompts from shot details. |
-| `seedance15-generate` | To generate scene videos with Seedance 1.5 via Replicate. |
-| `upscale-video` | To upscale scene clips with Topaz via Replicate. |
-| `extract-foreground` | To extract foreground objects from images and produce transparent PNG cutouts. |
-| `generate-thumbnail` | To generate video thumbnails via Replicate. |
+| `writing-video-plan` | To write a lyric-driven storyboard from lyrics, style, and requirements. |
+| `writing-seedance15-prompt` | To write motion-focused Seedance prompts from shot details. |
+| `generating-seedance15-video` | To generate scene videos with Seedance 1.5 via Replicate. |
+| `upscaling-video` | To upscale scene clips with Topaz via Replicate. |
+| `extracting-foreground` | To extract foreground objects from images and produce transparent PNG cutouts. |
+| `generating-thumbnail` | To generate video thumbnails via Replicate. |
 
 ### Post-Production Skills
 
 | Skill | When to use |
 |---|---|
-| `mv-compilation` | To compile scene clips into a full music video with ffmpeg (stretch, fit, concat, audio mux). |
+| `compiling-video` | To compile scene clips into a full music video with ffmpeg (stretch, fit, concat, audio mux). |
 
 ### Full Pipeline Skills
 
@@ -104,7 +104,7 @@ violyra/
 | Skill | When to use |
 |---|---|
 | `replicate` | To discover and run Replicate models through API-first workflow. |
-| `download-youtube-video` | To download a YouTube URL to local files using yt-dlp. |
+| `downloading-youtube-video` | To download a YouTube URL to local files using yt-dlp. |
 
 ## Typical Workflows
 
@@ -116,13 +116,13 @@ brainstorming-video-idea      ← define concept, style, characters
   → executing-video-plan      ← dispatch subagents per task with two-stage review
       → generating-lyrics
       → generating-song
-      → lyrics-force-alignment
-      → mv-storyboard-writer
-      → production-pipeline   ← breakdown → extraction → shot-detail → consistency
-      → seedance15-prompt-writer
-      → seedance15-generate   ← per scene
-      → upscale-video         ← optional
-      → mv-compilation
+      → aligning-lyrics
+      → writing-video-plan
+      → running-production-pipeline   ← breakdown → extraction → shot details → consistency
+      → writing-seedance15-prompt
+      → generating-seedance15-video   ← per scene
+      → upscaling-video         ← optional
+      → compiling-video
   → retention-driven-development ← simulate audience, replace weak scenes
   → requesting-video-review   ← review against plan, block on critical issues
 ```
@@ -133,7 +133,7 @@ brainstorming-video-idea      ← define story, characters, visual style
   → setup-video-project       ← create workspace, initialize project.json
   → writing-plans             ← break production into tasks
   → executing-video-plan      ← dispatch subagents per task with two-stage review
-      → production-pipeline   ← breakdown → extraction → shot-detail → consistency
+      → running-production-pipeline   ← breakdown → extraction → shot details → consistency
       → [image/video generation per shot]
       → [post-production assembly]
   → retention-driven-development ← simulate audience, replace weak scenes
