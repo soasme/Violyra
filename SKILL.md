@@ -4,17 +4,50 @@ Violyra is a skill repository for music video production. It provides composable
 
 ## Skills
 
-- [Generating Seedance15 Video](skills/generating-seedance15-video/SKILL.md): generate storyboard scene videos with Replicate `bytedance/seedance-1.5-pro`.
-- [Writing Seedance15 Prompt](skills/writing-seedance15-prompt/SKILL.md): write motion-focused Seedance prompts for text-to-video and image-to-video.
-- [Writing Video Plan](skills/writing-video-plan/SKILL.md): write lyric-driven music video storyboard scenes from lyrics, style, and user requirements.
-- [Compiling Video](skills/compiling-video/SKILL.md): compile scene clips into a full-song MV with ffmpeg using optional auto-upscale, lyric-timing stretch, frame-fit, concat, and song audio mux.
-- [Aligning Lyrics](skills/aligning-lyrics/SKILL.md): align ground-truth lyric lines to audio using Replicate WhisperX word timestamps.
-- [Generating Voiceover](skills/generating-voiceover/SKILL.md): generate narration audio, then clean and normalize it for delivery-ready video voiceover.
-- [Upscaling Video](skills/upscaling-video/SKILL.md): upscale scene clips with Replicate `topazlabs/video-upscale`.
+### Workflow
+- [Brainstorming Video Idea](skills/brainstorming-video-idea/SKILL.md): refine a rough video idea through dialogue into a design doc and project.json seeds.
+- [Setup Video Project](skills/setup-video-project/SKILL.md): create workspace directory structure and initialize project.json after design approval.
+- [Executing Video Plan](skills/executing-video-plan/SKILL.md): execute a video production plan task-by-task with two-stage review per task.
+- [Retention-Driven Development](skills/retention-driven-development/SKILL.md): simulate 100 viewers per shot, score retention, regenerate weak shots. Replace, don't patch.
+- [Requesting Video Review](skills/requesting-video-review/SKILL.md): review production progress against plan by severity; Critical blocks delivery.
+
+### Music Production
+- [Generating Lyrics](skills/generating-lyrics/SKILL.md): write or refine song lyrics with verse/chorus/bridge markers before audio generation.
+- [Generating Song](skills/generating-song/SKILL.md): compose a generation prompt from lyrics and style; validate the audio file once placed.
+
+### Asset Management
+- [Generating Actor Pack](skills/generating-actor-pack/SKILL.md): manage global actor appearance references (name, appearance text, reference images).
+- [Generating Character Pack](skills/generating-character-pack/SKILL.md): manage project-scoped character compositions (actor + costume + props).
+- [Generating Scene Pack](skills/generating-scene-pack/SKILL.md): manage global scene/environment references.
+- [Generating Prop Pack](skills/generating-prop-pack/SKILL.md): manage global prop references.
+- [Generating Costume Pack](skills/generating-costume-pack/SKILL.md): manage global costume references.
+- [Prompt Template](skills/prompt-template/SKILL.md): manage reusable prompt templates with `{{variable}}` slots.
+
+### Production Pipeline
+- [Breaking Down Video Script](skills/breaking-down-video-script/SKILL.md): convert any raw text into an indexed shot list and chapter summary.
+- [Extracting Video Entities](skills/extracting-video-entities/SKILL.md): populate actor, scene, prop, and costume packs from a shot list.
+- [Enriching Shot Details](skills/enriching-shot-details/SKILL.md): enrich shots with cinematic parameters (framing, angle, movement, mood, frame prompts).
+- [Checking Consistency](skills/checking-consistency/SKILL.md): detect character/scene drift across shots and produce a consistency report.
+- [Running Video Production Pipeline](skills/running-video-production-pipeline/SKILL.md): orchestrate breaking-down → extracting → enriching → checking for a chapter.
+
+### Video Generation
+- [Writing Video Plan](skills/writing-video-plan/SKILL.md): write a lyric-driven storyboard from lyrics, style, and requirements.
+- [Writing Seedance15 Prompt](skills/writing-seedance15-prompt/SKILL.md): write motion-focused Seedance prompts from shot details.
+- [Generating Seedance15 Video](skills/generating-seedance15-video/SKILL.md): generate scene videos with Seedance 1.5 via Replicate.
+- [Upscaling Video](skills/upscaling-video/SKILL.md): upscale scene clips with Topaz via Replicate.
 - [Extracting Foreground](skills/extracting-foreground/SKILL.md): extract foreground objects from images and produce transparent PNG cutouts.
-- [Generating Thumbnail](skills/generating-thumbnail/SKILL.md): generate YouTube thumbnail images with Replicate `google/nano-banana-pro`.
-- [Downloading YouTube Video](skills/downloading-youtube-video/SKILL.md): download a YouTube URL to local files using `uvx yt-dlp`.
+- [Generating Thumbnail](skills/generating-thumbnail/SKILL.md): generate video thumbnails via Replicate.
+
+### Post-Production
+- [Compiling Video](skills/compiling-video/SKILL.md): compile scene clips into a full music video with ffmpeg (stretch, fit, concat, audio mux).
+
+### Full Pipeline
+- [MV Production Pipeline](skills/mv-production-pipeline/SKILL.md): run the complete music video workflow from lyrics to final compiled video.
+- [Shorts Production Pipeline](skills/shorts-production-pipeline/SKILL.md): run the complete short drama workflow from screenplay to final assembly.
+
+### Utilities
 - [Replicate](skills/replicate/SKILL.md): discover and run Replicate models through API-first workflow.
+- [Downloading YouTube Video](skills/downloading-youtube-video/SKILL.md): download a YouTube URL to local files using `uvx yt-dlp`.
 
 ## Notes
 
