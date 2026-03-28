@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-const { access, mkdir, readFile, writeFile } = require("node:fs/promises");
-const { constants } = require("node:fs");
-const { basename, dirname, extname } = require("node:path");
-const { parseArgs } = require("node:util");
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
+import { constants } from "node:fs";
+import { basename, dirname, extname } from "node:path";
+import { parseArgs } from "node:util";
+import { fileURLToPath } from "node:url";
 
 const CLI_SCRIPT_PATH = ".agents/skills/lyrics-force-alignment/scripts/align.js";
 const DEFAULT_MODEL = "dashed/whisperx-subtitles-replicate";
@@ -1702,7 +1703,7 @@ async function main() {
   console.log("Done.");
 }
 
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch((error) => {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`Error: ${message}`);
@@ -1710,7 +1711,7 @@ if (require.main === module) {
   });
 }
 
-module.exports = {
+export {
   alignWordSequences,
   buildApproximateSegments,
   buildLrc,

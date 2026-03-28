@@ -9,8 +9,6 @@ export default defineConfig({
     exclude: [
       '**/node_modules/**',
       '**/packages/**',
-      // Pre-existing POC skills using CJS require() — not yet migrated to ESM
-      'skills/mv-compilation/**',
     ],
   },
 })
