@@ -1,12 +1,17 @@
 #!/usr/bin/env node
 
-const { access, mkdir, readFile, writeFile } = require("node:fs/promises");
-const { constants } = require("node:fs");
-const { basename, dirname, extname, join, resolve } = require("node:path");
-const { execFileSync } = require("node:child_process");
-const { parseArgs } = require("node:util");
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
+import { constants } from "node:fs";
+import { basename, extname, join, resolve } from "node:path";
+import { execFileSync } from "node:child_process";
+import { parseArgs } from "node:util";
 
-const { upscaleVideo, parseTargetResolution } = require("../../video-upscale/scripts/upscale.js");
+import { upscaleVideo, parseTargetResolution } from "../../upscale-video/scripts/upscale.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const CLI_SCRIPT_PATH = ".agents/skills/mv-compilation/scripts/compile.js";
 const DEFAULT_STORYBOARD_PATH = "assets/storyboard.json";
@@ -563,14 +568,14 @@ async function main() {
   console.log(`Saved compile plan: ${planPath}`);
 }
 
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch((error) => {
     console.error(error instanceof Error ? error.message : error);
     process.exit(1);
   });
 }
 
-module.exports = {
+export {
   ALLOWED_FIT_MODES,
   DEFAULT_ALIGNED_PATH,
   DEFAULT_FIT_MODE,
