@@ -28,3 +28,7 @@ Dispatches a reviewer subagent with production context to catch issues before th
    - Fix Critical immediately before proceeding
    - Fix Important before delivering
    - Log Minor in `<base-dir>/docs/review-notes.md`
+
+## After Review
+
+If no Critical or Important issues remain, the production is ready for delivery.

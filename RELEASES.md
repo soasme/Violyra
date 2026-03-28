@@ -25,7 +25,7 @@
 
 ---
 
-## v1.0.1 — 2026-03-28
+## v1.0.1 — 2026-03-27
 
 ### Changes
 - Renamed 15 skills to `gerund-object` naming convention
