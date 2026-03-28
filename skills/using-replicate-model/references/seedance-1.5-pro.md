@@ -6,6 +6,8 @@
 | API Endpoint | `https://api.replicate.com/v1/models/bytedance/seedance-1.5-pro/predictions` |
 | Use          | Text-to-video and image-to-video generation with optional audio        |
 
+> Use the `writing-seedance15-prompt` skill to craft effective prompts for this model.
+
 ## Key Inputs
 
 | Parameter        | Type    | Default  | Options / Range                                      | Description                                                         |

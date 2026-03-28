@@ -6,6 +6,8 @@
 | Queue endpoint | `https://queue.fal.run/fal-ai/wan-25-preview/image-to-video`              |
 | Use            | Animate a still image into a video clip with optional background audio     |
 
+> **Note:** This endpoint uses the `wan-25-preview` route, which may be updated or renamed when the model reaches stable release. Check `https://fal.ai/models` for a stable `wan-2.5` endpoint before using in production.
+
 ## Key Inputs
 
 | Parameter                | Type    | Default  | Options / Range          | Description                                                              |

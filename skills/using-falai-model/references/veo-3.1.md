@@ -8,6 +8,8 @@
 | I2V queue endpoint | `https://queue.fal.run/fal-ai/veo3/image-to-video`                     |
 | Use                | Text-to-video and image-to-video with native audio generation           |
 
+> **Note:** fal.ai's current production endpoint for Veo 3.1 generation is `fal-ai/veo3` (not `fal-ai/veo3.1`). As of 2026-03-28, fal.ai has not published a separate `veo3.1` route. Update the endpoint to `fal-ai/veo3.1` once fal.ai makes it available.
+
 > **Audio note:** Veo 3 generates audio natively alongside video (`generate_audio` defaults to `true`). Include sound cues in your prompt — ambient sounds, music style, dialogue, or silence directives — to guide the audio output. See the `writing-veo31-prompt` skill for prompt writing guidance.
 
 > **Fast variant:** A cheaper, faster variant is available as `fal-ai/veo3/fast` (T2V) and `fal-ai/veo3/fast/image-to-video` (I2V). The fast queue endpoints follow the same pattern.

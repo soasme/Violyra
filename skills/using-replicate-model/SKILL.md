@@ -39,7 +39,7 @@ Browse collections (curated by Replicate staff):
 
 ```bash
 curl -s "https://api.replicate.com/v1/collections" \
-  -H "Authorization: Bearer $REPLICATE_API_TOKEN" | jq '.[].slug'
+  -H "Authorization: Bearer $REPLICATE_API_TOKEN" | jq '.results[].slug'
 ```
 
 Use official models — they are always running, have stable schemas, and predictable pricing.

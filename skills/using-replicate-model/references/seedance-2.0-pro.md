@@ -1,14 +1,16 @@
 # Seedance 2.0 Pro — Replicate Reference
 
+> **Not yet available on Replicate at time of writing — check https://replicate.com/bytedance for updates.**
+>
+> The examples below follow Seedance 1.5 Pro patterns and will need to be verified against the live schema once the model is published.
+
 | Field        | Value                                                                        |
 |--------------|------------------------------------------------------------------------------|
 | Model ID     | `bytedance/seedance-2.0-pro` (expected)                                      |
 | API Endpoint | `https://api.replicate.com/v1/models/bytedance/seedance-2.0-pro/predictions` |
 | Use          | Text-to-video and image-to-video generation with audio                       |
 
-> **Not yet available on Replicate at time of writing — check https://replicate.com/bytedance for updates.**
->
-> The examples below follow Seedance 1.5 Pro patterns and will need to be verified against the live schema once the model is published.
+> Use the `writing-seedance20-prompt` skill to craft effective prompts for this model.
 
 ## Expected Key Inputs
 
