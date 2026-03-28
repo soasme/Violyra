@@ -14,6 +14,7 @@ Violyra is a skill repository for music video production. It provides composable
 ### Music Production
 - [Generating Lyrics](skills/generating-lyrics/SKILL.md): write or refine song lyrics with verse/chorus/bridge markers before audio generation.
 - [Generating Song](skills/generating-song/SKILL.md): compose a generation prompt from lyrics and style; validate the audio file once placed.
+- [Aligning Lyrics](skills/aligning-lyrics/SKILL.md): align ground-truth lyric lines to audio using Replicate WhisperX word timestamps.
 
 ### Asset Management
 - [Generating Actor Pack](skills/generating-actor-pack/SKILL.md): manage global actor appearance references (name, appearance text, reference images).
@@ -40,6 +41,7 @@ Violyra is a skill repository for music video production. It provides composable
 
 ### Post-Production
 - [Compiling Video](skills/compiling-video/SKILL.md): compile scene clips into a full music video with ffmpeg (stretch, fit, concat, audio mux).
+- [Generating Voiceover](skills/generating-voiceover/SKILL.md): generate narration audio, then clean and normalize it for delivery-ready video voiceover.
 
 ### Full Pipeline
 - [MV Production Pipeline](skills/mv-production-pipeline/SKILL.md): run the complete music video workflow from lyrics to final compiled video.
