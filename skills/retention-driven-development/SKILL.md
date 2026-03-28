@@ -21,7 +21,7 @@ Simulates audience behavior to identify and replace weak shots. Core principle: 
    - **Visual variety** — scene/angle changes vs. adjacent shots
    - **Pacing** — shot duration vs. action density in the script excerpt
    - **Character presence** — protagonist on screen?
-   - **Lyric sync** — does the visual action match the lyric moment?
+   - **Lyric/beat sync** — if lyrics are present, does the visual action match the lyric moment? Otherwise (e.g., shorts without lyrics), does the visual action align with the main audio beat, hook, or voiceover emphasis?
 3. Identify weak shots: score < threshold
 4. For each weak shot:
    a. Note why the shot scored low
