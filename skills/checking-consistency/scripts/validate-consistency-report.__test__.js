@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
-const SCRIPT = 'skills/consistency-check/scripts/validate-consistency-report.js'
+const SCRIPT = 'skills/checking-consistency/scripts/validate-consistency-report.js'
 function validate(data) {
   const f = join(tmpDir, 'report.json')
   writeFileSync(f, JSON.stringify(data), 'utf8')

@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
-const SCRIPT = 'skills/script-breakdown/scripts/validate-shot-list.js'
+const SCRIPT = 'skills/breaking-down-video-script/scripts/validate-shot-list.js'
 function validate(data) {
   const f = join(tmpDir, 'shot-list.json')
   writeFileSync(f, JSON.stringify(data), 'utf8')
