@@ -10,12 +10,12 @@ Manages global physical appearance references for performers. An actor pack capt
 ## Subcommands
 
 ```bash
-pnpm exec dotenv -- node skills/generating-actor-pack/scripts/actor-pack.js <subcommand> [options]
+source .env && node skills/generating-actor-pack/scripts/actor-pack.js <subcommand> [options]
 ```
 
 ### create
 ```bash
-pnpm exec dotenv -- node skills/generating-actor-pack/scripts/actor-pack.js create \
+source .env && node skills/generating-actor-pack/scripts/actor-pack.js create \
   --base-dir assets/ --name "Mia" \
   --appearance "short black hair, slim build, ~20s, distinctive freckles" \
   --description "Lead performer" --tags '["lead","female"]'
@@ -24,25 +24,25 @@ Returns the created pack JSON. File: `<base-dir>/global/actors/<id>/pack.json`.
 
 ### read
 ```bash
-pnpm exec dotenv -- node skills/generating-actor-pack/scripts/actor-pack.js read \
+source .env && node skills/generating-actor-pack/scripts/actor-pack.js read \
   --base-dir assets/ --id actor_lz4x7
 ```
 
 ### update
 ```bash
-pnpm exec dotenv -- node skills/generating-actor-pack/scripts/actor-pack.js update \
+source .env && node skills/generating-actor-pack/scripts/actor-pack.js update \
   --base-dir assets/ --id actor_lz4x7 --appearance "short black hair, updated"
 ```
 
 ### delete
 ```bash
-pnpm exec dotenv -- node skills/generating-actor-pack/scripts/actor-pack.js delete \
+source .env && node skills/generating-actor-pack/scripts/actor-pack.js delete \
   --base-dir assets/ --id actor_lz4x7
 ```
 
 ### list
 ```bash
-pnpm exec dotenv -- node skills/generating-actor-pack/scripts/actor-pack.js list \
+source .env && node skills/generating-actor-pack/scripts/actor-pack.js list \
   --base-dir assets/ [--filter mia]
 ```
 

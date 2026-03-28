@@ -9,7 +9,7 @@
    ```yaml
    read:
      - path/to/violyra/skills/replicate/SKILL.md
-     - path/to/violyra/skills/mv-compilation/SKILL.md
+     - path/to/violyra/skills/compiling-video/SKILL.md
      # add other skills as needed
    ```
 

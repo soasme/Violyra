@@ -37,3 +37,6 @@ Thumbs.db
 
 assets/*
 !assets/.gitkeep
+
+# Git worktrees
+.worktrees/

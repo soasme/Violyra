@@ -59,20 +59,20 @@ Five skills whose SKILL.md files instruct any agent on what to reason about and 
 
 | Skill | Purpose | Primary inputs | Primary output |
 |---|---|---|---|
-| `script-breakdown` | Any text → chapter + indexed shot list | raw text | `chapter.json`, `shot-list.json` |
-| `entity-extraction` | Shot list → populate packs | `shot-list.json` | pack files, `extraction-report.json` |
-| `shot-detail` | Enrich shots with cinematic parameters | `shot-list.json`, `extraction-report.json`, `shot-details.json` (existing, optional) | `shot-details.json` |
-| `consistency-check` | Detect entity/style drift across shots | `shot-list.json`, `shot-details.json`, `extraction-report.json`, packs | `consistency-report.json` |
-| `production-pipeline` | Orchestrate reasoning skills for a chapter | any text or existing chapter | all reasoning skill outputs |
+| `breaking-down-video-script` | Any text → chapter + indexed shot list | raw text | `chapter.json`, `shot-list.json` |
+| `extracting-video-entities` | Shot list → populate packs | `shot-list.json` | pack files, `extraction-report.json` |
+| `enriching-shot-details` | Enrich shots with cinematic parameters | `shot-list.json`, `extraction-report.json`, `shot-details.json` (existing, optional) | `shot-details.json` |
+| `checking-consistency` | Detect entity/style drift across shots | `shot-list.json`, `shot-details.json`, `extraction-report.json`, packs | `consistency-report.json` |
+| `running-video-production-pipeline` | Orchestrate reasoning skills for a chapter | any text or existing chapter | all reasoning skill outputs |
 
 ### Full Pipeline Skills
 
-Two skills that wire the complete end-to-end workflow for a specific production type. Each invokes `production-pipeline` internally as the chapter-level orchestrator.
+Two skills that wire the complete end-to-end workflow for a specific production type. Each invokes `running-video-production-pipeline` internally as the chapter-level orchestrator.
 
 | Skill | Purpose |
 |---|---|
-| `shorts-production-pipeline` | Full short film/drama workflow: text → breakdown → extraction → shot-detail → consistency → video generation |
-| `mv-production-pipeline` | Full music video workflow: lyrics/audio → breakdown → extraction → shot-detail → consistency → seedance generation → compilation |
+| `shorts-production-pipeline` | Full short film/drama workflow: text → breakdown → extraction → enriching shot details → consistency → video generation |
+| `mv-production-pipeline` | Full music video workflow: lyrics/audio → breakdown → extraction → enriching shot details → consistency → seedance generation → compilation |
 
 ---
 
@@ -130,27 +130,27 @@ skills/
       prompt-template.__test__.js
 
   # Reasoning Skills
-  script-breakdown/
+  breaking-down-video-script/
     SKILL.md
     scripts/
       validate-shot-list.js
       validate-shot-list.__test__.js
-  shot-detail/
+  enriching-shot-details/
     SKILL.md
     scripts/
       validate-shot-details.js
       validate-shot-details.__test__.js
-  entity-extraction/
+  extracting-video-entities/
     SKILL.md
     scripts/
       validate-extraction-report.js
       validate-extraction-report.__test__.js
-  consistency-check/
+  checking-consistency/
     SKILL.md
     scripts/
       validate-consistency-report.js
       validate-consistency-report.__test__.js
-  production-pipeline/
+  running-video-production-pipeline/
     SKILL.md
     references/
       workflow.md
@@ -193,10 +193,10 @@ All files for a project live under a single user-specified `--base-dir` (default
 
   chapters/<chapter-id>/               # all files for a chapter share this directory
     chapter.json                       # chapter metadata + raw/condensed text
-    shot-list.json                     # indexed shot array (output of script-breakdown)
-    shot-details.json                  # per-shot cinematic detail (output of shot-detail)
-    extraction-report.json             # entity refs per shot (output of entity-extraction)
-    consistency-report.json            # drift issues (output of consistency-check)
+    shot-list.json                     # indexed shot array (output of breaking-down-video-script)
+    shot-details.json                  # per-shot cinematic detail (output of enriching-shot-details)
+    extraction-report.json             # entity refs per shot (output of extracting-video-entities)
+    consistency-report.json            # drift issues (output of checking-consistency)
 ```
 
 **Chapter directory convention:** the chapter ID is the directory name under `chapters/`. All reasoning skill inputs and outputs for a chapter are colocated there. Scripts that take a chapter as input accept `--chapter-dir <base-dir>/chapters/<chapter-id>`.
@@ -440,7 +440,7 @@ Image sub-schema (same as actor images):
 }
 ```
 
-`status`: `"draft" | "shooting" | "done"`. `condensedText` is produced by the agent during `script-breakdown`; it is the version used by downstream skills.
+`status`: `"draft" | "shooting" | "done"`. `condensedText` is produced by the agent during `breaking-down-video-script`; it is the version used by downstream skills.
 
 ---
 
@@ -464,7 +464,7 @@ Image sub-schema (same as actor images):
 }
 ```
 
-`characterNames` and `sceneNames` are raw name strings extracted from the condensed text. They are resolved to pack IDs by `entity-extraction` and stored in `extraction-report.json`. Shot status: `"pending" | "generating" | "ready"`.
+`characterNames` and `sceneNames` are raw name strings extracted from the condensed text. They are resolved to pack IDs by `extracting-video-entities` and stored in `extraction-report.json`. Shot status: `"pending" | "generating" | "ready"`.
 
 Note: `sceneNames` is an array to handle shots that span multiple locations (e.g. a cross-cut or split-screen).
 
@@ -472,7 +472,7 @@ Note: `sceneNames` is an array to handle shots that span multiple locations (e.g
 
 ### `chapters/<id>/shot-details.json`
 
-Shot details are written after `entity-extraction` completes, so `sceneIds` can reference valid pack IDs. Character and actor references per shot live in `extraction-report.json`, not here — that separation avoids duplication and keeps shot-details focused on cinematic parameters.
+Shot details are written after `extracting-video-entities` completes, so `sceneIds` can reference valid pack IDs. Character and actor references per shot live in `extraction-report.json`, not here — that separation avoids duplication and keeps shot-details focused on cinematic parameters.
 
 ```json
 {
@@ -512,7 +512,7 @@ Shot details are written after `entity-extraction` completes, so `sceneIds` can 
 `followAtmosphere`: when `true`, the agent inherits the `atmosphere` value from the previous shot that has `followAtmosphere: false` (the atmosphere "source" shot). When `false`, this shot defines a new atmosphere that subsequent shots may inherit. This is how consistent visual atmosphere is propagated across a sequence without repeating it in every shot. If the first shot in a sequence has `followAtmosphere: true` and no preceding source shot exists, treat it as a source shot (use its own `atmosphere` value and set `followAtmosphere: false`).
 `moodTags`: free-form strings. Suggested vocabulary: `"melancholic" | "energetic" | "tense" | "romantic" | "mysterious" | "playful" | "hopeful" | "desperate" | "triumphant" | "serene"`. Not enum-enforced — agents may add domain-specific tags.
 
-`dialogLines` array schema — placed in `shot-details.json` (not `shot-list.json`) because dialog belongs to the cinematic enrichment pass, not the initial breakdown. Breakdown only extracts character names; dialog text is added by the agent during `shot-detail`.
+`dialogLines` array schema — placed in `shot-details.json` (not `shot-list.json`) because dialog belongs to the cinematic enrichment pass, not the initial breakdown. Breakdown only extracts character names; dialog text is added by the agent during `enriching-shot-details`.
 ```json
 {
   "index": 0,
@@ -618,7 +618,7 @@ Consistency check reads `shot-list.json` + `shot-details.json` + `extraction-rep
 Every pack management script follows this interface:
 
 ```bash
-pnpm exec dotenv -- node skills/<skill-name>/scripts/<entity-name>.js <subcommand> [options]
+source .env && node skills/<skill-name>/scripts/<entity-name>.js <subcommand> [options]
 
 # Subcommands (all packs)
 create   --base-dir <path> --name <str> [--description <str>] [--tags <json-array>]
@@ -658,7 +658,7 @@ Output is always a JSON object to stdout. Errors go to stderr with a non-zero ex
 Reasoning skill validator scripts follow:
 
 ```bash
-pnpm exec dotenv -- node skills/<skill-name>/scripts/validate-<file>.js --file <path>
+source .env && node skills/<skill-name>/scripts/validate-<file>.js --file <path>
 ```
 
 Exits 0 on valid, 1 on invalid (with error details to stderr).
@@ -709,33 +709,33 @@ What to do if a step fails or produces unexpected results.
 
 ---
 
-## `production-pipeline/references/workflow.md` Format
+## `running-video-production-pipeline/references/workflow.md` Format
 
-This file is a numbered checklist used by the `production-pipeline` skill SKILL.md. Format:
+This file is a numbered checklist used by the `running-video-production-pipeline` skill SKILL.md. Format:
 
 ```markdown
 # Chapter Production Workflow
 
 ## Step 1 — Script Breakdown
-- Skill: `script-breakdown`
+- Skill: `breaking-down-video-script`
 - Input: raw text (provided by user or from `chapter.json#rawText`)
 - Output: `chapters/<id>/chapter.json`, `chapters/<id>/shot-list.json`
 - Decision: if condensedText changes meaning significantly, flag for user review before continuing
 
 ## Step 2 — Entity Extraction
-- Skill: `entity-extraction`
+- Skill: `extracting-video-entities`
 - Input: `shot-list.json`
 - Output: pack files under `global/` and `characters/`, `extraction-report.json`
 - Decision: for each new entity name, check if a matching pack already exists before creating a new one (fuzzy name match)
 
 ## Step 3 — Shot Detail
-- Skill: `shot-detail`
+- Skill: `enriching-shot-details`
 - Input: `shot-list.json`, `extraction-report.json`
 - Output: `shot-details.json`
 - Decision: for shots with multiple sceneIds, pick the dominant scene for atmosphere inheritance
 
 ## Step 4 — Consistency Check
-- Skill: `consistency-check`
+- Skill: `checking-consistency`
 - Input: `shot-list.json`, `shot-details.json`, `extraction-report.json`, relevant pack files
 - Output: `consistency-report.json`
 - Decision: if issues found, present to user; if optimizedShotList is produced, ask before overwriting shot-list.json
@@ -749,25 +749,25 @@ This file is a numbered checklist used by the `production-pipeline` skill SKILL.
 [Any text input]
       │
       ▼
-script-breakdown
+breaking-down-video-script
       │
       ├─► chapter.json
       └─► shot-list.json
                 │
                 ▼
-        entity-extraction ──────────────────► global/actors/, global/scenes/,
+        extracting-video-entities ──────────────────► global/actors/, global/scenes/,
                 │                             global/props/, global/costumes/,
                 └─► extraction-report.json    characters/
                           │
                           │  (+ shot-list.json + extraction-report.json)
                           ▼
-                    shot-detail
+                    enriching-shot-details
                           │
                           └─► shot-details.json
                                     │
                                     │  (+ shot-list.json + extraction-report.json + packs)
                                     ▼
-                            consistency-check
+                            checking-consistency
                                     │
                                     └─► consistency-report.json
                                               │
@@ -792,17 +792,17 @@ brainstorming-video-idea
   → executing-video-plan
       → generating-lyrics
       → generating-song
-      → lyrics-force-alignment
-      → mv-storyboard-writer          ← produces storyboard.json
-      → production-pipeline
-          → script-breakdown          ← agent provides storyboard.json content as raw text input
-          → entity-extraction
-          → shot-detail
-          → consistency-check
-      → seedance15-prompt-writer
-      → seedance15-generate   ← per scene
-      → upscale-video         ← optional
-      → mv-compilation
+      → aligning-lyrics
+      → writing-video-plan            ← produces storyboard.json
+      → running-video-production-pipeline
+          → breaking-down-video-script  ← agent provides storyboard.json content as raw text input
+          → extracting-video-entities
+          → enriching-shot-details
+          → checking-consistency
+      → writing-seedance15-prompt
+      → generating-seedance15-video   ← per scene
+      → upscaling-video               ← optional
+      → compiling-video
   → retention-driven-development
   → requesting-video-review
 ```
@@ -813,18 +813,18 @@ brainstorming-video-idea
   → setup-video-project
   → writing-plans
   → executing-video-plan
-      → production-pipeline
-          → script-breakdown
-          → entity-extraction
-          → shot-detail
-          → consistency-check
+      → running-video-production-pipeline
+          → breaking-down-video-script
+          → extracting-video-entities
+          → enriching-shot-details
+          → checking-consistency
       → [image/video generation per shot]
       → [post-production assembly]
   → retention-driven-development
   → requesting-video-review
 ```
 
-**`seedance15-prompt-writer` integration:** `seedance15-prompt-writer` is an existing Violyra skill (see `skills/seedance15-prompt-writer/SKILL.md`) that writes motion-focused prompts for Seedance text-to-video and image-to-video generation. Shot detail fields feed into it as follows:
+**`writing-seedance15-prompt` integration:** `writing-seedance15-prompt` is an existing Violyra skill (see `skills/writing-seedance15-prompt/SKILL.md`) that writes motion-focused prompts for Seedance text-to-video and image-to-video generation. Shot detail fields feed into it as follows:
 
 | Shot detail field | Prompt-writer input |
 |---|---|
@@ -867,9 +867,9 @@ brainstorming-video-idea
 
 ## Operational Conventions
 
-### Re-running entity-extraction
+### Re-running extracting-video-entities
 
-When `entity-extraction` runs again on the same chapter (e.g. after the shot list is updated):
+When `extracting-video-entities` runs again on the same chapter (e.g. after the shot list is updated):
 1. For each entity name in the new shot list, first call `list --filter <name>` on the relevant pack script to check for an existing pack (fuzzy match by name).
 2. If a matching pack is found, reuse its ID — do not create a duplicate.
 3. Update `extraction-report.json` in full (overwrite, not merge). The report always reflects the current shot list.
@@ -877,11 +877,11 @@ When `entity-extraction` runs again on the same chapter (e.g. after the shot lis
 
 ### Multi-chapter projects and shared character packs
 
-Characters and global assets (actors, scenes, props, costumes) live at the project level (`<base-dir>/characters/` and `<base-dir>/global/`), not inside chapter directories. All chapters in a project share the same pack files. When two chapters reference the same character name, `entity-extraction` reuses the same pack ID (via the fuzzy name match above). This is the mechanism for cross-chapter consistency.
+Characters and global assets (actors, scenes, props, costumes) live at the project level (`<base-dir>/characters/` and `<base-dir>/global/`), not inside chapter directories. All chapters in a project share the same pack files. When two chapters reference the same character name, `extracting-video-entities` reuses the same pack ID (via the fuzzy name match above). This is the mechanism for cross-chapter consistency.
 
-### `production-pipeline/references/workflow.md`
+### `running-video-production-pipeline/references/workflow.md`
 
-This file must be created as part of implementing the `production-pipeline` skill. It is a numbered step checklist (format defined in the `production-pipeline/references/workflow.md Format` section above) committed at `skills/production-pipeline/references/workflow.md`. The `production-pipeline` SKILL.md references it directly.
+This file must be created as part of implementing the `running-video-production-pipeline` skill. It is a numbered step checklist (format defined in the `running-video-production-pipeline/references/workflow.md Format` section above) committed at `skills/running-video-production-pipeline/references/workflow.md`. The `running-video-production-pipeline` SKILL.md references it directly.
 
 ---
 

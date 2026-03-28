@@ -17,8 +17,8 @@ This runs all `*.{test,spec}.js` and `*.__test__.js` files across the repo using
 ## Running a Specific Skill Test
 
 ```bash
-pnpm exec vitest run skills/mv-compilation
-pnpm exec vitest run skills/lyrics-force-alignment
+pnpm exec vitest run skills/compiling-video
+pnpm exec vitest run skills/aligning-lyrics
 ```
 
 ## Environment
@@ -26,7 +26,7 @@ pnpm exec vitest run skills/lyrics-force-alignment
 Tests that call Replicate or other APIs require `.env` to be populated:
 
 ```bash
-pnpm exec dotenv -- pnpm test
+source .env && pnpm test
 ```
 
 ## Adding Tests for a New Skill

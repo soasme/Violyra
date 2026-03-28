@@ -10,12 +10,12 @@ Manages global physical object references. A prop pack captures the appearance a
 ## Subcommands
 
 ```bash
-pnpm exec dotenv -- node skills/generating-prop-pack/scripts/prop-pack.js <subcommand> [options]
+source .env && node skills/generating-prop-pack/scripts/prop-pack.js <subcommand> [options]
 ```
 
 ### create
 ```bash
-pnpm exec dotenv -- node skills/generating-prop-pack/scripts/prop-pack.js create \
+source .env && node skills/generating-prop-pack/scripts/prop-pack.js create \
   --base-dir assets/ --name "Vintage Guitar" \
   --description "Worn sunburst Telecaster, scratched body" \
   --tags '["instrument","music"]'

@@ -10,12 +10,12 @@ Manages reusable prompt templates with `{{variable}}` slots. Agents substitute v
 ## Subcommands
 
 ```bash
-pnpm exec dotenv -- node skills/prompt-template/scripts/prompt-template.js <subcommand> [options]
+source .env && node skills/prompt-template/scripts/prompt-template.js <subcommand> [options]
 ```
 
 ### create
 ```bash
-pnpm exec dotenv -- node skills/prompt-template/scripts/prompt-template.js create \
+source .env && node skills/prompt-template/scripts/prompt-template.js create \
   --base-dir assets/ \
   --name "High-Energy Performance" \
   --category video_prompt \

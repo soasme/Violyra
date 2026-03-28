@@ -10,12 +10,12 @@ Manages global costume/outfit references. A costume pack describes a complete ou
 ## Subcommands
 
 ```bash
-pnpm exec dotenv -- node skills/generating-costume-pack/scripts/costume-pack.js <subcommand> [options]
+source .env && node skills/generating-costume-pack/scripts/costume-pack.js <subcommand> [options]
 ```
 
 ### create
 ```bash
-pnpm exec dotenv -- node skills/generating-costume-pack/scripts/costume-pack.js create \
+source .env && node skills/generating-costume-pack/scripts/costume-pack.js create \
   --base-dir assets/ --name "Punk Outfit" \
   --description "Black leather jacket, torn jeans, combat boots, silver chains" \
   --tags '["punk","dark"]'

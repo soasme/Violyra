@@ -18,9 +18,9 @@ brainstorming-video-idea
   → writing-plans
   → executing-video-plan
       → [music / script / storyboard]
-      → production-pipeline        ← breakdown → extraction → shot-detail → consistency
+      → running-video-production-pipeline ← breakdown → extraction → shot details → consistency
       → [video generation per scene]
-      → mv-compilation
+      → compiling-video
   → retention-driven-development   ← simulate 100 viewers, replace weak scenes
   → requesting-video-review
 ```
@@ -100,7 +100,7 @@ Violyra is designed to be loaded as a plugin by your AI coding agent:
 | Windsurf | `.windsurf/INSTALL.md` |
 | Aider | `.aider/INSTALL.md` |
 
-Once installed, tell your agent to use any skill by name — e.g. `use the production-pipeline skill` — and it will follow the `SKILL.md` instructions directly.
+Once installed, tell your agent to use any skill by name — e.g. `use the running-video-production-pipeline skill` — and it will follow the `SKILL.md` instructions directly.
 
 ### Run tests
 
@@ -133,10 +133,10 @@ description: Use when... <triggering conditions, max ~200 chars>
 ---
 ```
 
-Scripts always run through dotenv to load `.env`:
+Scripts read environment variables from `.env`:
 
 ```bash
-pnpm exec dotenv -- node skills/<skill-name>/scripts/<action>.js --help
+source .env && node skills/<skill-name>/scripts/<action>.js --help
 ```
 
 See [`docs/design.md`](docs/design.md) for the full skill library and [`docs/design-docs/2026-03-27-production-pipeline-design.md`](docs/design-docs/2026-03-27-production-pipeline-design.md) for production pipeline schemas, data flow, and script CLI contracts.

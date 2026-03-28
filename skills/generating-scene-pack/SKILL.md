@@ -10,12 +10,12 @@ Manages global location/environment references. A scene pack captures the visual
 ## Subcommands
 
 ```bash
-pnpm exec dotenv -- node skills/generating-scene-pack/scripts/scene-pack.js <subcommand> [options]
+source .env && node skills/generating-scene-pack/scripts/scene-pack.js <subcommand> [options]
 ```
 
 ### create
 ```bash
-pnpm exec dotenv -- node skills/generating-scene-pack/scripts/scene-pack.js create \
+source .env && node skills/generating-scene-pack/scripts/scene-pack.js create \
   --base-dir assets/ --name "Rooftop at Sunset" \
   --description "Urban rooftop, haze, golden hour light, graffiti walls" \
   --tags '["exterior","urban","dusk"]'
