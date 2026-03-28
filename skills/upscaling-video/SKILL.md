@@ -7,7 +7,7 @@ description: Upscale local scene clips with Replicate topazlabs/video-upscale. U
 
 Use this skill for deterministic scene upscaling before final compilation.
 
-Always run commands through dotenv so `REPLICATE_API_TOKEN` is loaded:
+Source `.env` so `REPLICATE_API_TOKEN` is loaded:
 `source .env && <command>`
 
 ## Upscale One Clip

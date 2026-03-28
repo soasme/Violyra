@@ -34,7 +34,7 @@ All non-utility skills use the pattern `<gerund>-<object>` (e.g., `aligning-lyri
 | `extract-foreground` | `extracting-foreground` |
 | `generate-thumbnail` | `generating-thumbnail` |
 | `consistency-check` | `checking-consistency` |
-| `production-pipeline` | `running-production-pipeline` |
+| `production-pipeline` | `running-video-production-pipeline` |
 | `seedance15-generate` | `generating-seedance15-video` |
 | `seedance15-prompt-writer` | `writing-seedance15-prompt` |
 

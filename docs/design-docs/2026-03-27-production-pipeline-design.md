@@ -63,11 +63,11 @@ Five skills whose SKILL.md files instruct any agent on what to reason about and 
 | `extracting-video-entities` | Shot list → populate packs | `shot-list.json` | pack files, `extraction-report.json` |
 | `enriching-shot-details` | Enrich shots with cinematic parameters | `shot-list.json`, `extraction-report.json`, `shot-details.json` (existing, optional) | `shot-details.json` |
 | `checking-consistency` | Detect entity/style drift across shots | `shot-list.json`, `shot-details.json`, `extraction-report.json`, packs | `consistency-report.json` |
-| `running-production-pipeline` | Orchestrate reasoning skills for a chapter | any text or existing chapter | all reasoning skill outputs |
+| `running-video-production-pipeline` | Orchestrate reasoning skills for a chapter | any text or existing chapter | all reasoning skill outputs |
 
 ### Full Pipeline Skills
 
-Two skills that wire the complete end-to-end workflow for a specific production type. Each invokes `running-production-pipeline` internally as the chapter-level orchestrator.
+Two skills that wire the complete end-to-end workflow for a specific production type. Each invokes `running-video-production-pipeline` internally as the chapter-level orchestrator.
 
 | Skill | Purpose |
 |---|---|
@@ -150,7 +150,7 @@ skills/
     scripts/
       validate-consistency-report.js
       validate-consistency-report.__test__.js
-  running-production-pipeline/
+  running-video-production-pipeline/
     SKILL.md
     references/
       workflow.md
@@ -709,9 +709,9 @@ What to do if a step fails or produces unexpected results.
 
 ---
 
-## `running-production-pipeline/references/workflow.md` Format
+## `running-video-production-pipeline/references/workflow.md` Format
 
-This file is a numbered checklist used by the `running-production-pipeline` skill SKILL.md. Format:
+This file is a numbered checklist used by the `running-video-production-pipeline` skill SKILL.md. Format:
 
 ```markdown
 # Chapter Production Workflow
@@ -794,7 +794,7 @@ brainstorming-video-idea
       → generating-song
       → aligning-lyrics
       → writing-video-plan            ← produces storyboard.json
-      → running-production-pipeline
+      → running-video-production-pipeline
           → breaking-down-video-script  ← agent provides storyboard.json content as raw text input
           → extracting-video-entities
           → enriching-shot-details
@@ -813,7 +813,7 @@ brainstorming-video-idea
   → setup-video-project
   → writing-plans
   → executing-video-plan
-      → running-production-pipeline
+      → running-video-production-pipeline
           → breaking-down-video-script
           → extracting-video-entities
           → enriching-shot-details
@@ -879,9 +879,9 @@ When `extracting-video-entities` runs again on the same chapter (e.g. after the 
 
 Characters and global assets (actors, scenes, props, costumes) live at the project level (`<base-dir>/characters/` and `<base-dir>/global/`), not inside chapter directories. All chapters in a project share the same pack files. When two chapters reference the same character name, `extracting-video-entities` reuses the same pack ID (via the fuzzy name match above). This is the mechanism for cross-chapter consistency.
 
-### `running-production-pipeline/references/workflow.md`
+### `running-video-production-pipeline/references/workflow.md`
 
-This file must be created as part of implementing the `running-production-pipeline` skill. It is a numbered step checklist (format defined in the `running-production-pipeline/references/workflow.md Format` section above) committed at `skills/running-production-pipeline/references/workflow.md`. The `running-production-pipeline` SKILL.md references it directly.
+This file must be created as part of implementing the `running-video-production-pipeline` skill. It is a numbered step checklist (format defined in the `running-video-production-pipeline/references/workflow.md Format` section above) committed at `skills/running-video-production-pipeline/references/workflow.md`. The `running-video-production-pipeline` SKILL.md references it directly.
 
 ---
 

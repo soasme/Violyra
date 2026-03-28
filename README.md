@@ -18,7 +18,7 @@ brainstorming-video-idea
   → writing-plans
   → executing-video-plan
       → [music / script / storyboard]
-      → running-production-pipeline ← breakdown → extraction → shot details → consistency
+      → running-video-production-pipeline ← breakdown → extraction → shot details → consistency
       → [video generation per scene]
       → compiling-video
   → retention-driven-development   ← simulate 100 viewers, replace weak scenes
@@ -100,7 +100,7 @@ Violyra is designed to be loaded as a plugin by your AI coding agent:
 | Windsurf | `.windsurf/INSTALL.md` |
 | Aider | `.aider/INSTALL.md` |
 
-Once installed, tell your agent to use any skill by name — e.g. `use the running-production-pipeline skill` — and it will follow the `SKILL.md` instructions directly.
+Once installed, tell your agent to use any skill by name — e.g. `use the running-video-production-pipeline skill` — and it will follow the `SKILL.md` instructions directly.
 
 ### Run tests
 

@@ -35,7 +35,7 @@ Prototyping example:
 `espeak-ng -v en-us -s 165 -w draft.wav "Your script text"`
 
 Cloud example (requires `REPLICATE_API_TOKEN`):
-`REPLICATE_API_TOKEN=<token> node .agent/skills/generating-voiceover/scripts/chatterbox_tts.js --prompt "Your script text" --output narration.wav --audio-ref ref.wav`
+`REPLICATE_API_TOKEN=<token> node .agents/skills/generating-voiceover/scripts/chatterbox_tts.js --prompt "Your script text" --output narration.wav --audio-ref ref.wav`
 
 Cleanup guidance:
 

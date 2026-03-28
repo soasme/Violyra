@@ -1,5 +1,5 @@
 ---
-name: running-production-pipeline
+name: running-video-production-pipeline
 description: Use when orchestrating breaking-down-video-script → extracting-video-entities → enriching-shot-details → checking-consistency for a chapter. Runs all four reasoning skills in sequence.
 ---
 
@@ -15,7 +15,7 @@ Orchestrates the four reasoning skills for a single chapter. Call this skill ins
 
 ## Workflow
 
-Follow `skills/running-production-pipeline/references/workflow.md` step by step.
+Follow `skills/running-video-production-pipeline/references/workflow.md` step by step.
 
 ## Output
 

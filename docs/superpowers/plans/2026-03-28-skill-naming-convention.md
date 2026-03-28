@@ -28,7 +28,7 @@
 | `skills/extract-foreground` | `skills/extracting-foreground` |
 | `skills/generate-thumbnail` | `skills/generating-thumbnail` |
 | `skills/consistency-check` | `skills/checking-consistency` |
-| `skills/production-pipeline` | `skills/running-production-pipeline` |
+| `skills/production-pipeline` | `skills/running-video-production-pipeline` |
 | `skills/seedance15-generate` | `skills/generating-seedance15-video` |
 | `skills/seedance15-prompt-writer` | `skills/writing-seedance15-prompt` |
 
@@ -58,7 +58,7 @@ All 15 renamed skills' SKILL.md files need `name:` updated. Additionally:
 - `skills/downloading-youtube-video/SKILL.md` — path references to old names
 
 **Production pipeline references file:**
-- `skills/running-production-pipeline/references/workflow.md` — all 4 skill name references + dotenv strings
+- `skills/running-video-production-pipeline/references/workflow.md` — all 4 skill name references + dotenv strings
 
 **Docs files with old skill name references:**
 - `docs/design.md`
@@ -96,7 +96,7 @@ git mv skills/download-youtube-video skills/downloading-youtube-video
 git mv skills/extract-foreground skills/extracting-foreground
 git mv skills/generate-thumbnail skills/generating-thumbnail
 git mv skills/consistency-check skills/checking-consistency
-git mv skills/production-pipeline skills/running-production-pipeline
+git mv skills/production-pipeline skills/running-video-production-pipeline
 git mv skills/seedance15-generate skills/generating-seedance15-video
 git mv skills/seedance15-prompt-writer skills/writing-seedance15-prompt
 ```
@@ -107,7 +107,7 @@ git mv skills/seedance15-prompt-writer skills/writing-seedance15-prompt
 ls skills/ | sort
 ```
 
-Expected output includes: `aligning-lyrics`, `breaking-down-video-script`, `checking-consistency`, `compiling-video`, `downloading-youtube-video`, `enriching-shot-details`, `extracting-foreground`, `extracting-video-entities`, `generating-seedance15-video`, `generating-thumbnail`, `generating-voiceover`, `running-production-pipeline`, `upscaling-video`, `writing-seedance15-prompt`, `writing-video-plan`
+Expected output includes: `aligning-lyrics`, `breaking-down-video-script`, `checking-consistency`, `compiling-video`, `downloading-youtube-video`, `enriching-shot-details`, `extracting-foreground`, `extracting-video-entities`, `generating-seedance15-video`, `generating-thumbnail`, `generating-voiceover`, `running-video-production-pipeline`, `upscaling-video`, `writing-seedance15-prompt`, `writing-video-plan`
 
 - [ ] **Step 3: Commit**
 
@@ -138,7 +138,7 @@ In each file, change the `name:` frontmatter to match the new directory name:
 `skills/extracting-foreground/SKILL.md`: `name: extracting-foreground`
 `skills/generating-thumbnail/SKILL.md`: `name: generating-thumbnail`
 `skills/checking-consistency/SKILL.md`: `name: checking-consistency`
-`skills/running-production-pipeline/SKILL.md`: `name: running-production-pipeline`
+`skills/running-video-production-pipeline/SKILL.md`: `name: running-video-production-pipeline`
 `skills/generating-seedance15-video/SKILL.md`: `name: generating-seedance15-video`
 `skills/writing-seedance15-prompt/SKILL.md`: `name: writing-seedance15-prompt`
 
@@ -151,7 +151,7 @@ git add skills/generating-voiceover/SKILL.md skills/aligning-lyrics/SKILL.md \
   skills/compiling-video/SKILL.md skills/upscaling-video/SKILL.md \
   skills/downloading-youtube-video/SKILL.md skills/extracting-foreground/SKILL.md \
   skills/generating-thumbnail/SKILL.md skills/checking-consistency/SKILL.md \
-  skills/running-production-pipeline/SKILL.md skills/generating-seedance15-video/SKILL.md \
+  skills/running-video-production-pipeline/SKILL.md skills/generating-seedance15-video/SKILL.md \
   skills/writing-seedance15-prompt/SKILL.md
 git commit -m "refactor: update SKILL.md name fields to match new directory names"
 ```
@@ -382,19 +382,19 @@ git commit -m "refactor: update SKILL.md path references to new skill directory 
 
 ---
 
-### Task 6: Update running-production-pipeline references
+### Task 6: Update running-video-production-pipeline references
 
 **Files:**
-- Modify: `skills/running-production-pipeline/SKILL.md`
-- Modify: `skills/running-production-pipeline/references/workflow.md`
+- Modify: `skills/running-video-production-pipeline/SKILL.md`
+- Modify: `skills/running-video-production-pipeline/references/workflow.md`
 
-- [ ] **Step 1: Update `skills/running-production-pipeline/SKILL.md`**
+- [ ] **Step 1: Update `skills/running-video-production-pipeline/SKILL.md`**
 
 Replace:
 - `script-breakdown → entity-extraction → shot-detail → consistency-check` → `breaking-down-video-script → extracting-video-entities → enriching-shot-details → checking-consistency`
-- `skills/production-pipeline/references/workflow.md` → `skills/running-production-pipeline/references/workflow.md`
+- `skills/production-pipeline/references/workflow.md` → `skills/running-video-production-pipeline/references/workflow.md`
 
-- [ ] **Step 2: Update `skills/running-production-pipeline/references/workflow.md`**
+- [ ] **Step 2: Update `skills/running-video-production-pipeline/references/workflow.md`**
 
 Replace all occurrences:
 - `script-breakdown` → `breaking-down-video-script`
@@ -406,8 +406,8 @@ Replace all occurrences:
 - [ ] **Step 3: Commit**
 
 ```bash
-git add skills/running-production-pipeline/SKILL.md \
-  skills/running-production-pipeline/references/workflow.md
+git add skills/running-video-production-pipeline/SKILL.md \
+  skills/running-video-production-pipeline/references/workflow.md
 git commit -m "refactor: update production-pipeline skill name references and dotenv usage strings"
 ```
 
@@ -465,7 +465,7 @@ Replace all old skill names with new names in the skills table and the workflow 
 - `entity-extraction` → `extracting-video-entities`
 - `shot-detail` → `enriching-shot-details`
 - `consistency-check` → `checking-consistency`
-- `production-pipeline` → `running-production-pipeline`
+- `production-pipeline` → `running-video-production-pipeline`
 - `mv-storyboard-writer` → `writing-video-plan`
 - `seedance15-prompt-writer` → `writing-seedance15-prompt`
 - `seedance15-generate` → `generating-seedance15-video`

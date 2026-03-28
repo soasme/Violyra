@@ -15,7 +15,7 @@ The script handles:
 4. Frame fitting to target output resolution (default `1920x1080`).
 5. Scene concatenation and full-song audio mux.
 
-Always run commands through dotenv:
+Source `.env` so environment variables are loaded:
 `source .env && <command>`
 
 ## Compile Full Song

@@ -7,7 +7,7 @@ description: Generate scene MP4 files from storyboard JSON using Replicate byted
 
 Use `scripts/generate.js` to run `bytedance/seedance-1.5-pro` via Replicate and download scene videos locally.
 
-Always run commands through dotenv so `REPLICATE_API_TOKEN` is loaded from `.env`:
+Source `.env` so `REPLICATE_API_TOKEN` is loaded:
 `source .env && <command>`
 
 ## Workflow

@@ -73,7 +73,7 @@ violyra/
 | `extracting-video-entities` | To extract characters, scenes, and props from a shot list and populate asset packs. |
 | `enriching-shot-details` | To enrich shots with cinematic parameters (framing, angle, movement, mood, frame prompts). |
 | `checking-consistency` | To detect character/scene drift across shots and produce a consistency report. |
-| `running-production-pipeline` | To orchestrate breaking-down-video-script → extracting-video-entities → enriching-shot-details → checking-consistency for a chapter. |
+| `running-video-production-pipeline` | To orchestrate breaking-down-video-script → extracting-video-entities → enriching-shot-details → checking-consistency for a chapter. |
 
 ### Video Generation Skills
 
@@ -118,7 +118,7 @@ brainstorming-video-idea      ← define concept, style, characters
       → generating-song
       → aligning-lyrics
       → writing-video-plan
-      → running-production-pipeline   ← breakdown → extraction → shot details → consistency
+      → running-video-production-pipeline   ← breakdown → extraction → shot details → consistency
       → writing-seedance15-prompt
       → generating-seedance15-video   ← per scene
       → upscaling-video         ← optional
@@ -133,7 +133,7 @@ brainstorming-video-idea      ← define story, characters, visual style
   → setup-video-project       ← create workspace, initialize project.json
   → writing-plans             ← break production into tasks
   → executing-video-plan      ← dispatch subagents per task with two-stage review
-      → running-production-pipeline   ← breakdown → extraction → shot details → consistency
+      → running-video-production-pipeline   ← breakdown → extraction → shot details → consistency
       → [image/video generation per shot]
       → [post-production assembly]
   → retention-driven-development ← simulate audience, replace weak scenes

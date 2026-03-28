@@ -7,7 +7,7 @@ description: Generate YouTube thumbnail images with Replicate google/nano-banana
 
 Use `scripts/generate.js` to call Replicate `google/nano-banana-pro` and save a local thumbnail image.
 
-Always run commands through dotenv so `REPLICATE_API_TOKEN` is loaded:
+Source `.env` so `REPLICATE_API_TOKEN` is loaded:
 `source .env && <command>`
 
 ## Workflow

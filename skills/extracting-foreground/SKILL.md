@@ -8,4 +8,4 @@ description: Remove image backgrounds and produce transparent PNG outputs with R
 Use `scripts/extract.js` to remove image backgrounds.
 
 Run:
-`REPLICATE_API_TOKEN=<token> node .agent/skills/extracting-foreground/scripts/extract.js --input <input-image> --output <output-image>`
+`REPLICATE_API_TOKEN=<token> node .agents/skills/extracting-foreground/scripts/extract.js --input <input-image> --output <output-image>`
