@@ -18,7 +18,7 @@ import {
   waitForPrediction,
 } from "./upscale.js";
 
-describe(".agents/skills/video-upscale/scripts/upscale.js", () => {
+describe(".agents/skills/upscaling-video/scripts/upscale.js", () => {
   describe("parseTargetResolution", () => {
     it("accepts supported target resolutions", () => {
       for (const value of ALLOWED_TARGET_RESOLUTIONS) {

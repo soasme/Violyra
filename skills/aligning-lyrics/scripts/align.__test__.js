@@ -30,7 +30,7 @@ function makeRecognizedWords(text) {
   }));
 }
 
-describe(".agents/skills/lyrics-force-alignment/scripts/align.js", () => {
+describe(".agents/skills/aligning-lyrics/scripts/align.js", () => {
   describe("normalizeWord", () => {
     it("normalizes case, apostrophes, and punctuation", () => {
       expect(

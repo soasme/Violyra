@@ -8,7 +8,7 @@ import {
   shouldUpscale,
 } from "./compile.js";
 
-describe(".agents/skills/mv-compilation/scripts/compile.js", () => {
+describe(".agents/skills/compiling-video/scripts/compile.js", () => {
   describe("buildDefaultOutputPath", () => {
     it("builds default output filename from song path", () => {
       expect(buildDefaultOutputPath("assets/song.mp3")).toBe(

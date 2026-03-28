@@ -1,4 +1,4 @@
-// skills/entity-extraction/scripts/validate-extraction-report.js
+// skills/extracting-video-entities/scripts/validate-extraction-report.js
 import { readFileSync } from 'node:fs'
 import { parseArgs } from 'node:util'
 

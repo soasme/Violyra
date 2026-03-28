@@ -1,4 +1,4 @@
-// skills/shot-detail/scripts/validate-shot-details.js
+// skills/enriching-shot-details/scripts/validate-shot-details.js
 import { readFileSync } from 'node:fs'
 import { parseArgs } from 'node:util'
 

@@ -1,4 +1,4 @@
-// skills/consistency-check/scripts/validate-consistency-report.js
+// skills/checking-consistency/scripts/validate-consistency-report.js
 import { readFileSync } from 'node:fs'
 import { parseArgs } from 'node:util'
 

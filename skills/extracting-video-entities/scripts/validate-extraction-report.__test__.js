@@ -1,4 +1,4 @@
-// skills/entity-extraction/scripts/validate-extraction-report.__test__.js
+// skills/extracting-video-entities/scripts/validate-extraction-report.__test__.js
 import { it, expect, beforeEach, afterEach } from 'vitest'
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'

@@ -1,4 +1,4 @@
-// skills/script-breakdown/scripts/validate-shot-list.js
+// skills/breaking-down-video-script/scripts/validate-shot-list.js
 import { readFileSync } from 'node:fs'
 import { parseArgs } from 'node:util'
 

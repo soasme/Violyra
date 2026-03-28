@@ -26,7 +26,7 @@ import {
   splitScenesByCachedManifest,
 } from "./generate.js";
 
-describe(".agents/skills/seedance15-generate/scripts/generate.js", () => {
+describe(".agents/skills/generating-seedance15-video/scripts/generate.js", () => {
   describe("createPrediction", () => {
     it("posts prompt to the Seedance model endpoint with Prefer: wait", async () => {
       const previousFetch = global.fetch;

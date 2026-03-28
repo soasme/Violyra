@@ -13,7 +13,7 @@ import {
   resolveImageInput,
 } from "./generate.js";
 
-describe(".agents/skills/youtube-thumbnail-generator/scripts/generate.js", () => {
+describe(".agents/skills/generating-thumbnail/scripts/generate.js", () => {
   describe("parseImageInputs", () => {
     it("returns empty array when image is omitted", () => {
       expect(parseImageInputs(undefined)).toEqual([]);

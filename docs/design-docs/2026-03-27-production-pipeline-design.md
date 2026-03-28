@@ -618,7 +618,7 @@ Consistency check reads `shot-list.json` + `shot-details.json` + `extraction-rep
 Every pack management script follows this interface:
 
 ```bash
-pnpm exec dotenv -- node skills/<skill-name>/scripts/<entity-name>.js <subcommand> [options]
+source .env && node skills/<skill-name>/scripts/<entity-name>.js <subcommand> [options]
 
 # Subcommands (all packs)
 create   --base-dir <path> --name <str> [--description <str>] [--tags <json-array>]
@@ -658,7 +658,7 @@ Output is always a JSON object to stdout. Errors go to stderr with a non-zero ex
 Reasoning skill validator scripts follow:
 
 ```bash
-pnpm exec dotenv -- node skills/<skill-name>/scripts/validate-<file>.js --file <path>
+source .env && node skills/<skill-name>/scripts/validate-<file>.js --file <path>
 ```
 
 Exits 0 on valid, 1 on invalid (with error details to stderr).

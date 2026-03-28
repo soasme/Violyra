@@ -1,4 +1,4 @@
-// skills/script-breakdown/scripts/validate-shot-list.__test__.js
+// skills/breaking-down-video-script/scripts/validate-shot-list.__test__.js
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'

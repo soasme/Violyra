@@ -1,4 +1,4 @@
-// skills/consistency-check/scripts/validate-consistency-report.__test__.js
+// skills/checking-consistency/scripts/validate-consistency-report.__test__.js
 import { it, expect, beforeEach, afterEach } from 'vitest'
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
