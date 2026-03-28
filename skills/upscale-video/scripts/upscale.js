@@ -1,22 +1,23 @@
 #!/usr/bin/env node
 
-const { access, mkdir, readFile, writeFile } = require("node:fs/promises");
-const { constants } = require("node:fs");
-const { basename, dirname, extname } = require("node:path");
-const { parseArgs } = require("node:util");
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
+import { constants } from "node:fs";
+import { basename, dirname, extname } from "node:path";
+import { parseArgs } from "node:util";
+import { fileURLToPath } from "node:url";
 
 const CLI_SCRIPT_PATH = ".agents/skills/video-upscale/scripts/upscale.js";
-const MODEL_ID = "topazlabs/video-upscale";
+export const MODEL_ID = "topazlabs/video-upscale";
 const REPLICATE_API_BASE = "https://api.replicate.com/v1";
-const MODEL_PREDICTIONS_URL = `${REPLICATE_API_BASE}/models/${MODEL_ID}/predictions`;
-const REPLICATE_FILES_URL = `${REPLICATE_API_BASE}/files`;
+export const MODEL_PREDICTIONS_URL = `${REPLICATE_API_BASE}/models/${MODEL_ID}/predictions`;
+export const REPLICATE_FILES_URL = `${REPLICATE_API_BASE}/files`;
 
-const DEFAULT_TARGET_RESOLUTION = "1080p";
-const ALLOWED_TARGET_RESOLUTIONS = new Set(["720p", "1080p", "4k"]);
-const DEFAULT_TARGET_FPS = 24;
-const MIN_TARGET_FPS = 15;
-const MAX_TARGET_FPS = 120;
-const DEFAULT_POLL_INTERVAL_MS = 1000;
+export const DEFAULT_TARGET_RESOLUTION = "1080p";
+export const ALLOWED_TARGET_RESOLUTIONS = new Set(["720p", "1080p", "4k"]);
+export const DEFAULT_TARGET_FPS = 24;
+export const MIN_TARGET_FPS = 15;
+export const MAX_TARGET_FPS = 120;
+export const DEFAULT_POLL_INTERVAL_MS = 1000;
 
 const TERMINAL_PREDICTION_STATUSES = new Set(["succeeded", "failed", "canceled"]);
 
@@ -34,11 +35,11 @@ Options:
 `);
 }
 
-function sleep(ms) {
+export function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function isHttpUrl(value) {
+export function isHttpUrl(value) {
   if (typeof value !== "string") {
     return false;
   }
@@ -50,11 +51,11 @@ function isHttpUrl(value) {
   }
 }
 
-function isDataUri(value) {
+export function isDataUri(value) {
   return typeof value === "string" && value.startsWith("data:");
 }
 
-function parseIntegerInRange(rawValue, optionName, min, max, fallback) {
+export function parseIntegerInRange(rawValue, optionName, min, max, fallback) {
   if (rawValue === undefined || rawValue === null || rawValue === "") {
     return fallback;
   }
@@ -68,7 +69,7 @@ function parseIntegerInRange(rawValue, optionName, min, max, fallback) {
   return parsed;
 }
 
-function parseTargetResolution(rawValue) {
+export function parseTargetResolution(rawValue) {
   const value = rawValue || DEFAULT_TARGET_RESOLUTION;
   if (!ALLOWED_TARGET_RESOLUTIONS.has(value)) {
     throw new Error(
@@ -80,7 +81,7 @@ function parseTargetResolution(rawValue) {
   return value;
 }
 
-function getMimeType(filePath) {
+export function getMimeType(filePath) {
   const ext = extname(filePath).toLowerCase();
   const mimeByExtension = {
     ".mp4": "video/mp4",
@@ -93,7 +94,7 @@ function getMimeType(filePath) {
   return mimeByExtension[ext] || "application/octet-stream";
 }
 
-async function assertReadableFile(filePath, optionName) {
+export async function assertReadableFile(filePath, optionName) {
   try {
     await access(filePath, constants.R_OK);
   } catch (error) {
@@ -102,11 +103,11 @@ async function assertReadableFile(filePath, optionName) {
   }
 }
 
-async function ensureParentDirectory(filePath) {
+export async function ensureParentDirectory(filePath) {
   await mkdir(dirname(filePath), { recursive: true });
 }
 
-function buildDefaultOutputPath(inputValue) {
+export function buildDefaultOutputPath(inputValue) {
   if (isHttpUrl(inputValue) || isDataUri(inputValue)) {
     return "assets/upscaled.mp4";
   }
@@ -119,7 +120,7 @@ function buildDefaultOutputPath(inputValue) {
   return `${inputValue.slice(0, -extension.length)}.upscaled${extension}`;
 }
 
-async function uploadFileToReplicate(filePath, apiToken) {
+export async function uploadFileToReplicate(filePath, apiToken) {
   let fileContent;
   try {
     fileContent = await readFile(filePath);
@@ -156,7 +157,7 @@ async function uploadFileToReplicate(filePath, apiToken) {
   return uploadedUrl;
 }
 
-async function resolveVideoInput(videoInput, apiToken) {
+export async function resolveVideoInput(videoInput, apiToken) {
   if (!videoInput) {
     throw new Error("--input is required");
   }
@@ -169,7 +170,7 @@ async function resolveVideoInput(videoInput, apiToken) {
   return uploadFileToReplicate(videoInput, apiToken);
 }
 
-function extractOutputUrl(output) {
+export function extractOutputUrl(output) {
   if (typeof output === "string") {
     return output;
   }
@@ -182,7 +183,7 @@ function extractOutputUrl(output) {
   return null;
 }
 
-async function createPrediction({ input, apiToken }) {
+export async function createPrediction({ input, apiToken }) {
   const response = await fetch(MODEL_PREDICTIONS_URL, {
     method: "POST",
     headers: {
@@ -200,7 +201,7 @@ async function createPrediction({ input, apiToken }) {
   return response.json();
 }
 
-async function waitForPrediction(predictionUrl, apiToken, pollIntervalMs) {
+export async function waitForPrediction(predictionUrl, apiToken, pollIntervalMs) {
   let prediction = { status: "starting", output: null, error: null };
 
   while (!TERMINAL_PREDICTION_STATUSES.has(prediction.status)) {
@@ -227,7 +228,7 @@ async function waitForPrediction(predictionUrl, apiToken, pollIntervalMs) {
   return prediction;
 }
 
-async function downloadToFile(url, outputPath) {
+export async function downloadToFile(url, outputPath) {
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Error downloading upscaled video: ${response.status} ${response.statusText}`);
@@ -238,7 +239,7 @@ async function downloadToFile(url, outputPath) {
   await writeFile(outputPath, Buffer.from(outputBuffer));
 }
 
-async function upscaleVideo({
+export async function upscaleVideo({
   inputPath,
   outputPath,
   targetResolution = DEFAULT_TARGET_RESOLUTION,
@@ -286,7 +287,7 @@ async function upscaleVideo({
   };
 }
 
-async function main() {
+export async function main() {
   const { values } = parseArgs({
     options: {
       input: { type: "string", short: "i" },
@@ -348,37 +349,9 @@ async function main() {
   console.log(`[3/3] Output URL: ${result.outputUrl}`);
 }
 
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch((error) => {
     console.error(error instanceof Error ? error.message : error);
     process.exit(1);
   });
 }
-
-module.exports = {
-  ALLOWED_TARGET_RESOLUTIONS,
-  DEFAULT_POLL_INTERVAL_MS,
-  DEFAULT_TARGET_FPS,
-  DEFAULT_TARGET_RESOLUTION,
-  MAX_TARGET_FPS,
-  MIN_TARGET_FPS,
-  MODEL_ID,
-  MODEL_PREDICTIONS_URL,
-  REPLICATE_FILES_URL,
-  buildDefaultOutputPath,
-  createPrediction,
-  downloadToFile,
-  extractOutputUrl,
-  getMimeType,
-  isDataUri,
-  isHttpUrl,
-  main,
-  parseIntegerInRange,
-  parseTargetResolution,
-  resolveVideoInput,
-  sleep,
-  upscaleVideo,
-  uploadFileToReplicate,
-  waitForPrediction,
-};
-

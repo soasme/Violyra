@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-const { readFile, writeFile } = require("node:fs/promises");
-const { extname } = require("node:path");
-const { parseArgs } = require("node:util");
+import { readFile, writeFile } from "node:fs/promises";
+import { extname } from "node:path";
+import { parseArgs } from "node:util";
+import { fileURLToPath } from "node:url";
 
 const CHATTERBOX_API_URL =
   "https://api.replicate.com/v1/models/resemble-ai/chatterbox/predictions";
@@ -180,14 +181,14 @@ async function main() {
   });
 }
 
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch((error) => {
     console.error(error instanceof Error ? error.message : error);
     process.exit(1);
   });
 }
 
-module.exports = {
+export {
   CHATTERBOX_API_URL,
   DEFAULT_POLL_INTERVAL_MS,
   generateTts,

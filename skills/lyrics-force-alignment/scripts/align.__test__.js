@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-
-const {
+import {
   alignWordSequences,
   buildApproximateSegments,
   buildLrc,
@@ -11,7 +10,7 @@ const {
   normalizeWord,
   reconstructWordTimings,
   tokenSimilarity,
-} = require("./align.js");
+} from "./align.js";
 
 function makeLyricWords(text) {
   return text.split(/\s+/).map((word, index) => ({

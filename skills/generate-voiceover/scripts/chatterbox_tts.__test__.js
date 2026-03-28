@@ -3,13 +3,13 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { describe, it, expect, vi } from "vitest";
 
-const {
+import {
   CHATTERBOX_API_URL,
   generateTts,
   getAudioMimeType,
   main,
   waitForPrediction,
-} = require("./chatterbox_tts.js");
+} from "./chatterbox_tts.js";
 
 describe("chatterbox_tts.js", () => {
   describe("getAudioMimeType", () => {

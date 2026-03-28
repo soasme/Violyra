@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { describe, expect, it, vi } from "vitest";
 
-const {
+import {
   buildModelInputOptions,
   buildDefaultOutputPath,
   DEFAULT_ASPECT_RATIO,
@@ -24,7 +24,7 @@ const {
   resolveImageInput,
   selectScenes,
   splitScenesByCachedManifest,
-} = require("./generate.js");
+} from "./generate.js";
 
 describe(".agents/skills/seedance15-generate/scripts/generate.js", () => {
   describe("createPrediction", () => {

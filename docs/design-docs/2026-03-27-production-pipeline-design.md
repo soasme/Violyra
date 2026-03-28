@@ -29,7 +29,7 @@ The **workflow skills** (`brainstorming-video-idea`, `setup-video-project`, `wri
 
 ### Workflow Skills
 
-Six skills that govern the production process end-to-end. These are pure SKILL.md instructions — no scripts, no file I/O ownership. They mirror software development best practices (spec before code, review before merge, tasks before execution) applied to video production.
+Six skills that govern the production process end-to-end. They mirror software development best practices (spec before code, review before merge, tasks before execution) applied to video production. Scripts are allowed where useful — workflow skills are not restricted to pure SKILL.md instructions.
 
 | Skill | When to use |
 |---|---|

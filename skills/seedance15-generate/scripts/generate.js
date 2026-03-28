@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-const { mkdir, readFile, writeFile } = require("node:fs/promises");
-const { basename, dirname, extname, join } = require("node:path");
-const { parseArgs } = require("node:util");
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { basename, dirname, extname, join } from "node:path";
+import { parseArgs } from "node:util";
+import { fileURLToPath } from "node:url";
 
 const MODEL_ID = "bytedance/seedance-1.5-pro";
 const MODEL_PREDICTIONS_URL = `https://api.replicate.com/v1/models/${MODEL_ID}/predictions`;
@@ -700,14 +701,14 @@ async function main() {
   console.log(`Saved: ${outputPath}`);
 }
 
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch((error) => {
     console.error(error instanceof Error ? error.message : error);
     process.exit(1);
   });
 }
 
-module.exports = {
+export {
   DEFAULT_INPUT_PATH,
   DEFAULT_OUTPUT_PATH,
   DEFAULT_SCENES_DIR,

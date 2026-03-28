@@ -1,13 +1,12 @@
 import { describe, expect, it } from "vitest";
-
-const {
+import {
   buildDefaultOutputPath,
   buildFrameFilter,
   buildManifestOutputUrlMap,
   computeSceneTimings,
   parseFitMode,
   shouldUpscale,
-} = require("./compile.js");
+} from "./compile.js";
 
 describe(".agents/skills/mv-compilation/scripts/compile.js", () => {
   describe("buildDefaultOutputPath", () => {
