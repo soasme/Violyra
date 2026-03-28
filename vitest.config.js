@@ -11,7 +11,6 @@ export default defineConfig({
       '**/packages/**',
       // Pre-existing POC skills using CJS require() — not yet migrated to ESM
       'skills/generate-thumbnail/**',
-      'skills/generate-voiceover/**',
       'skills/mv-compilation/**',
       'skills/lyrics-force-alignment/**',
       'skills/seedance15-generate/**',
