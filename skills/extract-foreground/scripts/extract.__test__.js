@@ -4,12 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { vi } from "vitest";
 
-const {
-  getMimeType,
-  main,
-  MODEL_VERSION,
-  REPLICATE_API_URL,
-} = require("./extract.js");
+import { getMimeType, main, MODEL_VERSION, REPLICATE_API_URL } from "./extract.js";
 
 describe("extract.js", () => {
   describe("getMimeType", () => {

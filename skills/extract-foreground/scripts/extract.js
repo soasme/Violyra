@@ -12,9 +12,10 @@
  *   node .agent/skills/transparent-image/scripts/extract.js --input public/bicycle.png --output public/bicycle-transparent.png
  */
 
-const { parseArgs } = require("node:util");
-const { readFile, writeFile } = require("node:fs/promises");
-const { extname } = require("node:path");
+import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
+import { readFile, writeFile } from "node:fs/promises";
+import { extname } from "node:path";
 
 const REPLICATE_API_URL = "https://api.replicate.com/v1/predictions";
 const MODEL_VERSION =
@@ -132,16 +133,11 @@ async function main() {
   console.log(`Saved to: ${outputValue}`);
 }
 
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main().catch((error) => {
     console.error(error);
     process.exit(1);
   });
 }
 
-module.exports = {
-  getMimeType,
-  main,
-  MODEL_VERSION,
-  REPLICATE_API_URL,
-};
+export { getMimeType, main, MODEL_VERSION, REPLICATE_API_URL };
