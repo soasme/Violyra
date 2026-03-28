@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { describe, expect, it, vi } from "vitest";
 
-const {
+import {
   ALLOWED_TARGET_RESOLUTIONS,
   DEFAULT_TARGET_FPS,
   MODEL_PREDICTIONS_URL,
@@ -16,7 +16,7 @@ const {
   resolveVideoInput,
   upscaleVideo,
   waitForPrediction,
-} = require("./upscale.js");
+} from "./upscale.js";
 
 describe(".agents/skills/video-upscale/scripts/upscale.js", () => {
   describe("parseTargetResolution", () => {
