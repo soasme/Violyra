@@ -21,6 +21,10 @@ Every `skills/<skill-name>/SKILL.md` must:
 - Have a `name` field that matches the directory name exactly
 - End with a `## Logging` section (see `skills/lib/logging-guide.md`)
 
+**Frontmatter constraints:**
+- Values must be unquoted plain scalars (e.g., `name: writing-video-plan`, not `name: "writing-video-plan"`). The linter's YAML parser does not support quoted values or block scalars.
+- The `## Logging` section must not contain any sub-sections (`###` headings or deeper). It is a terminal flat section.
+
 ## Script Requirements
 
 Every script added to `skills/<skill-name>/scripts/` must:

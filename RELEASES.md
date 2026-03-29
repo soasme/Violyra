@@ -12,7 +12,7 @@
 
 **Observability**
 - `skills/lib/logging-guide.md` — canonical JSONL schema for production logs
-- All 33 existing `SKILL.md` files updated with a `## Logging` section specifying per-skill inputs/outputs
+- All 33 pre-existing `SKILL.md` files updated with a `## Logging` section specifying per-skill inputs/outputs (34 total after this release)
 - Log file: `{project_dir}/logs/production.jsonl` — append-only, one JSON object per line
 
 ### New Skills
