@@ -33,6 +33,8 @@ Each step is a composable skill. Run the full pipeline or pick individual skills
 
 **Full guide:** [`docs/usage.md`](docs/usage.md)
 
+This quickstart currently documents the lyric-driven / music-video happy path.
+
 **Quickstart:**
 
 ```bash
@@ -53,7 +55,7 @@ cp song.mp3 assets/my-video/assets/song.mp3
 /executing-video-plan
 ```
 
-The executor reads `production-plan.json`, identifies the next actionable phase, and reports blockers in plan terms. If `song.mp3` is missing, it will stop cleanly at the source-assets phase. Once all assets are ready, it drives the chapter-centric workflow through `chapters/chapter-01/` and `final/`.
+The executor reads `production-plan.json`, identifies the next actionable phase, and reports blockers in plan terms. If the project uses a song file and `song.mp3` is missing, it will stop cleanly at the source-assets phase. Once the required assets are ready, it drives the chapter-centric workflow through `chapters/chapter-01/` and `final/`.
 
 ---
 

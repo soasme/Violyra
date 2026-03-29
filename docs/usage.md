@@ -1,6 +1,8 @@
 # Violyra Usage Guide
 
-This guide describes the full happy-path from a rough idea to a delivery-ready video. Follow it end-to-end or pick individual phases to slot into your own workflow.
+This guide describes the current lyric-driven happy path from a rough idea to a delivery-ready video. Follow it end-to-end or pick individual phases to slot into your own workflow.
+
+If your project does not use a song file or lyric alignment, treat this as the music-video path rather than the universal path for every Violyra project.
 
 ## Prerequisites
 
@@ -79,7 +81,7 @@ Reads `video-idea.md`, `lyrics.txt`, and the canonical workflow model. Writes th
 - `docs/video-plan.md` — human runbook with resolved chapter and phase details
 - `assets/production-plan.json` — machine execution manifest for `executing-video-plan`
 
-If `song.mp3` is not available yet, that is fine. The plan will show `source-assets` as the current blocked phase until you add it.
+If the project uses a song file and `song.mp3` is not available yet, that is fine. The plan will show `source-assets` as the current blocked phase until you add it.
 
 ### 5. Execute the plan
 
@@ -164,7 +166,7 @@ Read `docs/video-plan.md` to see which phases are complete. Or run `executing-vi
 
 ## Common Issues
 
-**"song.mp3 missing"** — Supply the file at `{project_dir}/assets/song.mp3` and run `executing-video-plan` again. This blocks only the `source-assets` phase.
+**"song.mp3 missing"** — This matters only for lyric-driven projects that use a local song file. Supply `{project_dir}/assets/song.mp3` and run `executing-video-plan` again. This blocks only the `source-assets` phase.
 
 **"chapter.json is empty"** or **"`chapters/chapter-01/scenes/` is empty"** — These are only blockers once the plan reaches those phases. Check `docs/video-plan.md` to confirm the current phase before treating them as errors.
 

@@ -13,7 +13,7 @@ Collect before writing:
 
 1. `{project_dir}/docs/video-idea.md` — approved design doc from brainstorming
 2. `{project_dir}/assets/lyrics.txt` — required lyric source for `storyboard.json`
-3. `{project_dir}/assets/song.mp3` — optional at planning time, but needed before source-assets phase can complete
+3. `{project_dir}/assets/song.mp3` — optional at planning time, but needed before source-assets phase can complete for lyric-driven projects
 4. `skills/lib/workflow.json` — canonical phase definitions (read to populate production-plan.json)
 5. `user_requirements` — any additional constraints the user specified
 

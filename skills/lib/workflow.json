@@ -51,7 +51,8 @@
       ],
       "optional": false,
       "enabled_by_default": true,
-      "manual": false
+      "manual": false,
+      "note": "This default source-assets phase assumes a lyric-driven project with a local song file."
     },
     {
       "id": "production-pipeline",
