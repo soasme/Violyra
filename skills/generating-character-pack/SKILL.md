@@ -26,3 +26,10 @@ Validates that `actor-id` references an existing actor pack. File: `<base-dir>/c
 
 ### read / update / delete / list
 Same `--base-dir`, `--id`, `--filter` flags. Update accepts `--actor-id`, `--costume-id`, `--prop-ids`.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `character_name`, `actor_ref`, `action` (`create`/`update`/`list`)
+**On completion** — key `outputs`: `pack_path`, `character_count`
