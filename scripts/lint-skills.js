@@ -3,7 +3,7 @@ import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
 export function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/)
+  const match = content.replace(/\r\n/g, '\n').match(/^---\n([\s\S]*?)\n---/)
   if (!match) return null
   const fm = {}
   for (const line of match[1].split('\n')) {
@@ -32,7 +32,7 @@ export function lintSkillContent(dirName, content) {
     violations.push(`${dirName}: name '${fm.name}' does not match directory name '${dirName}'`)
   }
   if (fm.name && !/^[a-z]+-[a-z0-9]+(-[a-z0-9]+)*$/.test(fm.name)) {
-    violations.push(`${dirName}: name '${fm.name}' does not follow gerund-object pattern`)
+    violations.push(`${dirName}: name '${fm.name}' must be kebab-case slug matching gerund-object convention (e.g. writing-video-plan, generating-actor-pack)`)
   }
   return violations
 }

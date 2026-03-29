@@ -17,6 +17,10 @@ describe('parseFrontmatter', () => {
     const c = '---\nname: foo-bar\ndescription: Use when: conditions apply\n---'
     expect(parseFrontmatter(c).description).toBe('Use when: conditions apply')
   })
+  it('handles CRLF line endings', () => {
+    const c = '---\r\nname: writing-video-plan\r\ndescription: A description.\r\n---\r\n# Content'
+    expect(parseFrontmatter(c)).toEqual({ name: 'writing-video-plan', description: 'A description.' })
+  })
 })
 
 describe('lintSkillContent', () => {
