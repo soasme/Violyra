@@ -1,6 +1,6 @@
 // skills/lib/pack-utils.__test__.js
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { mkdtempSync, rmSync, readFileSync } from 'node:fs'
+import { mkdtempSync, rmSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import {
@@ -9,6 +9,7 @@ import {
   readPack,
   writePack,
   listPacksInDir,
+  resolveAsset,
 } from './pack-utils.js'
 
 let tmpDir
@@ -58,5 +59,68 @@ describe('listPacksInDir', () => {
     const packs = listPacksInDir(tmpDir)
     expect(packs).toHaveLength(2)
     expect(packs.map(p => p.name).sort()).toEqual(['A', 'B'])
+  })
+})
+
+describe('resolveAsset', () => {
+  it('finds asset in project dir when no project.json exists', () => {
+    writeFileSync(join(tmpDir, 'image.png'), 'data')
+    const result = resolveAsset(tmpDir, 'image.png')
+    expect(result).toBe(join(tmpDir, 'image.png'))
+  })
+
+  it('finds asset in project dir when assetDirs is ["."]', () => {
+    writeFileSync(join(tmpDir, 'project.json'), JSON.stringify({ $schemaVersion: '1.0', assetDirs: ['.'] }))
+    writeFileSync(join(tmpDir, 'image.png'), 'data')
+    const result = resolveAsset(tmpDir, 'image.png')
+    expect(result).toBe(join(tmpDir, 'image.png'))
+  })
+
+  it('falls back to external dir when not found locally', () => {
+    const ext = mkdtempSync(join(tmpdir(), 'ext-'))
+    try {
+      writeFileSync(join(ext, 'shared.png'), 'data')
+      writeFileSync(join(tmpDir, 'project.json'), JSON.stringify({
+        $schemaVersion: '1.0',
+        assetDirs: ['.', ext]
+      }))
+      expect(resolveAsset(tmpDir, 'shared.png')).toBe(join(ext, 'shared.png'))
+    } finally {
+      rmSync(ext, { recursive: true, force: true })
+    }
+  })
+
+  it('returns local file over external when both exist', () => {
+    const ext = mkdtempSync(join(tmpdir(), 'ext-'))
+    try {
+      writeFileSync(join(tmpDir, 'image.png'), 'local')
+      writeFileSync(join(ext, 'image.png'), 'external')
+      writeFileSync(join(tmpDir, 'project.json'), JSON.stringify({
+        $schemaVersion: '1.0',
+        assetDirs: ['.', ext]
+      }))
+      expect(resolveAsset(tmpDir, 'image.png')).toBe(join(tmpDir, 'image.png'))
+    } finally {
+      rmSync(ext, { recursive: true, force: true })
+    }
+  })
+
+  it('throws when asset not found in any dir', () => {
+    writeFileSync(join(tmpDir, 'project.json'), JSON.stringify({ $schemaVersion: '1.0', assetDirs: ['.'] }))
+    expect(() => resolveAsset(tmpDir, 'missing.png')).toThrow('Asset not found: missing.png')
+  })
+
+  it('throws when project.json is invalid', () => {
+    writeFileSync(join(tmpDir, 'project.json'), '{not valid json')
+    expect(() => resolveAsset(tmpDir, 'image.png')).toThrow(`Failed to parse project.json in ${tmpDir}`)
+  })
+
+  it('rejects absolute asset paths', () => {
+    expect(() => resolveAsset(tmpDir, '/tmp/image.png')).toThrow('Asset path must be relative: /tmp/image.png')
+  })
+
+  it('rejects paths that escape the asset dir', () => {
+    writeFileSync(join(tmpDir, '..', 'outside.png'), 'data')
+    expect(() => resolveAsset(tmpDir, '../outside.png')).toThrow('Asset path escapes asset dir: ../outside.png')
   })
 })

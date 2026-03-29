@@ -34,6 +34,7 @@ Creates the isolated workspace for a new video production after design approval.
      "defaultModel": "bytedance/seedance-1.5-pro",
      "fps": 24,
      "resolution": "1920x1080",
+     "assetDirs": ["."],
      "createdAt": "<ISO timestamp>"
    }
    ```
@@ -47,6 +48,18 @@ Creates the isolated workspace for a new video production after design approval.
 ## After Setup
 
 Transition to `writing-video-plan` (for music videos) or `executing-video-plan` (for short dramas) depending on the production type.
+
+## Asset Directories
+
+`assetDirs` controls where skills look for assets (actor packs, reference images, prop files). Default when absent: `["."]` — the project directory itself.
+
+To reference assets from a shared library without copying them:
+
+```json
+"assetDirs": [".", "/Users/me/studio-assets", "/Volumes/NAS/shared"]
+```
+
+Resolution order: first matching path wins. Skills write output only to the project directory — external dirs are treated as read-only in normal production flow. An agent may write to an external dir only when the user explicitly instructs it to move or promote assets.
 
 ## Logging
 

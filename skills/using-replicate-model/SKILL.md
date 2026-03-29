@@ -97,6 +97,21 @@ See `references/` for ready-to-use examples for this project's preferred models:
 - `topaz-video-upscale.md` — Topaz Labs video upscaler
 - `nano-banana-pro.md` — Google Nano Banana Pro (image)
 
+## Caching
+
+Before creating a prediction, check the project manifest. After a successful prediction, download the Replicate output into your project directory and record the local path.
+
+**Lookup (before creating a prediction):**
+1. Compute a cache key from the prompt, model ID, and inference params using `manifest-utils.js`
+2. Call `readManifest(projectDir)` then `findEntry(manifest, cacheKey)`
+3. If entry found and `isEntryValid(entry, projectDir)` → return `entry.output` (a project-relative path to a local file under `projectDir`); log `completed` with `notes: "cache_hit"`; skip inference
+
+**Record (after successful inference):**
+1. Download the Replicate output into your project directory, then build an entry: `{ cache_key, prompt, model, params_hash, output: relative-path-from-projectDir-to-downloaded-output, created_at: new Date().toISOString() }`. The `output` field must be a project-relative local filesystem path, not a remote URL.
+2. Call `manifest = addEntry(manifest, entry)` then `writeManifest(projectDir, manifest)`
+
+The manifest stores and returns local filesystem paths, so caching only works for outputs that have been downloaded into `projectDir`. See `skills/lib/manifest-utils.js` for all helper functions.
+
 ## Logging
 
 Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
