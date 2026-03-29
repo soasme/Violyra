@@ -71,6 +71,21 @@ describe('readManifest', () => {
     expect(manifest.entries).toHaveLength(1)
     expect(manifest.entries[0].cache_key).toBe('sha256:abc')
   })
+
+  it('returns empty manifest when file is invalid JSON', () => {
+    writeFileSync(join(tmpDir, 'manifest.json'), '{not valid json')
+    expect(readManifest(tmpDir)).toEqual({ $schemaVersion: '1.0', entries: [] })
+  })
+
+  it('returns empty manifest when schema version is unknown', () => {
+    writeFileSync(join(tmpDir, 'manifest.json'), JSON.stringify({ $schemaVersion: '9.9', entries: [] }))
+    expect(readManifest(tmpDir)).toEqual({ $schemaVersion: '1.0', entries: [] })
+  })
+
+  it('normalizes missing entries to an empty array', () => {
+    writeFileSync(join(tmpDir, 'manifest.json'), JSON.stringify({ $schemaVersion: '1.0' }))
+    expect(readManifest(tmpDir)).toEqual({ $schemaVersion: '1.0', entries: [] })
+  })
 })
 
 describe('writeManifest / readManifest round-trip', () => {
@@ -103,6 +118,16 @@ describe('isEntryValid', () => {
 
   it('returns false when output file is missing', () => {
     expect(isEntryValid({ output: 'missing.mp4' }, tmpDir)).toBe(false)
+  })
+
+  it('returns false for absolute output paths', () => {
+    writeFileSync(join(tmpDir, 'shot.mp4'), 'video')
+    expect(isEntryValid({ output: join(tmpDir, 'shot.mp4') }, tmpDir)).toBe(false)
+  })
+
+  it('returns false when output path escapes projectDir', () => {
+    writeFileSync(join(tmpDir, '..', 'outside.mp4'), 'video')
+    expect(isEntryValid({ output: '../outside.mp4' }, tmpDir)).toBe(false)
   })
 })
 

@@ -19,9 +19,10 @@ description: Write optimized video generation prompts for any supported model â€
 1. Identify the target model name.
 2. Open and read the corresponding file in `references/` (see table below). Apply all model-specific rules found there.
 3. Apply the universal principles below to every shot.
-4. If the model supports multi-shot (stated in its reference file), chain all shots using the model's delimiter into a single prompt string.
-5. If the model is single-shot only, produce one prompt per shot. The caller invokes this skill once per shot.
-6. Output the final prompt string(s), ready for the inference skill.
+4. From the model reference, determine whether the model accepts multi-shot prompts in a single API call or requires one API call per shot.
+5. If the model accepts multi-shot prompts in a single API call, chain all shots using the model's delimiter into one inference-ready prompt string.
+6. If the model requires one API call per shot (for example, Veo 3.1), produce one finalized inference-ready prompt per shot. You may additionally produce a planning chain for orchestration or review, but do not send that chain as a single API call.
+7. Output the inference-ready prompt string(s) for the caller to submit. Include a separate planning chain only when it is useful and clearly marked as non-inference text.
 
 ## Universal Principles
 
@@ -62,7 +63,7 @@ Bad: "a sad scene"
 | `seedance-2.0` | `references/seedance-2.0-prompt.md` |
 | `seedance-1.5` | `references/seedance-1.5-prompt.md` |
 
-For models not listed, apply universal principles only.
+For models not listed, apply universal principles only and default to one inference-ready prompt per shot unless the caller provides confirmed multi-shot API behavior.
 
 ## Logging
 

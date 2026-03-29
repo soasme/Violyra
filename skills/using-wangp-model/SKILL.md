@@ -81,11 +81,11 @@ Before submitting a job, check the project manifest. After successful inference,
 **Lookup (before submitting):**
 1. Compute a cache key from the prompt, model name, and inference params using `manifest-utils.js`
 2. Call `readManifest(projectDir)` then `findEntry(manifest, cacheKey)`
-3. If entry found and `isEntryValid(entry, projectDir)` → return `entry.output`; log `completed` with `notes: "cache_hit"`; skip inference
+3. If entry found and `isEntryValid(entry, projectDir)` → return `entry.output` (a project-relative path to a local file under `projectDir`); log `completed` with `notes: "cache_hit"`; skip inference
 
 **Record (after successful inference):**
-1. Build an entry: `{ cache_key, prompt, model, params_hash, output: relative-path-from-projectDir, created_at: new Date().toISOString() }`
-2. Call `addEntry(manifest, entry)` then `writeManifest(projectDir, manifest)`
+1. Build an entry: `{ cache_key, prompt, model, params_hash, output: relative-path-from-projectDir, created_at: new Date().toISOString() }`. The `output` field must be a project-relative local filesystem path under `projectDir`.
+2. Call `manifest = addEntry(manifest, entry)` then `writeManifest(projectDir, manifest)`
 
 See `skills/lib/manifest-utils.js` for all helper functions.
 

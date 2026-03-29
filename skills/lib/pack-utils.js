@@ -1,6 +1,6 @@
 // skills/lib/pack-utils.js
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs'
-import { join, dirname, isAbsolute } from 'node:path'
+import { join, dirname, isAbsolute, resolve, relative } from 'node:path'
 
 export const SCHEMA_VERSION = '1.0'
 
@@ -36,6 +36,23 @@ export function writePack(filePath, data) {
   writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8')
 }
 
+function resolvePathWithinDir(baseDir, assetPath) {
+  if (typeof assetPath !== 'string' || assetPath.length === 0) {
+    throw new Error('Asset path must be a non-empty relative path')
+  }
+  if (isAbsolute(assetPath)) throw new Error(`Asset path must be relative: ${assetPath}`)
+
+  const resolvedBaseDir = resolve(baseDir)
+  const candidate = resolve(resolvedBaseDir, assetPath)
+  const candidateRelativePath = relative(resolvedBaseDir, candidate)
+
+  if (candidateRelativePath === '' || (!candidateRelativePath.startsWith('..') && !isAbsolute(candidateRelativePath))) {
+    return candidate
+  }
+
+  throw new Error(`Asset path escapes asset dir: ${assetPath}`)
+}
+
 export function resolveAsset(projectDir, relativePath) {
   let assetDirs = ['.']
   const projectJsonPath = join(projectDir, 'project.json')
@@ -43,11 +60,15 @@ export function resolveAsset(projectDir, relativePath) {
     try {
       const config = JSON.parse(readFileSync(projectJsonPath, 'utf8'))
       if (Array.isArray(config.assetDirs)) assetDirs = config.assetDirs
-    } catch {}
+    } catch (err) {
+      throw new Error(
+        `Failed to parse project.json in ${projectDir}: ${err instanceof Error ? err.message : String(err)}`
+      )
+    }
   }
   for (const dir of assetDirs) {
     const base = isAbsolute(dir) ? dir : join(projectDir, dir)
-    const candidate = join(base, relativePath)
+    const candidate = resolvePathWithinDir(base, relativePath)
     if (existsSync(candidate)) return candidate
   }
   throw new Error(`Asset not found: ${relativePath}`)

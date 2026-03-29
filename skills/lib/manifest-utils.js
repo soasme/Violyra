@@ -1,7 +1,7 @@
 // skills/lib/manifest-utils.js
 import { createHash } from 'node:crypto'
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
-import { join } from 'node:path'
+import { join, resolve, relative, isAbsolute } from 'node:path'
 
 const MANIFEST_SCHEMA_VERSION = '1.0'
 
@@ -21,6 +21,21 @@ function emptyManifest() {
   return { $schemaVersion: MANIFEST_SCHEMA_VERSION, entries: [] }
 }
 
+function resolveProjectPath(projectDir, relativePath) {
+  if (typeof relativePath !== 'string' || relativePath.length === 0) return null
+  if (isAbsolute(relativePath)) return null
+
+  const resolvedProjectDir = resolve(projectDir)
+  const resolvedPath = resolve(resolvedProjectDir, relativePath)
+  const projectRelativePath = relative(resolvedProjectDir, resolvedPath)
+
+  if (projectRelativePath === '' || projectRelativePath.startsWith('..') || isAbsolute(projectRelativePath)) {
+    return null
+  }
+
+  return resolvedPath
+}
+
 export function computeCacheKey(prompt, modelId, params) {
   const payload = JSON.stringify({
     prompt,
@@ -33,24 +48,46 @@ export function computeCacheKey(prompt, modelId, params) {
 export function readManifest(projectDir) {
   const manifestPath = join(projectDir, 'manifest.json')
   if (!existsSync(manifestPath)) return emptyManifest()
-  return JSON.parse(readFileSync(manifestPath, 'utf8'))
+
+  try {
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
+    if (!manifest || typeof manifest !== 'object' || Array.isArray(manifest)) return emptyManifest()
+    if (manifest.$schemaVersion !== MANIFEST_SCHEMA_VERSION) return emptyManifest()
+
+    return {
+      ...manifest,
+      $schemaVersion: MANIFEST_SCHEMA_VERSION,
+      entries: Array.isArray(manifest.entries) ? manifest.entries : [],
+    }
+  } catch {
+    return emptyManifest()
+  }
 }
 
 export function writeManifest(projectDir, manifest) {
-  writeFileSync(join(projectDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8')
+  const normalizedManifest = {
+    ...manifest,
+    $schemaVersion: MANIFEST_SCHEMA_VERSION,
+    entries: Array.isArray(manifest?.entries) ? manifest.entries : [],
+  }
+  writeFileSync(join(projectDir, 'manifest.json'), `${JSON.stringify(normalizedManifest, null, 2)}\n`, 'utf8')
 }
 
 export function findEntry(manifest, cacheKey) {
-  return manifest.entries.find(entry => entry.cache_key === cacheKey) ?? null
+  const entries = Array.isArray(manifest?.entries) ? manifest.entries : []
+  return entries.find(entry => entry.cache_key === cacheKey) ?? null
 }
 
 export function isEntryValid(entry, projectDir) {
-  return existsSync(join(projectDir, entry.output))
+  const outputPath = resolveProjectPath(projectDir, entry?.output)
+  return outputPath ? existsSync(outputPath) : false
 }
 
 export function addEntry(manifest, entry) {
+  const entries = Array.isArray(manifest?.entries) ? manifest.entries : []
   return {
     ...manifest,
-    entries: [...manifest.entries, entry],
+    $schemaVersion: MANIFEST_SCHEMA_VERSION,
+    entries: [...entries, entry],
   }
 }

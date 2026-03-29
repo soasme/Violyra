@@ -109,4 +109,18 @@ describe('resolveAsset', () => {
     writeFileSync(join(tmpDir, 'project.json'), JSON.stringify({ $schemaVersion: '1.0', assetDirs: ['.'] }))
     expect(() => resolveAsset(tmpDir, 'missing.png')).toThrow('Asset not found: missing.png')
   })
+
+  it('throws when project.json is invalid', () => {
+    writeFileSync(join(tmpDir, 'project.json'), '{not valid json')
+    expect(() => resolveAsset(tmpDir, 'image.png')).toThrow(`Failed to parse project.json in ${tmpDir}`)
+  })
+
+  it('rejects absolute asset paths', () => {
+    expect(() => resolveAsset(tmpDir, '/tmp/image.png')).toThrow('Asset path must be relative: /tmp/image.png')
+  })
+
+  it('rejects paths that escape the asset dir', () => {
+    writeFileSync(join(tmpDir, '..', 'outside.png'), 'data')
+    expect(() => resolveAsset(tmpDir, '../outside.png')).toThrow('Asset path escapes asset dir: ../outside.png')
+  })
 })
