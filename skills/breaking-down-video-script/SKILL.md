@@ -51,3 +51,10 @@ Exits 0 on valid, 1 on invalid (error to stderr).
 
 - If condensed text loses meaning: show both versions to the user and ask to confirm before continuing.
 - If a shot has no identifiable characters or scenes: leave arrays empty, do not invent them.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `script_path`, `chapter_id`
+**On completion** — key `outputs`: `shot_list_path`, `shot_count`, `chapter_summary_path`

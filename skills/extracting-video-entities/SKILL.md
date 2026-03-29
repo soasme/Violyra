@@ -52,3 +52,10 @@ source .env && node skills/extracting-video-entities/scripts/validate-extraction
 - If a name is ambiguous (multiple pack matches): present options to user and ask which to use.
 - Never auto-create character packs — that is a deliberate agent step done after reviewing extraction results.
 - On re-run: overwrite `extraction-report.json` fully. Never delete existing packs.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `shot_list_path`
+**On completion** — key `outputs`: `actor_count`, `scene_count`, `prop_count`, `costume_count`

@@ -44,3 +44,10 @@ Pause for user confirmation after each phase before proceeding. Show what was pr
 ## Error Handling
 
 Stop and report at any skill failure. Ask user whether to retry, skip, or abort.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `project_dir`, `screenplay_path`
+**On completion** — key `outputs`: `final_video_path`, `duration_s`

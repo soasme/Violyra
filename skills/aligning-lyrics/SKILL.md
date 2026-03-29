@@ -97,3 +97,10 @@ If alignment quality is poor (for example many unmatched words), the script logs
 - If global match quality is very low, all lines are proportionally redistributed over detected timeline range.
 
 This guarantees usable output files even when ASR quality is noisy.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `audio_file`, `lyrics_file`
+**On completion** — key `outputs`: `aligned_json_path`, `line_count`

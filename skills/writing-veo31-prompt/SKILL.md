@@ -342,3 +342,10 @@ When providing a start frame (`image`), follow these rules:
       "resolution": "1080p",
       "generate_audio": true
     }
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `shot_id`, `mode` (`text_to_video`/`reference_to_video`/`interpolation`/`r2v`)
+**On completion** — key `outputs`: `prompt_length`, `shot_id`, `generate_audio` (true/false)

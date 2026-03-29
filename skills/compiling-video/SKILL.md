@@ -1,6 +1,6 @@
 ---
 name: compiling-video
-description: Compile scene clips into a full-song music video with ffmpeg using storyboard + aligned lyrics timing. Use when you need deterministic final assembly (optional auto-upscale, scene stretch, frame fit, concat, audio mux) and a default 1920x1080 output.
+description: Compile scene clips into a full-song music video with ffmpeg using storyboard + lyrics timing. Use when you need final assembly with auto-upscale, scene stretch, frame fit, concat, and audio mux.
 ---
 
 # MV Compilation
@@ -46,3 +46,10 @@ source .env && node .agents/skills/compiling-video/scripts/compile.js \
 4. `--manifest <manifest.json>` to use source generation URLs for more reliable upscale input
 5. `--no-upscale` to disable upscale
 6. `--force-upscale` to ignore upscale cache in `--work-dir/upscaled`
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `storyboard`, `aligned`, `song`, `output`
+**On completion** — key `outputs`: `output_video`, `duration_s`, `scene_count`

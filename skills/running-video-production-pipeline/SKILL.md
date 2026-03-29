@@ -27,3 +27,10 @@ All four reasoning skill outputs for the chapter:
 
 - Stop between steps if any validator exits non-zero. Show the error and ask the user how to proceed.
 - After checking-consistency: if `optimizedShotList` is non-null, present it to the user and ask before overwriting `shot-list.json`. If user approves, re-run enriching-shot-details and checking-consistency on the updated shot list.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `script_path`, `chapter_id`
+**On completion** — key `outputs`: `enriched_shot_list_path`, `consistency_report_path`

@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'if echo \"$CLAUDE_TOOL_INPUT\" | grep -q \"\\\"file_path\\\".*skills/\"; then pnpm --silent lint-skills; else :; fi'",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

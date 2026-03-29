@@ -63,3 +63,10 @@ Save to `<base-dir>/docs/video-idea.md`:
 ## After Approval
 
 Transition to `setup-video-project` with the approved design.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `topic` (the rough video idea), `constraints` (style, duration, format)
+**On completion** — key `outputs`: `design_doc_path`, `project_json_seeds` (true/false)

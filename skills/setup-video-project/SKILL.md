@@ -47,3 +47,10 @@ Creates the isolated workspace for a new video production after design approval.
 ## After Setup
 
 Transition to `writing-video-plan` (for music videos) or `executing-video-plan` (for short dramas) depending on the production type.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `project_dir`, `project_name`
+**On completion** — key `outputs`: `project_json_path`, `dirs_created` (array of created directory paths)

@@ -46,3 +46,10 @@ Writes or refines song lyrics through collaborative dialogue. Output is `lyrics.
 ## After Approval
 
 Transition to `generating-song`.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `theme`, `style`, `structure` (verse/chorus/bridge counts)
+**On completion** — key `outputs`: `lyrics_path`, `line_count`
