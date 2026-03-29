@@ -96,6 +96,21 @@ See `references/` for ready-to-use examples:
 - `topaz-video-upscale.md` — Topaz video upscaler
 - `nano-banana-pro.md` — Nano Banana Pro (image generation)
 
+## Caching
+
+Before submitting to the queue, check the project manifest. After a successful result, record the output.
+
+**Lookup (before submitting):**
+1. Compute a cache key from the prompt, model ID, and inference params using `manifest-utils.js`
+2. Call `readManifest(projectDir)` then `findEntry(manifest, cacheKey)`
+3. If entry found and `isEntryValid(entry, projectDir)` → return `entry.output`; log `completed` with `notes: "cache_hit"`; skip inference
+
+**Record (after successful inference):**
+1. Build an entry: `{ cache_key, prompt, model, params_hash, output: relative-path-from-projectDir, created_at: new Date().toISOString() }`
+2. Call `addEntry(manifest, entry)` then `writeManifest(projectDir, manifest)`
+
+See `skills/lib/manifest-utils.js` for all helper functions.
+
 ## Logging
 
 Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
