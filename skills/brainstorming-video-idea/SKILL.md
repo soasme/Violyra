@@ -28,7 +28,7 @@ Do NOT write any files, create project directories, or transition to setup-video
 Ask in this order, adapting based on what the user has already told you:
 
 1. **Platform and duration** — "Is this for YouTube (3–5 min MV), TikTok/Shorts (under 60s), or another platform?"
-2. **Source audio** — "Do you have a song file ready, or do we need to generate one first?"
+2. **Source assets** — "What inputs does this project actually depend on? For example lyrics, song audio, screenplay, voiceover, reference stills, or source footage?"
 3. **Genre and mood** — "What's the emotional feel? (e.g., dreamy, high-energy, melancholic, playful)"
 4. **Characters** — "Who are the main characters? Names, key visual traits, any continuity requirements across scenes?"
 5. **Visual style** — "What visual style fits best? (e.g., anime, lo-fi illustration, cinematic live-action aesthetic, dark fantasy)"
@@ -55,9 +55,10 @@ Present in sections, get approval after each:
 
 1. **Concept and audience** — what the viewer should feel, who this is for
 2. **Characters and continuity** — names, visual traits, how consistency will be maintained
-3. **Music and lyrics** — source file status, lyric handling, lyric-to-scene ratio
-4. **Scene progression** — chapter breakdown with section labels (intro, verse, chorus, bridge, outro)
-5. **Production feasibility** — reference images needed, model constraints, estimated scene count, risks
+3. **Source assets** — what files the project depends on, where they should live under `assets/`, and which ones are required before planning vs execution
+4. **Music and lyrics** — only if relevant for this project: source file status, lyric handling, lyric-to-scene ratio
+5. **Scene progression** — chapter breakdown with section labels (intro, verse, chorus, bridge, outro)
+6. **Production feasibility** — reference images needed, model constraints, estimated scene count, risks
 
 ## Written Design Doc
 
@@ -79,9 +80,16 @@ After approval, write to `{project_dir}/docs/video-idea.md`:
 |---|---|---|---|
 | ... | ... | ... | reference images / start frames / none |
 
+## Source Assets
+| Path | Purpose | Required for planning? | Required before execution? | Status |
+|---|---|---|---|---|
+| assets/... | lyrics / screenplay / song / voiceover / stills / footage | yes/no | yes/no | present / to be added / to be generated |
+
+All project-specific source files should live under `{project_dir}/assets/`. This section is the source of truth for what inputs the project actually depends on.
+
 ## Music
-- Source: {existing file path or "to be generated"}
-- Style notes: {tempo, mood, any generation parameters}
+- Source: {existing file path / to be generated / not applicable}
+- Style notes: {tempo, mood, any generation parameters, or "n/a"}
 
 ## Lyric Handling
 - Sung-line count: {n}

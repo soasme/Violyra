@@ -29,30 +29,18 @@
     },
     {
       "id": "source-assets",
-      "title": "Localize source audio and align lyrics",
-      "default_skill": "aligning-lyrics",
-      "requires": [
-        "{project_dir}/assets/lyrics.txt",
-        "{project_dir}/assets/song.mp3"
-      ],
-      "produces": [
-        "{project_dir}/assets/aligned_lyrics.json",
-        "{project_dir}/assets/subtitle.srt",
-        "{project_dir}/assets/subtitle.lrc"
-      ],
+      "title": "Localize and preprocess declared source assets",
+      "default_skill": null,
+      "requires": [],
+      "produces": [],
       "verification": [
-        "aligned_lyrics.json exists",
-        "subtitle.srt exists",
-        "alignment excludes any lyrics.txt lines prefixed with #"
+        "All source assets required for this project mode are present or explicitly deferred"
       ],
-      "blocks_if_missing": [
-        "{project_dir}/assets/lyrics.txt",
-        "{project_dir}/assets/song.mp3"
-      ],
+      "blocks_if_missing": [],
       "optional": false,
       "enabled_by_default": true,
       "manual": false,
-      "note": "This default source-assets phase assumes a lyric-driven project with a local song file."
+      "note": "Template phase only. writing-video-plan must rewrite this phase from video-idea.md based on the project's declared source assets and preprocessing needs."
     },
     {
       "id": "production-pipeline",

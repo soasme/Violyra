@@ -35,6 +35,8 @@ Each step is a composable skill. Run the full pipeline or pick individual skills
 
 This quickstart currently documents the lyric-driven / music-video happy path.
 
+For other project types, place the needed inputs under `assets/` and declare them in `video-idea.md`. The planner should derive required files from that document rather than assuming `lyrics.txt` / `song.mp3`.
+
 **Quickstart:**
 
 ```bash

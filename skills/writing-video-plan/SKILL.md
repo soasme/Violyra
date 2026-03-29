@@ -12,14 +12,15 @@ Turn an approved `video-idea.md` into a full production plan. Produces three art
 Collect before writing:
 
 1. `{project_dir}/docs/video-idea.md` — approved design doc from brainstorming
-2. `{project_dir}/assets/lyrics.txt` — required lyric source for `storyboard.json`
-3. `{project_dir}/assets/song.mp3` — optional at planning time, but needed before source-assets phase can complete for lyric-driven projects
-4. `skills/lib/workflow.json` — canonical phase definitions (read to populate production-plan.json)
-5. `user_requirements` — any additional constraints the user specified
+2. Project-specific files declared in `video-idea.md` under `## Source Assets`
+3. `skills/lib/workflow.json` — canonical phase definitions (read to populate production-plan.json)
+4. `user_requirements` — any additional constraints the user specified
 
-If `video-idea.md` or `assets/lyrics.txt` does not exist, do not proceed. Ask the user to run `brainstorming-video-idea`, `setup-video-project`, and place the lyric file first.
+If `video-idea.md` does not exist, do not proceed. Ask the user to run `brainstorming-video-idea` first.
 
-Do not invent lyric lines. Read them from `assets/lyrics.txt` and preserve sung text exactly.
+Treat `video-idea.md` as the source of truth for required assets. The user can place any project-specific files under `{project_dir}/assets/` and declare them in `## Source Assets`.
+
+Do not invent source text. If the storyboard depends on lyrics, screenplay text, or another narrative source, read it from the declared asset path and preserve it exactly.
 
 ## Outputs
 
@@ -35,10 +36,11 @@ Do not invent lyric lines. Read them from `assets/lyrics.txt` and preserve sung 
 
 Follow the existing storyboard contract in `references/storyboard-format.md`.
 
-- Read `{project_dir}/assets/lyrics.txt`.
-- Treat lines prefixed with `#` as non-sung section markers.
-- Split sung lyrics into sections (intro, verse, chorus, bridge, outro).
-- Map lyric lines to scenes. Default: 2 sung lines per scene.
+- Read the narrative source declared in `video-idea.md`.
+  - For lyric-driven projects: read the declared lyrics file under `assets/`, treat lines prefixed with `#` as non-sung section markers, and split sung lyrics into sections.
+  - For screenplay-driven projects: read the declared screenplay / treatment / brief file under `assets/`.
+  - If the narrative source needed to author the storyboard is missing, stop and ask for that specific file path from `## Source Assets`.
+- Map source text to scenes according to the approved design. Default lyric-driven ratio: 2 sung lines per scene.
 - Set one `character` focus per scene unless ensemble is required.
 - Write a concrete `prompt` with subject action, environment motion, and camera movement.
 - Default output: `{project_dir}/assets/storyboard.json`
@@ -54,6 +56,18 @@ Read `skills/lib/workflow.json`. For each phase, populate:
 - `produces`: resolve `{chapter_dir}` template variables
 - `status`: initialize to `"pending"` unless artifacts already exist
 - `enabled`: for optional phases, derive whether they should participate in execution
+
+For the `source-assets` phase specifically, do not blindly copy the template values. Rewrite the phase from `video-idea.md`:
+
+- `requires`: all declared source assets that must exist before execution can proceed
+- `blocks_if_missing`: the subset of those assets that are still absent
+- `default_skill`:
+  - `aligning-lyrics` for lyric-driven projects with a declared song file plus lyric file
+  - `null` for projects whose source-assets phase is manual intake only
+- `produces` / `verification`: project-specific preprocessing outputs if applicable
+  - lyric-driven example: `aligned_lyrics.json`, `subtitle.srt`, `subtitle.lrc`
+  - non-lyric example: possibly no generated outputs, just confirmation that declared source assets are present
+- `note`: describe the project mode in plain language, for example `This source-assets phase is manual because the project uses screenplay text and reference stills, not lyric alignment.`
 
 ```json
 {
@@ -101,6 +115,8 @@ For optional phases:
 - `reference-images` — set `"enabled": true` when a named character appears in 3 or more scenes, or when the design doc explicitly requires reference images or start frames.
 
 If an optional phase is not needed yet, leave `"status": "pending"` and `"enabled": false`. The executor treats it as non-blocking.
+
+If a declared source asset is needed for storyboard authoring and is missing, stop before writing `storyboard.json`. If a declared source asset is only needed later for execution, keep writing the plan and mark `source-assets` as blocked in `production-plan.json`.
 
 ### Step 3: Write `video-plan.md`
 

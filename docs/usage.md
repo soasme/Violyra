@@ -4,6 +4,8 @@ This guide describes the current lyric-driven happy path from a rough idea to a 
 
 If your project does not use a song file or lyric alignment, treat this as the music-video path rather than the universal path for every Violyra project.
 
+For variant projects, put required source files under `{project_dir}/assets/` and declare them in `video-idea.md` under `## Source Assets`. `writing-video-plan` should read that section instead of assuming the same files for every project.
+
 ## Prerequisites
 
 - Node.js 18+
@@ -51,7 +53,11 @@ The agent will ask one question at a time, propose 2–3 creative directions, an
 
 Creates the directory structure and `project.json`. Output: `{project_dir}/project.json`, `assets/`, `docs/`, `logs/`, `final/`, `global/`, `characters/`, `chapters/`.
 
-### 3. Supply lyrics, and optionally the song
+### 3. Supply the project's declared source assets
+
+Put source files under `{project_dir}/assets/` and declare them in `video-idea.md`.
+
+For the lyric-driven happy path, that usually means:
 
 Copy your lyric file manually:
 ```bash
@@ -76,12 +82,12 @@ And the fields are green and new
 /writing-video-plan
 ```
 
-Reads `video-idea.md`, `lyrics.txt`, and the canonical workflow model. Writes three artifacts:
+Reads `video-idea.md`, the declared source assets needed for planning, and the canonical workflow model. Writes three artifacts:
 - `assets/storyboard.json` — scene-level creative input for generation
 - `docs/video-plan.md` — human runbook with resolved chapter and phase details
 - `assets/production-plan.json` — machine execution manifest for `executing-video-plan`
 
-If the project uses a song file and `song.mp3` is not available yet, that is fine. The plan will show `source-assets` as the current blocked phase until you add it.
+If some declared execution-time assets are not available yet, that is fine. The plan will show `source-assets` as blocked until you add them.
 
 ### 5. Execute the plan
 
