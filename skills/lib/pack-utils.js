@@ -1,6 +1,6 @@
 // skills/lib/pack-utils.js
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs'
-import { join, dirname } from 'node:path'
+import { join, dirname, isAbsolute } from 'node:path'
 
 export const SCHEMA_VERSION = '1.0'
 
@@ -34,6 +34,23 @@ export function readPack(filePath) {
 export function writePack(filePath, data) {
   mkdirSync(dirname(filePath), { recursive: true })
   writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8')
+}
+
+export function resolveAsset(projectDir, relativePath) {
+  let assetDirs = ['.']
+  const projectJsonPath = join(projectDir, 'project.json')
+  if (existsSync(projectJsonPath)) {
+    try {
+      const config = JSON.parse(readFileSync(projectJsonPath, 'utf8'))
+      if (Array.isArray(config.assetDirs)) assetDirs = config.assetDirs
+    } catch {}
+  }
+  for (const dir of assetDirs) {
+    const base = isAbsolute(dir) ? dir : join(projectDir, dir)
+    const candidate = join(base, relativePath)
+    if (existsSync(candidate)) return candidate
+  }
+  throw new Error(`Asset not found: ${relativePath}`)
 }
 
 export function errorExit(msg) {
