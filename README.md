@@ -31,33 +31,23 @@ Each step is a composable skill. Run the full pipeline or pick individual skills
 
 ## Usage
 
-**Full guide:** [`docs/usage.md`](docs/usage.md)
-
-This quickstart currently documents the lyric-driven / music-video happy path.
-
-For other project types, place the needed inputs under `assets/` and declare them in `video-idea.md`. The planner should derive required files from that document rather than assuming `lyrics.txt` / `song.mp3`.
-
-**Quickstart:**
-
 ```bash
-# 1. Brainstorm and approve a video idea
+# brainstorm and approve the idea
 /brainstorming-video-idea
 
-# 2. Set up the project workspace
+# set up the project workspace
 /setup-video-project
 
-# 3. Supply your lyrics, and optionally the song if it is ready
-cp lyrics.txt assets/my-video/assets/lyrics.txt
-cp song.mp3 assets/my-video/assets/song.mp3
+# copy your project assets into assets/<project>/
 
-# 4. Write the production plan
+# write the production plan
 /writing-video-plan
 
-# 5. Execute phase by phase
+# run the next phase and repeat as the project advances
 /executing-video-plan
 ```
 
-The executor reads `production-plan.json`, identifies the next actionable phase, and reports blockers in plan terms. If the project uses a song file and `song.mp3` is missing, it will stop cleanly at the source-assets phase. Once the required assets are ready, it drives the chapter-centric workflow through `chapters/chapter-01/` and `final/`.
+Full walkthrough: [`docs/usage.md`](docs/usage.md)
 
 ---
 
