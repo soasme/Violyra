@@ -226,5 +226,5 @@ Tell the user:
 
 Log to `{project_dir}/logs/production.jsonl`. See `skills/lib/logging-guide.md`.
 
-- **On invocation** — event `invoked`, inputs: `lyrics_path`, `style`, `aspect_ratio`
+- **On invocation** — event `invoked`, inputs: `idea_doc_path`, `style`, `aspect_ratio`
 - **On completion** — event `completed`, outputs: `storyboard_path`, `video_plan_path`, `production_plan_path`, `shot_count`

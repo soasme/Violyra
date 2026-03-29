@@ -17,7 +17,7 @@ brainstorming-video-idea
   → [supply song.mp3 + lyrics.txt]
   → aligning-lyrics
   → writing-video-plan                ← writes storyboard.json + video-plan.md + production-plan.json
-  → executing-video-plan
+  → executing-video-plan        ← manages all 13 phases via production-plan.json
       Phase 3:  running-video-production-pipeline
       Phase 4:  aligning-lyrics (alignment check, optional)
       Phase 5:  generating-character-pack (reference images, if needed)
@@ -167,3 +167,4 @@ Read `docs/video-plan.md` to see which phases are complete. Or run `executing-vi
 | `retention-driven-development` | 9 | `logs/retention-report.json`, updated scenes |
 | `requesting-video-review` | 11 | `logs/review-feedback.md` |
 | `generating-thumbnail` | 12 | `output/thumbnail.jpg` |
+| *(delivery — platform-specific)* | 13 | `output/final.mp4` + `output/thumbnail.jpg` uploaded to platform |
