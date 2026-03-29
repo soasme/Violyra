@@ -12,13 +12,17 @@ Source `.env` so `REPLICATE_API_TOKEN` is loaded:
 
 ## Workflow
 
-1. Generate a thumbnail from prompt text:
-`source .env && node .agents/skills/generating-thumbnail/scripts/generate.js --prompt "YouTube thumbnail, dramatic split-light portrait, bold headline area, high contrast, clean background" --output assets/thumbnails/episode-01.jpg --aspect-ratio 16:9 --resolution 2K`
-
-2. Optionally provide one or more reference images:
-`source .env && node .agents/skills/generating-thumbnail/scripts/generate.js --prompt "YouTube thumbnail for coding tutorial, laptop close-up, energetic composition, clear title-safe space" --image assets/ref/host.png --image https://example.com/product.png --output assets/thumbnails/tutorial.jpg`
-
-3. Verify output file exists at `--output`.
+1. Extract 2-4 candidate reference frames from the final video using ffmpeg or existing stills. Prefer expressive frames with clean faces, readable composition, and title-safe space.
+2. Generate multiple thumbnail candidates, not just one:
+`source .env && node .agents/skills/generating-thumbnail/scripts/generate.js --prompt "YouTube thumbnail, dramatic split-light portrait, bold headline area, high contrast, clean background" --image final/frame-01.jpg --output final/thumbnail.candidate-1.jpg --aspect-ratio 16:9 --resolution 2K`
+3. Generate at least one alternate concept with a different crop or emphasis:
+`source .env && node .agents/skills/generating-thumbnail/scripts/generate.js --prompt "YouTube thumbnail, bright character close-up, strong emotion, clean sky background, clear title-safe area" --image final/frame-02.jpg --output final/thumbnail.candidate-2.jpg --aspect-ratio 16:9 --resolution 2K`
+4. Compare the candidates for:
+   - readability at small size
+   - subject clarity
+   - emotional hook
+   - clean title-safe space
+5. Save the winner as the delivery thumbnail, typically `<base-dir>/final/thumbnail.jpg`.
 
 Local `--image` paths are uploaded to Replicate Files API automatically. Hosted URLs and data URIs are passed through unchanged.
 
@@ -35,7 +39,9 @@ Local `--image` paths are uploaded to Replicate Files API automatically. Hosted 
 
 ## Output Contract
 
-- Saves a generated thumbnail image to the local path provided via `--output`.
+- Saves one or more candidate images to local paths provided via `--output`.
+- Keeps alternates when helpful (for example `thumbnail.candidate-1.jpg`, `thumbnail.candidate-2.jpg`).
+- Saves the selected delivery image as `<base-dir>/final/thumbnail.jpg`.
 - Prints prediction metadata and final output URL for traceability.
 
 ## Logging
