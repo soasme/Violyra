@@ -1,5 +1,28 @@
 # Releases
 
+## v1.5.0 — 2026-03-30
+
+### Workflow Redesign
+
+- `brainstorming-video-idea` rebuilt as an approval-first skill with explicit design consensus before setup or planning
+- `writing-video-plan` now emits three coordinated artifacts: `storyboard.json`, `video-plan.md`, and `production-plan.json`
+- `executing-video-plan` rebuilt as a state-aware phase executor that reads the production manifest and reports blockers in plan terms
+- `skills/lib/workflow.json` added as the canonical multi-phase workflow definition shared by planning and execution
+
+### Documentation
+
+- `docs/usage.md` added as a general usage guide for idea-first, full-pipeline, and direct-skill workflows
+- `README.md` now includes a short `Usage` section that points users to the full guide
+- New superpowers-aligned design and implementation docs added under `docs/superpowers/`
+
+### Brainstorming Companions
+
+- `skills/brainstorming-video-idea/spec-document-reviewer-prompt.md` added for self-review of idea docs
+- `skills/brainstorming-video-idea/visual-companion.md` added to guide video-specific visual exploration
+- Visual companion helper scripts added under `skills/brainstorming-video-idea/scripts/`
+
+---
+
 ## v1.3.0 — 2026-03-29
 
 ### Infrastructure

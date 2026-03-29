@@ -1,6 +1,6 @@
 {
   "name": "violyra",
-  "version": "1.3.0",
+  "version": "1.5.0",
   "type": "module",
   "description": "Video making agent skills for music video production",
   "main": ".claude-plugin/plugin.json",
