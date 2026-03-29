@@ -6,6 +6,7 @@
   "main": ".claude-plugin/plugin.json",
   "scripts": {
     "test": "vitest run",
+    "lint-skills": "node scripts/lint-skills.js",
     "dev:app": "pnpm exec dotenv -- pnpm --filter @vima/app dev",
     "build:app": "pnpm exec dotenv -- pnpm --filter @vima/app build",
     "start:app": "pnpm exec dotenv -- pnpm --filter @vima/app start"
