@@ -47,3 +47,10 @@ source .env && node skills/checking-consistency/scripts/validate-consistency-rep
 
 - Never auto-apply `optimizedShotList` — always present to user first.
 - If no issues found: write report with empty `issues` array and `optimizedShotList: null`.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `shot_list_path`
+**On completion** — key `outputs`: `consistency_report_path`, `drift_count`, `optimized_shot_list_path`

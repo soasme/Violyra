@@ -51,3 +51,10 @@ source .env && node skills/enriching-shot-details/scripts/validate-shot-details.
 
 - If a shot has multiple scene IDs: pick the dominant scene for atmosphere inheritance.
 - If `followAtmosphere: true` but no previous source shot: treat this shot as the source.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `shot_list_path`
+**On completion** — key `outputs`: `enriched_shot_list_path`, `shots_enriched` (count)
