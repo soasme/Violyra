@@ -1,199 +1,245 @@
 # Violyra Usage Guide
 
-This guide describes the current lyric-driven happy path from a rough idea to a delivery-ready video. Follow it end-to-end or pick individual phases to slot into your own workflow.
+Violyra is a skill library for AI agents doing video production work. It is not a single fixed pipeline. You choose the skills that fit the project type: music video, short drama, anime short, narrated explainer, mixed-media edit, and so on.
 
-If your project does not use a song file or lyric alignment, treat this as the music-video path rather than the universal path for every Violyra project.
+Use this guide as the general entry point. For the full architecture and skill catalog, see [design.md](./design.md).
 
-For variant projects, put required source files under `{project_dir}/assets/` and declare them in `video-idea.md` under `## Source Assets`. `writing-video-plan` should read that section instead of assuming the same files for every project.
+## Before You Start
 
-## Prerequisites
+- Install dependencies at the repo root with `pnpm install`
+- Put required credentials in `.env`
+- Create a project workspace under `assets/`
+- Keep project-specific files inside that workspace
 
-- Node.js 18+
-- `pnpm install` run at the repo root
-- API credentials in `.env` (see `.env.example`)
-- A project directory, e.g. `assets/my-video/`
+Typical project workspace after setup:
 
-## Phase Overview
-
-```
-brainstorming-video-idea
-  → setup-video-project
-  → [supply lyrics.txt, optionally song.mp3]
-  → writing-video-plan                ← writes storyboard.json + video-plan.md + production-plan.json
-  → executing-video-plan        ← manages all 13 phases via production-plan.json
-      Phase 2:  aligning-lyrics when song.mp3 is available
-      Phase 3:  running-video-production-pipeline  ← chapters/chapter-01/*
-      Phase 4:  lyric-scene reconciliation (optional, manual)
-      Phase 5:  using-replicate-model (reference images / start frames, optional)
-      Phase 6:  writing-video-prompt
-      Phase 7:  using-replicate-model     ← chapter-local scene clips + manifest
-      Phase 8:  compiling-video           ← final/draft.mp4
-      Phase 9:  retention-driven-development
-      Phase 10: compiling-video           ← final/final.mp4
-      Phase 11: requesting-video-review
-      Phase 12: generating-thumbnail
-      Phase 13: delivery
+```text
+assets/<project>/
+├── assets/        # input files and generated intermediate assets
+├── docs/          # idea docs, plans, review notes
+├── logs/          # production.jsonl and other run artifacts
+├── final/         # final renders and delivery assets
+├── global/        # global packs created during extraction / planning
+├── characters/    # project-scoped character packs
+└── chapters/      # chapter-level breakdown and generation outputs
 ```
 
-## Step-by-Step
+## Basic Flow
 
-### 1. Brainstorm the idea
+Many projects follow this shape:
 
-```
+```bash
+# define the concept and constraints
 /brainstorming-video-idea
-```
 
-The agent will ask one question at a time, propose 2–3 creative directions, and converge on a design with you. Nothing is written until you approve. Output: `{project_dir}/docs/video-idea.md`.
-
-### 2. Set up the project workspace
-
-```
+# create the project workspace
 /setup-video-project
-```
 
-Creates the directory structure and `project.json`. Output: `{project_dir}/project.json`, `assets/`, `docs/`, `logs/`, `final/`, `global/`, `characters/`, `chapters/`.
+# copy the project's input files into assets/<project>/assets/
 
-### 3. Supply the project's declared source assets
-
-Put source files under `{project_dir}/assets/` and declare them in `video-idea.md`.
-
-For the lyric-driven happy path, that usually means:
-
-Copy your lyric file manually:
-```bash
-cp /path/to/lyrics.txt {project_dir}/assets/lyrics.txt
-```
-
-If you already have the audio, place it too:
-```bash
-cp /path/to/song.mp3 {project_dir}/assets/song.mp3
-```
-
-**Lyrics format:** One line per sung line. Mark non-sung lines (section headers, decorations) with a `#` prefix so the pipeline can exclude them consistently:
-```
-# Verse 1
-When the morning light breaks through
-And the fields are green and new
-```
-
-### 4. Write the production plan
-
-```
+# write the production plan for this specific project
 /writing-video-plan
-```
 
-Reads `video-idea.md`, the declared source assets needed for planning, and the canonical workflow model. Writes three artifacts:
-- `assets/storyboard.json` — scene-level creative input for generation
-- `docs/video-plan.md` — human runbook with resolved chapter and phase details
-- `assets/production-plan.json` — machine execution manifest for `executing-video-plan`
-
-If some declared execution-time assets are not available yet, that is fine. The plan will show `source-assets` as blocked until you add them.
-
-### 5. Execute the plan
-
-```
+# run the next phase and repeat as the project advances
 /executing-video-plan
 ```
 
-Reads `production-plan.json`, identifies the next actionable phase, and executes it. Reports blockers in plan terms (current phase, missing file, recommended next skill). Continue running until all phases complete.
+The important part is not the exact file names. The important part is that the project's required inputs live under `assets/<project>/assets/` and are declared clearly in the project's design / idea document so the planner can derive the production requirements from the actual project.
 
-#### Phase 2 — Source assets
+## Choosing The Right Workflow
 
-When `song.mp3` is present, `aligning-lyrics` produces:
-- `assets/aligned_lyrics.json`
-- `assets/subtitle.srt`
-- `assets/subtitle.lrc`
+### Idea-first workflow
 
-#### Phase 3 — Production pipeline
+Use this when you are starting from a rough prompt, song concept, screenplay idea, or visual direction.
 
-Uses the default chapter directory `chapters/chapter-01/`. Produces:
-- `chapters/chapter-01/chapter.json`
-- `chapters/chapter-01/shot-list.json`
-- `chapters/chapter-01/extraction-report.json`
-- `chapters/chapter-01/shot-details.json`
-- `chapters/chapter-01/consistency-report.json`
-- packs under `global/` and `characters/`
+Typical sequence:
 
-#### Phase 4 — Lyric-scene reconciliation *(optional, manual)*
+1. `brainstorming-video-idea`
+2. `setup-video-project`
+3. place source assets in `assets/`
+4. `writing-video-plan`
+5. `executing-video-plan`
+6. `retention-driven-development`
+7. `requesting-video-review`
 
-Only enable this if aligned lyric segments and the planned scene count diverge. Write the reconciliation decision to `logs/lyric-scene-reconciliation.md`.
+### Full-pipeline workflow
 
-#### Phase 5 — Reference images *(run when characters appear in 3+ scenes)*
+Use this when the project cleanly matches one of Violyra's end-to-end pipeline patterns.
 
-Use `using-replicate-model` with an image model such as Nano Banana or FLUX to generate recurring-character references and optional start frames. Save them under:
-- `assets/reference-images/`
-- `assets/start-frames/`
+- `mv-production-pipeline` for music-video style productions
+- `shorts-production-pipeline` for short-form narrative productions
 
-```
-/using-replicate-model
-```
+Use these when you want one higher-level workflow instead of manually stepping through planning and execution.
 
-#### Phase 7 — Scene generation
+### Direct skill workflow
 
-Generate one clip per prompt using your chosen video model. Save outputs under:
-- `chapters/chapter-01/scenes/`
-- `chapters/chapter-01/scene-generation.manifest.json`
+Use this when you already know which step you need.
 
-Scenes within a chapter can run in parallel. The default generation skill is `using-replicate-model`.
+Examples:
 
-#### Phase 8 → Phase 10 — Draft, retention pass, recompile
+- already have lyrics and want timing: `aligning-lyrics`
+- already have a shot list and want packs/details: `running-video-production-pipeline`
+- already have prompts and want generation: `using-replicate-model` or `using-falai-model`
+- already have scenes and want final assembly: `compiling-video`
 
-```
-/compiling-video                  # → final/draft.mp4
-/retention-driven-development     # → chapters/chapter-01/retention-report.json
-/compiling-video                  # → final/final.mp4
-```
+## Source Assets
 
-Do not skip the retention pass. It is the primary mechanism for improving clip quality before delivery.
+Violyra supports different project inputs. Do not assume every project uses the same files.
 
-#### Phase 11 — Video review
+Examples of valid source assets:
 
-```
-/requesting-video-review
-```
+- lyrics
+- song audio
+- screenplay
+- story brief
+- voiceover audio
+- reference images
+- source footage
+- a YouTube URL to download from
 
-Runs the review workflow against `final/final.mp4`. Output: `logs/review-feedback.md`. Do not deliver until the review says `Status: pass`.
+The correct rule is:
 
-#### Phase 12 — Thumbnail
+1. Put project inputs under `assets/<project>/assets/`
+2. Make the required inputs explicit in the project's design / idea document
+3. Let the planning skill derive the execution requirements from that project context
 
-```
-/generating-thumbnail
-```
+## Typical Project Patterns
 
-Use the final render to extract a few strong reference frames, generate multiple thumbnail candidates, and save the winner as `final/thumbnail.jpg` (≥ 1280×720).
+These are examples, not hard rules. The exact phase order should come from the approved idea doc and the production plan written for that project.
 
-#### Phase 13 — Delivery
+### Music Video
 
-Upload `final/final.mp4` and `final/thumbnail.jpg` to your target platform. No Violyra skill exists for this phase yet — delivery is manual.
+Common inputs:
 
-## Checking Phase Status
+- lyrics
+- song audio, or lyrics plus a song-generation step
+- style direction
+- recurring characters if applicable
 
-Read `docs/video-plan.md` to see which phases are complete. Or run `executing-video-plan` — it will identify the current phase and report what is needed to continue.
+Common sequence:
 
-## Common Issues
+1. `generating-lyrics` if lyrics do not exist yet
+2. `generating-song` if audio does not exist yet
+3. `aligning-lyrics`
+4. `writing-video-plan`
+5. `running-video-production-pipeline`
+6. prompt writing
+7. video generation
+8. `compiling-video`
+9. `retention-driven-development`
+10. `requesting-video-review`
+11. `generating-thumbnail`
 
-**"song.mp3 missing"** — This matters only for lyric-driven projects that use a local song file. Supply `{project_dir}/assets/song.mp3` and run `executing-video-plan` again. This blocks only the `source-assets` phase.
+### Short Drama / Narrative
 
-**"chapter.json is empty"** or **"`chapters/chapter-01/scenes/` is empty"** — These are only blockers once the plan reaches those phases. Check `docs/video-plan.md` to confirm the current phase before treating them as errors.
+Common inputs:
 
-**Character drifted off-spec in generation** — Enable Phase 5, generate references or start frames under `assets/reference-images/` / `assets/start-frames/`, regenerate affected scenes, and recompile.
+- screenplay or story brief
+- character definitions
+- reference images or look references
+- optional voiceover or dialogue assets
 
-**Lyric count and scene count don't match** — Enable Phase 4, write `logs/lyric-scene-reconciliation.md`, then continue.
+Common sequence:
 
-## All Skills
+1. `brainstorming-video-idea`
+2. `setup-video-project`
+3. `writing-video-plan`
+4. `running-video-production-pipeline`
+5. prompt writing
+6. video generation
+7. `compiling-video`
+8. `retention-driven-development`
+9. `requesting-video-review`
 
-| Skill | Phase | Produces |
-|---|---|---|
-| `brainstorming-video-idea` | Pre-planning | `docs/video-idea.md` |
-| `setup-video-project` | 1 | `project.json`, workspace dirs |
-| `aligning-lyrics` | 2 | `aligned_lyrics.json`, `subtitle.srt`, `subtitle.lrc` |
-| `writing-video-plan` | — | `storyboard.json`, `video-plan.md`, `production-plan.json` |
-| `running-video-production-pipeline` | 3 | `chapters/chapter-01/*`, `global/`, `characters/` |
-| *(manual reconciliation)* | 4 | `logs/lyric-scene-reconciliation.md` |
-| `using-replicate-model` | 5, 7 | `assets/reference-images/`, `assets/start-frames/`, `chapters/chapter-01/scenes/`, generation manifest |
-| `writing-video-prompt` | 6 | `chapters/chapter-01/video-prompts.json` |
-| `compiling-video` | 8, 10 | `final/draft.mp4`, `final/final.mp4` |
-| `retention-driven-development` | 9 | `chapters/chapter-01/retention-report.json`, regenerated scenes |
-| `requesting-video-review` | 11 | `logs/review-feedback.md` |
-| `generating-thumbnail` | 12 | `final/thumbnail.jpg` |
-| *(delivery — platform-specific)* | 13 | `final/final.mp4` + `final/thumbnail.jpg` uploaded to platform |
+### Mixed or Custom Project
+
+If the project is unusual, use the skill library compositionally instead of forcing it into one template.
+
+Start from:
+
+1. `brainstorming-video-idea`
+2. `setup-video-project`
+3. place the required inputs in `assets/`
+4. use `writing-video-plan` to make the project-specific phase order explicit
+
+## Core Skill Groups
+
+### Workflow
+
+- `brainstorming-video-idea`
+- `setup-video-project`
+- `writing-video-plan`
+- `executing-video-plan`
+- `retention-driven-development`
+- `requesting-video-review`
+
+### Production Pipeline
+
+- `breaking-down-video-script`
+- `extracting-video-entities`
+- `enriching-shot-details`
+- `checking-consistency`
+- `running-video-production-pipeline`
+
+### Generation
+
+- `writing-video-prompt`
+- `using-replicate-model`
+- `using-falai-model`
+- `upscaling-video`
+- `extracting-foreground`
+- `generating-thumbnail`
+
+### Audio / Music
+
+- `generating-lyrics`
+- `generating-song`
+- `aligning-lyrics`
+- `generating-voiceover`
+
+## Review And Iteration
+
+Violyra is built for iteration, not one-pass perfection.
+
+Use these review loops deliberately:
+
+- `retention-driven-development` when generated scenes are weak or uneven
+- `requesting-video-review` before delivery or after any major production milestone
+- `scoring-narrative-quality` after full compile when you want a whole-video narrative score
+
+The general rule is:
+
+1. generate a draft
+2. review it
+3. replace weak pieces
+4. recompile
+5. review again
+
+## Common Questions
+
+### What do I put in `assets/`?
+
+Whatever the project depends on: lyrics, screenplay, song audio, reference stills, source footage, voiceover, downloads, or generated intermediates.
+
+### Do I need all workflow skills every time?
+
+No. Some projects need the full concept → plan → execution flow. Some only need one skill.
+
+### Is `writing-video-plan` only for music videos?
+
+No. It should describe the production steps for the current project. The exact source assets and phase requirements should come from the project context, not from a single hardcoded file list.
+
+### When should I use the full pipeline skills?
+
+When the project clearly matches them:
+
+- `mv-production-pipeline` for music videos
+- `shorts-production-pipeline` for short-form narrative work
+
+Otherwise, compose the lower-level skills yourself.
+
+## Next References
+
+- [design.md](./design.md) for architecture and skill inventory
+- [installation.md](./installation.md) for setup
+- [testing.md](./testing.md) for repo verification
