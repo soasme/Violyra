@@ -51,5 +51,5 @@ source .env && node .agents/skills/compiling-video/scripts/compile.js \
 
 Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
-**On invocation** — key `inputs`: `shot_list_path`, `audio_path`, `output_path`
+**On invocation** — key `inputs`: `storyboard`, `aligned`, `song`, `output`
 **On completion** — key `outputs`: `output_video`, `duration_s`, `scene_count`

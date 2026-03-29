@@ -34,6 +34,22 @@ export function lintSkillContent(dirName, content) {
   if (fm.name && !/^[a-z]+-[a-z0-9]+(-[a-z0-9]+)*$/.test(fm.name)) {
     violations.push(`${dirName}: name '${fm.name}' must be kebab-case slug matching gerund-object convention (e.g. writing-video-plan, generating-actor-pack)`)
   }
+  const normalized = content.replace(/\r\n/g, '\n')
+  const fmMatch = normalized.match(/^---\n[\s\S]*?\n---\n*/)
+  const body = fmMatch ? normalized.slice(fmMatch[0].length) : normalized
+  const headingRegex = /^##\s+.+$/gm
+  let match
+  let loggingFound = false
+  let lastHeading = null
+  while ((match = headingRegex.exec(body)) !== null) {
+    lastHeading = match[0].trim()
+    if (lastHeading === '## Logging') loggingFound = true
+  }
+  if (!loggingFound) {
+    violations.push(`${dirName}: missing '## Logging' section`)
+  } else if (lastHeading !== '## Logging') {
+    violations.push(`${dirName}: '## Logging' section must be the final section in SKILL.md`)
+  }
   return violations
 }
 
@@ -43,6 +59,7 @@ function main() {
   const skillDirs = readdirSync(skillsDir, { withFileTypes: true })
     .filter(d => d.isDirectory() && d.name !== 'lib')
     .map(d => d.name)
+    .sort()
   const allViolations = []
   for (const dir of skillDirs) {
     const skillPath = join(skillsDir, dir, 'SKILL.md')

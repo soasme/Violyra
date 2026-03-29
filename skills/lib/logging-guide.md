@@ -43,9 +43,9 @@ mkdir -p {project_dir}/logs
 ```jsonl
 {"ts":"2026-03-29T12:00:00Z","skill":"writing-veo31-prompt","event":"invoked","reason":"Shot 3 needs a close-up prompt for the bridge section","inputs":{"shot_id":"ch1-s03","mode":"text_to_video"}}
 {"ts":"2026-03-29T12:01:14Z","skill":"writing-veo31-prompt","event":"completed","outputs":{"prompt_length":142,"shot_id":"ch1-s03"},"notes":"Used R2V mode due to reference image availability"}
-{"ts":"2026-03-29T12:05:00Z","skill":"using-falai-model","event":"invoked","reason":"Generating video for ch1-s03 using veo3.1","inputs":{"model":"fal-ai/veo3.1/text-to-video","shot_id":"ch1-s03"}}
+{"ts":"2026-03-29T12:05:00Z","skill":"using-falai-model","event":"invoked","reason":"Generating video for ch1-s03 using veo3.1","inputs":{"model_id":"fal-ai/veo3.1/text-to-video","shot_id":"ch1-s03"}}
 {"ts":"2026-03-29T12:07:33Z","skill":"using-falai-model","event":"failed","notes":"Timeout after 120s"}
-{"ts":"2026-03-29T12:07:35Z","skill":"using-falai-model","event":"retried","inputs":{"model":"fal-ai/veo3.1/text-to-video","shot_id":"ch1-s03"}}
+{"ts":"2026-03-29T12:07:35Z","skill":"using-falai-model","event":"retried","inputs":{"model_id":"fal-ai/veo3.1/text-to-video","shot_id":"ch1-s03"}}
 {"ts":"2026-03-29T12:10:01Z","skill":"using-falai-model","event":"completed","outputs":{"output_url":"https://cdn.fal.ai/...","duration_s":8,"shot_id":"ch1-s03"}}
 {"ts":"2026-03-29T14:22:00Z","skill":"scoring-narrative-quality","event":"scored","scores":{"hook":16,"pacing":14,"emotional_arc":18,"visual_variety":12,"payoff":15},"composite":75,"notes":"Visual variety dragged by 4 consecutive medium shots in the chorus"}
 ```

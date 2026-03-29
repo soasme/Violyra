@@ -27,5 +27,5 @@ For full MV compile, use:
 
 Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
-**On invocation** — key `inputs`: `input_video`, `scale_factor`, `model` (replicate or falai)
+**On invocation** — key `inputs`: `input_video`, `scale_factor`
 **On completion** — key `outputs`: `output_video`, `resolution`

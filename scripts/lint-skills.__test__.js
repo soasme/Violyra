@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { parseFrontmatter, lintSkillContent } from './lint-skills.js'
 
-const VALID = '---\nname: writing-video-plan\ndescription: Use when writing a storyboard plan from lyrics, style, and visual requirements.\n---\n# Content'
+const VALID = '---\nname: writing-video-plan\ndescription: Use when writing a storyboard plan from lyrics, style, and visual requirements.\n---\n# Content\n\n## Logging\n\nLog to `{project_dir}/logs/production.jsonl`.'
 
 describe('parseFrontmatter', () => {
   it('returns null when no frontmatter block', () => {
@@ -54,7 +54,15 @@ describe('lintSkillContent', () => {
     expect(lintSkillContent('VideoWriter', c)[0]).toMatch(/gerund-object/)
   })
   it('accepts multi-word gerund-object names', () => {
-    const c = '---\nname: writing-seedance15-prompt\ndescription: A description under 200 chars.\n---'
+    const c = '---\nname: writing-seedance15-prompt\ndescription: A description under 200 chars.\n---\n# Content\n\n## Logging\n\nLog here.'
     expect(lintSkillContent('writing-seedance15-prompt', c)).toEqual([])
+  })
+  it('reports missing ## Logging section', () => {
+    const c = '---\nname: writing-video-plan\ndescription: A description.\n---\n# Content'
+    expect(lintSkillContent('writing-video-plan', c)[0]).toMatch(/missing '## Logging'/)
+  })
+  it('reports ## Logging section not last', () => {
+    const c = '---\nname: writing-video-plan\ndescription: A description.\n---\n# Content\n\n## Logging\n\nLog here.\n\n## Extra\n\nExtra content.'
+    expect(lintSkillContent('writing-video-plan', c)[0]).toMatch(/'## Logging' section must be the final/)
   })
 })

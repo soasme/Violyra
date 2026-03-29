@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"$CLAUDE_TOOL_INPUT\" | grep -q '\"file_path\".*skills/' && pnpm --silent lint-skills",
+            "command": "sh -c 'if echo \"$CLAUDE_TOOL_INPUT\" | grep -q \"\\\"file_path\\\".*skills/\"; then pnpm --silent lint-skills; else :; fi'",
             "timeout": 15
           }
         ]

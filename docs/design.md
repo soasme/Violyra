@@ -121,9 +121,9 @@ Each skill's `SKILL.md` has a `## Logging` section (the last section) that speci
 | `writing-seedance15-prompt` | To write motion-focused Seedance 1.5 prompts from shot details. |
 | `writing-seedance20-prompt` | To write motion-focused Seedance 2.0 prompts with multi-shot support. |
 | `writing-veo31-prompt` | To write cinematic Veo 3.1 prompts with native audio cues and R2V mode. |
-| `upscaling-video` | To upscale scene clips with Topaz (via Replicate or fal.ai). |
+| `upscaling-video` | To upscale scene clips with Topaz via Replicate. |
 | `extracting-foreground` | To extract foreground objects from images and produce transparent PNG cutouts. |
-| `generating-thumbnail` | To generate video thumbnails via Replicate or fal.ai. |
+| `generating-thumbnail` | To generate video thumbnails via Replicate. |
 
 ### Post-Production Skills
 
