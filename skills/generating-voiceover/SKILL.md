@@ -1,6 +1,6 @@
 ---
 name: generating-voiceover
-description: Produce clean, consistent, delivery-ready TTS audio for video tasks. Use when asked to generate narration or voiceover, choose a local or cloud TTS engine, clean artifacts, normalize loudness, and export segment-ready audio files.
+description: Produce delivery-ready TTS audio for video tasks. Use when asked to generate narration or voiceover, choose a TTS engine, clean artifacts, normalize loudness, and export segment-ready audio files.
 ---
 
 # Generate Voiceover

@@ -1,6 +1,6 @@
 ---
 name: generating-thumbnail
-description: Generate YouTube thumbnail images with Replicate google/nano-banana-pro. Use when asked to create or iterate 16:9 thumbnail concepts from prompts and optional reference images, then save final JPG/PNG files locally.
+description: Generate YouTube thumbnail images with Replicate google/nano-banana-pro. Use when asked to create or iterate 16:9 thumbnail concepts from prompts and reference images, saving JPG/PNG locally.
 ---
 
 # Generate Thumbnail

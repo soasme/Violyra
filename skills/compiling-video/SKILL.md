@@ -1,6 +1,6 @@
 ---
 name: compiling-video
-description: Compile scene clips into a full-song music video with ffmpeg using storyboard + aligned lyrics timing. Use when you need deterministic final assembly (optional auto-upscale, scene stretch, frame fit, concat, audio mux) and a default 1920x1080 output.
+description: Compile scene clips into a full-song music video with ffmpeg using storyboard + lyrics timing. Use when you need final assembly with auto-upscale, scene stretch, frame fit, concat, and audio mux.
 ---
 
 # MV Compilation

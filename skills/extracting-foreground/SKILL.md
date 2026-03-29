@@ -1,6 +1,6 @@
 ---
 name: extracting-foreground
-description: Remove image backgrounds and produce transparent PNG outputs with Replicate 851-labs/background-remover. Use when asked to cut out subjects, remove backgrounds, or generate alpha-channel PNGs from images.
+description: Remove image backgrounds and produce transparent PNGs with Replicate 851-labs/background-remover. Use when asked to cut out subjects, remove backgrounds, or generate alpha-channel PNGs.
 ---
 
 # Extract Foreground
