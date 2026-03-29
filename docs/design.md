@@ -144,6 +144,11 @@ Each skill's `SKILL.md` has a `## Logging` section (the last section) that speci
 |---|---|
 | `using-replicate-model` | To discover and run any Replicate model. Includes reference sheets for Seedance 1.5/2.0, Veo 3.1, Chatterbox, Flux, Topaz, Wan 2.5, Nano Banana. |
 | `using-falai-model` | To run any fal.ai model via run, subscribe, submit, streaming, or real-time modes. Includes reference sheets for Veo 3.1, Flux, Chatterbox, Topaz, Wan 2.5, Nano Banana. |
+
+### Utility Skills
+
+| Skill | When to use |
+|---|---|
 | `downloading-youtube-video` | To download a YouTube URL to local files using yt-dlp. |
 
 ## Typical Workflows
