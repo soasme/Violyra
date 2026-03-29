@@ -9,3 +9,10 @@ Use `scripts/extract.js` to remove image backgrounds.
 
 Run:
 `REPLICATE_API_TOKEN=<token> node .agents/skills/extracting-foreground/scripts/extract.js --input <input-image> --output <output-image>`
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `input_image`
+**On completion** — key `outputs`: `output_png`

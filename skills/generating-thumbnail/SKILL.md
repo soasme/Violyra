@@ -37,3 +37,10 @@ Local `--image` paths are uploaded to Replicate Files API automatically. Hosted 
 
 - Saves a generated thumbnail image to the local path provided via `--output`.
 - Prints prediction metadata and final output URL for traceability.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `prompt`, `style`, `aspect_ratio`
+**On completion** — key `outputs`: `thumbnail_path`

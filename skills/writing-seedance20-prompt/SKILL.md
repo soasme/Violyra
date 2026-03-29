@@ -368,3 +368,10 @@ and
 For multi-shot scenes:
 
     Shot 1. Shot switch. Shot 2. Shot switch. Shot 3.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `shot_id`, `mode` (`image_to_video`/`text_to_video`)
+**On completion** — key `outputs`: `prompt_length`, `shot_id`

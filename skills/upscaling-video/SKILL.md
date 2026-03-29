@@ -22,3 +22,10 @@ source .env && node .agents/skills/upscaling-video/scripts/upscale.js \
 
 For full MV compile, use:
 `source .env && node .agents/skills/compiling-video/scripts/compile.js ...`
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `input_video`, `scale_factor`, `model` (replicate or falai)
+**On completion** — key `outputs`: `output_video`, `resolution`

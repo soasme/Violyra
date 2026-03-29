@@ -73,3 +73,10 @@ Use this structure:
   ]
 }
 ```
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `lyrics_path`, `style`, `aspect_ratio`
+**On completion** — key `outputs`: `storyboard_path`, `shot_count`
