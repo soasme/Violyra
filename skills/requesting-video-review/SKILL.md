@@ -32,3 +32,10 @@ Dispatches a reviewer subagent with production context to catch issues before th
 ## After Review
 
 If no Critical or Important issues remain, the production is ready for delivery.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `project_dir`, `plan_path`
+**On completion** — key `outputs`: `critical_count`, `important_count`, `minor_count`, `blocked` (true if critical > 0)

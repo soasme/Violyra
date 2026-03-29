@@ -48,3 +48,10 @@ Stop immediately and ask the user when:
 ## After Execution
 
 Transition to `retention-driven-development`.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `plan_path`, `task_id`
+**On completion** — key `outputs`: `task_status` (`passed`/`failed`), `artifacts` (array of output file paths)
