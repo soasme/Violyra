@@ -14,18 +14,18 @@ This guide describes the full happy-path from a rough idea to a delivery-ready v
 ```
 brainstorming-video-idea
   → setup-video-project
-  → [supply song.mp3 + lyrics.txt]
-  → aligning-lyrics
+  → [supply lyrics.txt, optionally song.mp3]
   → writing-video-plan                ← writes storyboard.json + video-plan.md + production-plan.json
   → executing-video-plan        ← manages all 13 phases via production-plan.json
-      Phase 3:  running-video-production-pipeline
-      Phase 4:  aligning-lyrics (alignment check, optional)
-      Phase 5:  generating-character-pack (reference images, if needed)
+      Phase 2:  aligning-lyrics when song.mp3 is available
+      Phase 3:  running-video-production-pipeline  ← chapters/chapter-01/*
+      Phase 4:  lyric-scene reconciliation (optional, manual)
+      Phase 5:  using-replicate-model (reference images / start frames, optional)
       Phase 6:  writing-video-prompt
-      Phase 7:  generating-scene-pack
-      Phase 8:  compiling-video           ← output/draft.mp4
+      Phase 7:  using-replicate-model     ← chapter-local scene clips + manifest
+      Phase 8:  compiling-video           ← final/draft.mp4
       Phase 9:  retention-driven-development
-      Phase 10: compiling-video           ← output/final.mp4
+      Phase 10: compiling-video           ← final/final.mp4
       Phase 11: requesting-video-review
       Phase 12: generating-thumbnail
       Phase 13: delivery
@@ -47,14 +47,18 @@ The agent will ask one question at a time, propose 2–3 creative directions, an
 /setup-video-project
 ```
 
-Creates the directory structure and `project.json`. Output: `{project_dir}/project.json`, `assets/`, `docs/`, `logs/`.
+Creates the directory structure and `project.json`. Output: `{project_dir}/project.json`, `assets/`, `docs/`, `logs/`, `final/`, `global/`, `characters/`, `chapters/`.
 
-### 3. Supply source audio and lyrics
+### 3. Supply lyrics, and optionally the song
 
-Copy your files manually:
+Copy your lyric file manually:
+```bash
+cp /path/to/lyrics.txt {project_dir}/assets/lyrics.txt
+```
+
+If you already have the audio, place it too:
 ```bash
 cp /path/to/song.mp3 {project_dir}/assets/song.mp3
-cp /path/to/lyrics.txt {project_dir}/assets/lyrics.txt
 ```
 
 **Lyrics format:** One line per sung line. Mark non-sung lines (section headers, decorations) with a `#` prefix so the pipeline can exclude them consistently:
@@ -64,55 +68,72 @@ When the morning light breaks through
 And the fields are green and new
 ```
 
-### 4. Align lyrics to audio
-
-```
-/aligning-lyrics
-```
-
-Segments lyrics to audio timing. Output: `aligned_lyrics.json`, `subtitle.srt`, `subtitle.lrc`.
-
-### 5. Write the production plan
+### 4. Write the production plan
 
 ```
 /writing-video-plan
 ```
 
-Reads `video-idea.md` and writes three artifacts:
+Reads `video-idea.md`, `lyrics.txt`, and the canonical workflow model. Writes three artifacts:
 - `assets/storyboard.json` — scene-level creative input for generation
-- `docs/video-plan.md` — human runbook with 13 phases and verification criteria
+- `docs/video-plan.md` — human runbook with resolved chapter and phase details
 - `assets/production-plan.json` — machine execution manifest for `executing-video-plan`
 
-### 6. Execute the plan
+If `song.mp3` is not available yet, that is fine. The plan will show `source-assets` as the current blocked phase until you add it.
+
+### 5. Execute the plan
 
 ```
 /executing-video-plan
 ```
 
-Reads `production-plan.json`, identifies the next runnable phase, and executes it. Reports blockers in plan terms (current phase, missing file, recommended next skill). Continue running until all phases complete.
+Reads `production-plan.json`, identifies the next actionable phase, and executes it. Reports blockers in plan terms (current phase, missing file, recommended next skill). Continue running until all phases complete.
+
+#### Phase 2 — Source assets
+
+When `song.mp3` is present, `aligning-lyrics` produces:
+- `assets/aligned_lyrics.json`
+- `assets/subtitle.srt`
+- `assets/subtitle.lrc`
 
 #### Phase 3 — Production pipeline
 
-Produces `chapter.json`, `shot-list.json`, `shot-details.json`, and packs in `assets/packs/`.
+Uses the default chapter directory `chapters/chapter-01/`. Produces:
+- `chapters/chapter-01/chapter.json`
+- `chapters/chapter-01/shot-list.json`
+- `chapters/chapter-01/extraction-report.json`
+- `chapters/chapter-01/shot-details.json`
+- `chapters/chapter-01/consistency-report.json`
+- packs under `global/` and `characters/`
+
+#### Phase 4 — Lyric-scene reconciliation *(optional, manual)*
+
+Only enable this if aligned lyric segments and the planned scene count diverge. Write the reconciliation decision to `logs/lyric-scene-reconciliation.md`.
 
 #### Phase 5 — Reference images *(run when characters appear in 3+ scenes)*
 
-Generates reference images for named characters to maintain visual consistency across shots. Skip for single-appearance characters or abstract visual content.
+Use `using-replicate-model` with an image model such as Nano Banana or FLUX to generate recurring-character references and optional start frames. Save them under:
+- `assets/reference-images/`
+- `assets/start-frames/`
 
 ```
-/generating-character-pack
+/using-replicate-model
 ```
 
 #### Phase 7 — Scene generation
 
-Generates video clips for each scene. Scenes within a chapter run in parallel; chapters are sequential.
+Generate one clip per prompt using your chosen video model. Save outputs under:
+- `chapters/chapter-01/scenes/`
+- `chapters/chapter-01/scene-generation.manifest.json`
+
+Scenes within a chapter can run in parallel. The default generation skill is `using-replicate-model`.
 
 #### Phase 8 → Phase 10 — Draft, retention pass, recompile
 
 ```
-/compiling-video          # → output/draft.mp4
-/retention-driven-development   # scores clips, replaces weak ones
-/compiling-video          # → output/final.mp4
+/compiling-video                  # → final/draft.mp4
+/retention-driven-development     # → chapters/chapter-01/retention-report.json
+/compiling-video                  # → final/final.mp4
 ```
 
 Do not skip the retention pass. It is the primary mechanism for improving clip quality before delivery.
@@ -123,7 +144,7 @@ Do not skip the retention pass. It is the primary mechanism for improving clip q
 /requesting-video-review
 ```
 
-Runs the review workflow against `output/final.mp4`. Output: `logs/review-feedback.md`. Do not deliver until the review passes.
+Runs the review workflow against `final/final.mp4`. Output: `logs/review-feedback.md`. Do not deliver until the review says `Status: pass`.
 
 #### Phase 12 — Thumbnail
 
@@ -131,11 +152,11 @@ Runs the review workflow against `output/final.mp4`. Output: `logs/review-feedba
 /generating-thumbnail
 ```
 
-Extracts candidate frames from `output/final.mp4`, generates thumbnail options, and selects the strongest. Output: `output/thumbnail.jpg` (≥ 1280×720).
+Use the final render to extract a few strong reference frames, generate multiple thumbnail candidates, and save the winner as `final/thumbnail.jpg` (≥ 1280×720).
 
 #### Phase 13 — Delivery
 
-Upload `output/final.mp4` and `output/thumbnail.jpg` to your target platform. No Violyra skill for this phase — delivery is platform-specific.
+Upload `final/final.mp4` and `final/thumbnail.jpg` to your target platform. No Violyra skill exists for this phase yet — delivery is manual.
 
 ## Checking Phase Status
 
@@ -143,13 +164,13 @@ Read `docs/video-plan.md` to see which phases are complete. Or run `executing-vi
 
 ## Common Issues
 
-**"song.mp3 missing"** — Supply the file at `{project_dir}/assets/song.mp3` and run `executing-video-plan` again.
+**"song.mp3 missing"** — Supply the file at `{project_dir}/assets/song.mp3` and run `executing-video-plan` again. This blocks only the `source-assets` phase.
 
-**"chapter.json is empty"** or **"scenes/ is empty"** — These are not immediate blockers if you haven't reached those phases yet. Check `docs/video-plan.md` to confirm which phase is current.
+**"chapter.json is empty"** or **"`chapters/chapter-01/scenes/` is empty"** — These are only blockers once the plan reaches those phases. Check `docs/video-plan.md` to confirm the current phase before treating them as errors.
 
-**Character drifted off-spec in generation** — Reference images were likely not generated or not used. Run Phase 5 (`/generating-character-pack`), regenerate affected scenes, and recompile.
+**Character drifted off-spec in generation** — Enable Phase 5, generate references or start frames under `assets/reference-images/` / `assets/start-frames/`, regenerate affected scenes, and recompile.
 
-**Lyric count and scene count don't match** — Run Phase 4 (`/aligning-lyrics`) to reconcile. Document the decision in `project.json`.
+**Lyric count and scene count don't match** — Enable Phase 4, write `logs/lyric-scene-reconciliation.md`, then continue.
 
 ## All Skills
 
@@ -157,14 +178,14 @@ Read `docs/video-plan.md` to see which phases are complete. Or run `executing-vi
 |---|---|---|
 | `brainstorming-video-idea` | Pre-planning | `docs/video-idea.md` |
 | `setup-video-project` | 1 | `project.json`, workspace dirs |
-| `aligning-lyrics` | 2, 4 | `aligned_lyrics.json`, `subtitle.srt`, `subtitle.lrc` |
+| `aligning-lyrics` | 2 | `aligned_lyrics.json`, `subtitle.srt`, `subtitle.lrc` |
 | `writing-video-plan` | — | `storyboard.json`, `video-plan.md`, `production-plan.json` |
-| `running-video-production-pipeline` | 3 | `chapter.json`, `shot-list.json`, `shot-details.json`, packs |
-| `generating-character-pack` | 5 | `reference-frames/`, actor packs |
-| `writing-video-prompt` | 6 | `video-prompts.json` |
-| `generating-scene-pack` | 7 | `assets/scenes/` |
-| `compiling-video` | 8, 10 | `output/draft.mp4`, `output/final.mp4` |
-| `retention-driven-development` | 9 | `logs/retention-report.json`, updated scenes |
+| `running-video-production-pipeline` | 3 | `chapters/chapter-01/*`, `global/`, `characters/` |
+| *(manual reconciliation)* | 4 | `logs/lyric-scene-reconciliation.md` |
+| `using-replicate-model` | 5, 7 | `assets/reference-images/`, `assets/start-frames/`, `chapters/chapter-01/scenes/`, generation manifest |
+| `writing-video-prompt` | 6 | `chapters/chapter-01/video-prompts.json` |
+| `compiling-video` | 8, 10 | `final/draft.mp4`, `final/final.mp4` |
+| `retention-driven-development` | 9 | `chapters/chapter-01/retention-report.json`, regenerated scenes |
 | `requesting-video-review` | 11 | `logs/review-feedback.md` |
-| `generating-thumbnail` | 12 | `output/thumbnail.jpg` |
-| *(delivery — platform-specific)* | 13 | `output/final.mp4` + `output/thumbnail.jpg` uploaded to platform |
+| `generating-thumbnail` | 12 | `final/thumbnail.jpg` |
+| *(delivery — platform-specific)* | 13 | `final/final.mp4` + `final/thumbnail.jpg` uploaded to platform |

@@ -1,11 +1,11 @@
 ---
 name: executing-video-plan
-description: Execute a video production plan phase by phase. Reads production-plan.json, finds the next runnable phase, and reports blockers in plan terms. Run after writing-video-plan.
+description: Execute a video production plan phase by phase. Reads production-plan.json, finds the next actionable phase, and reports blockers in plan terms. Run after writing-video-plan.
 ---
 
 # Executing Video Plan
 
-Load the production plan, find the next runnable phase, execute it, and continue until blocked or complete.
+Load the production plan, find the next actionable phase, execute it, and continue until blocked or complete.
 
 ## Inputs
 
@@ -24,14 +24,22 @@ Read `{project_dir}/assets/production-plan.json`. Read `{project_dir}/docs/video
 ### Step 2: Determine Current Phase
 
 Walk the phase list in order. For each phase:
-1. Skip phases marked `"status": "completed"`.
-2. Skip phases marked `"optional": true` that have no `requires` artifacts present (they have not been started yet and are not blocking).
-3. For the first non-completed phase, check whether all `requires` artifacts exist in the workspace.
+1. Skip phases marked `"status": "completed"` or `"status": "skipped"`.
+2. For phases marked `"optional": true`, treat them as non-blocking unless `"enabled": true` or `"status": "in-progress"`.
+3. If a phase is `"manual": true`, do not try to execute a skill for it. It is either a manual checkpoint or a manual delivery step.
+4. For each considered phase, check whether all `requires` artifacts exist in the workspace.
 
-The first non-completed phase with all `requires` satisfied is the **next runnable phase**.
-The first non-completed phase with a missing `requires` artifact is the **current blocked phase**.
+The first considered phase with all `requires` satisfied is the **next actionable phase**.
+The first considered phase with a missing `requires` artifact is the **current blocked phase**.
 
-### Step 3a: If a Phase is Runnable
+Supported statuses in `production-plan.json`:
+
+- `pending`
+- `in-progress`
+- `completed`
+- `skipped`
+
+### Step 3a: If an Executable Phase is Runnable
 
 Report:
 
@@ -46,19 +54,31 @@ Execute the phase using the named default skill. Follow that skill's instruction
 
 After execution, verify each artifact in `produces`. If all pass: update `production-plan.json` to set `"status": "completed"` for this phase. Continue to the next phase.
 
-### Step 3b: If a Phase is Blocked
+### Step 3b: If a Manual Phase is Actionable
+
+Report:
+
+> **Current phase:** {phase id} — {phase title}
+> **Status:** waiting for manual action
+> **Required inputs:** {list of requires}
+> **Verify before marking complete:** {phase.verification}
+> **Notes:** {phase.note if present}
+
+Do not attempt to execute a null/default skill. Pause and wait for the user to complete the manual step or provide the missing artifact. Once the user confirms the step is complete, mark the phase `"status": "completed"` and continue.
+
+### Step 3c: If a Phase is Blocked
 
 Report in plan terms:
 
 > **Current phase:** {phase id} — {phase title}
 > **Status:** blocked
 > **Missing:** `{path to missing artifact}`
-> **Once provided:** run `{default_skill}` or supply the file manually
+> **Once provided:** run `{default_skill}` if this is an executable phase, or complete the manual step and mark it done
 > **Next phases waiting:** {list of downstream phases}
 >
 > Execution is paused. Once the missing input is available, run `executing-video-plan` again to continue.
 
-Do not report phases that are not yet expected. If `production-pipeline` is not reached, a missing `chapter.json` is not a blocker — it simply hasn't been produced yet.
+Do not report phases that are not yet expected. If `production-pipeline` is not reached, a missing `{chapter_dir}/shot-details.json` is not a blocker — it simply has not been produced yet.
 
 ### Step 4: Two-Stage Review Per Phase
 
@@ -71,7 +91,7 @@ If Stage 2 fails, retry the generation for that scene/artifact before marking th
 
 ### Step 5: Parallelism
 
-For `scene-generation` phase only: scenes within a chapter can be dispatched in parallel subagents. Chapters must be sequential.
+For `scene-generation` phase only: scenes within the current chapter can be dispatched in parallel. Save clips under `{chapter_dir}/scenes/` and maintain `scene-generation.manifest.json` alongside them.
 
 All other phases are sequential.
 
@@ -83,16 +103,16 @@ Default sequence after `draft-compile`:
 1. `retention-review` — run `retention-driven-development`
 2. `recompile` — run `compiling-video` again
 3. `video-review` — run `requesting-video-review`
-4. `thumbnail` — run `generating-thumbnail` (requires `output/final.mp4`)
-5. `delivery` — user or agent uploads `output/final.mp4` and `output/thumbnail.jpg`
+4. `thumbnail` — run `generating-thumbnail` (requires `final/final.mp4`)
+5. `delivery` — user or agent uploads `final/final.mp4` and `final/thumbnail.jpg`
 
 ### Step 7: Completion
 
 When all phases reach `"status": "completed"`, report:
 
 > **All phases complete.**
-> Final video: `{project_dir}/output/final.mp4`
-> Thumbnail: `{project_dir}/output/thumbnail.jpg`
+> Final video: `{project_dir}/final/final.mp4`
+> Thumbnail: `{project_dir}/final/thumbnail.jpg`
 > Review log: `{project_dir}/logs/review-feedback.md`
 
 ## When to Stop and Ask

@@ -18,8 +18,11 @@ Creates the isolated workspace for a new video production after design approval.
 2. Create directory structure:
    ```
    <base-dir>/
+   ├── assets/              ← lyrics, song, storyboard, aligned lyrics
    ├── docs/
    │   └── video-idea.md    (already exists from brainstorming)
+   ├── logs/                ← production.jsonl and review logs
+   ├── final/               ← draft/final renders and thumbnail
    ├── global/              ← actor/scene/prop/costume packs
    ├── characters/          ← character packs
    └── chapters/            ← one subdir per chapter
@@ -43,11 +46,12 @@ Creates the isolated workspace for a new video production after design approval.
 ## Output
 
 - `<base-dir>/project.json`
+- `<base-dir>/assets/`, `<base-dir>/docs/`, `<base-dir>/logs/`, `<base-dir>/final/`
 - `<base-dir>/global/`, `<base-dir>/characters/`, `<base-dir>/chapters/` (empty directories)
 
 ## After Setup
 
-Transition to `writing-video-plan` (for music videos) or `executing-video-plan` (for short dramas) depending on the production type.
+Transition to `writing-video-plan`.
 
 ## Asset Directories
 

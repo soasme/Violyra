@@ -1,3 +1,4 @@
+// Browser-only — not testable with __test__.js
 (function() {
   const WS_URL = 'ws://' + window.location.host;
   let ws = null;

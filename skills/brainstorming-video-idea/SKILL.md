@@ -21,7 +21,7 @@ Do NOT write any files, create project directories, or transition to setup-video
 6. **Write design doc** — save to `{project_dir}/docs/video-idea.md`
 7. **Run spec document review** — use `spec-document-reviewer-prompt.md` to check the written doc
 8. **Ask user to review the doc** — wait for explicit approval before proceeding
-9. **Transition to `writing-video-plan`**
+9. **Transition to `setup-video-project`**, then `writing-video-plan`
 
 ## Clarifying Questions (one at a time)
 
@@ -115,13 +115,13 @@ After writing `video-idea.md`, review it using `spec-document-reviewer-prompt.md
 
 After the review loop passes, say:
 
-> "Design doc written to `{project_dir}/docs/video-idea.md`. Please review it and let me know if you want any changes before we start the production plan."
+> "Design doc written to `{project_dir}/docs/video-idea.md`. Please review it and let me know if you want any changes before we set up the workspace and start the production plan."
 
 Wait for explicit approval. If changes are requested, update the doc and re-run the spec review.
 
 ## After Approval
 
-Transition to `writing-video-plan`.
+If `{project_dir}/project.json` does not exist yet, transition to `setup-video-project` first. Once the workspace exists, transition to `writing-video-plan`.
 
 ## Logging
 

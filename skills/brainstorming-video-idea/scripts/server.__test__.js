@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { computeAcceptKey, encodeFrame, decodeFrame, OPCODES } from './server.cjs';
+import server from './server.cjs';
+
+const { computeAcceptKey, encodeFrame, decodeFrame, OPCODES } = server;
 
 describe('OPCODES', () => {
   it('defines expected opcode values', () => {
