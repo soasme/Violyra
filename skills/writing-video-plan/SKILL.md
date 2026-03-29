@@ -1,6 +1,6 @@
 ---
 name: writing-video-plan
-description: Write the production plan for an approved video idea. Emits storyboard.json (scene generation input), video-plan.md (human runbook), and production-plan.json (machine execution manifest). Run after brainstorming-video-idea and before executing-video-plan.
+description: Write the production plan for an approved video idea. Emits storyboard.json, video-plan.md (13-phase runbook), and production-plan.json (execution manifest). Run after brainstorming-video-idea.
 ---
 
 # Writing Video Plan

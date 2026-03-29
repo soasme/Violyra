@@ -1,6 +1,6 @@
 ---
 name: brainstorming-video-idea
-description: Use before making any video. Negotiates the best creative plan with the user before writing any files. Asks one question at a time, proposes 2-3 directions with trade-offs, and requires explicit approval before writing the design doc or starting project setup.
+description: Use before making any video. Negotiates the creative plan via one-question-at-a-time dialogue, proposes 2-3 directions with trade-offs, and requires explicit approval before writing any files.
 ---
 
 # Brainstorming Video Idea

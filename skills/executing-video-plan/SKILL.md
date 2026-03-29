@@ -1,6 +1,6 @@
 ---
 name: executing-video-plan
-description: Execute a video production plan phase by phase. Reads production-plan.json to determine the next runnable phase, reports blockers in plan terms, and dispatches subagents per task. Run after writing-video-plan.
+description: Execute a video production plan phase by phase. Reads production-plan.json, finds the next runnable phase, and reports blockers in plan terms. Run after writing-video-plan.
 ---
 
 # Executing Video Plan
