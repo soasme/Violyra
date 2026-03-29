@@ -1,5 +1,26 @@
 # Releases
 
+## v1.3.0 — 2026-03-29
+
+### Infrastructure
+
+**Harness Engineering**
+- `AGENTS.md` — golden principles for agents working on this repo (naming, test requirements, lint gate)
+- `scripts/lint-skills.js` — deterministic linter: validates frontmatter, description length, name/directory match, gerund-object convention
+- `.claude/settings.json` — pre-tool hook: runs `pnpm lint-skills` before any write to `skills/`
+- `package.json` — new `lint-skills` script
+
+**Observability**
+- `skills/lib/logging-guide.md` — canonical JSONL schema for production logs
+- All 33 existing `SKILL.md` files updated with a `## Logging` section specifying per-skill inputs/outputs
+- Log file: `{project_dir}/logs/production.jsonl` — append-only, one JSON object per line
+
+### New Skills
+
+- `scoring-narrative-quality` — score a compiled video on 5 narrative dimensions (hook, pacing, emotional arc, visual variety, payoff); composite 0–100; writes `scored` event to `production.jsonl`; recommends targeted `retention-driven-development` pass when composite < 70
+
+---
+
 ## v1.1.0 — 2026-03-28
 
 ### New Skills
