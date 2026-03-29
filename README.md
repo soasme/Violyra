@@ -29,6 +29,37 @@ Each step is a composable skill. Run the full pipeline or pick individual skills
 
 ---
 
+## Usage
+
+**Full guide:** [`docs/usage.md`](docs/usage.md)
+
+**Quickstart:**
+
+```bash
+# 1. Brainstorm and approve a video idea
+/brainstorming-video-idea
+
+# 2. Set up the project workspace
+/setup-video-project
+
+# 3. Supply your audio and lyrics
+cp song.mp3 assets/my-video/assets/song.mp3
+cp lyrics.txt assets/my-video/assets/lyrics.txt
+
+# 4. Align lyrics to audio
+/aligning-lyrics
+
+# 5. Write the production plan
+/writing-video-plan
+
+# 6. Execute phase by phase
+/executing-video-plan
+```
+
+The executor reads `production-plan.json`, identifies the next runnable phase, and reports any blockers in plan terms. Keep running it until all 13 phases complete.
+
+---
+
 ## Features
 
 ### Workflow
