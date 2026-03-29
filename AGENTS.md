@@ -36,6 +36,14 @@ Every script added to `skills/<skill-name>/scripts/` must:
 
 No LLM API calls in scripts. Scripts handle file I/O and validation only.
 
+**Exemptions from `__test__.js` requirement:**
+
+- Browser-companion `helper.js` files — these run inside a `<script>` tag in the browser and cannot be imported by Node. Document the exemption with a comment at the top of the file: `// Browser-only — not testable with __test__.js`.
+- Shell scripts (`.sh`) — not importable by Node.
+- HTML template files (`.html`) — not importable by Node.
+
+`.cjs` / `.js` files that export functions must have a `__test__.js` companion.
+
 ## Before Committing
 
 Run both of these and confirm they pass:
