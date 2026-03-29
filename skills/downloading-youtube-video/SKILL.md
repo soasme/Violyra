@@ -45,3 +45,10 @@ Pass browser cookies when a URL requires login or age verification:
 - Save downloaded files locally in the selected directory.
 - Preserve original extension unless `--merge-output-format` or `--audio-format` is set.
 - Print the final local path in terminal output.
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `url`, `output_dir`, `format` (`video`/`audio`/`both`)
+**On completion** — key `outputs`: `video_path`, `audio_path`, `duration_s`

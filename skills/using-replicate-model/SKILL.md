@@ -96,3 +96,11 @@ See `references/` for ready-to-use examples for this project's preferred models:
 - `flux-1.1-pro.md` — Black Forest Labs FLUX 1.1 Pro (image)
 - `topaz-video-upscale.md` — Topaz Labs video upscaler
 - `nano-banana-pro.md` — Google Nano Banana Pro (image)
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `model_id`, `version` (if pinned), key input params (e.g. `prompt`, `image`)
+**On completion** — key `outputs`: `output_url`, `prediction_id`
+**On failed/retried** — key `notes`: error message or timeout duration

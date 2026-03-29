@@ -95,3 +95,11 @@ See `references/` for ready-to-use examples:
 - `chatterbox.md` — Chatterbox TTS
 - `topaz-video-upscale.md` — Topaz video upscaler
 - `nano-banana-pro.md` — Nano Banana Pro (image generation)
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `model_id`, `call_mode` (`run`/`subscribe`/`submit`/`stream`/`realtime`), key input params
+**On completion** — key `outputs`: `output_url`, `request_id`
+**On failed/retried** — key `notes`: error message or status code

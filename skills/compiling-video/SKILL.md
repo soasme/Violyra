@@ -46,3 +46,10 @@ source .env && node .agents/skills/compiling-video/scripts/compile.js \
 4. `--manifest <manifest.json>` to use source generation URLs for more reliable upscale input
 5. `--no-upscale` to disable upscale
 6. `--force-upscale` to ignore upscale cache in `--work-dir/upscaled`
+
+## Logging
+
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+
+**On invocation** — key `inputs`: `shot_list_path`, `audio_path`, `output_path`
+**On completion** — key `outputs`: `output_video`, `duration_s`, `scene_count`
