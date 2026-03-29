@@ -1,0 +1,241 @@
+{
+  "$schemaVersion": "1.0",
+  "description": "Canonical Violyra production phase definitions. Consumed by writing-video-plan, executing-video-plan, and docs/usage.md. Do not duplicate phase names or artifact paths in other skill files — reference this file instead.",
+  "phases": [
+    {
+      "id": "project-setup",
+      "title": "Set up project workspace",
+      "default_skill": "setup-video-project",
+      "requires": [],
+      "produces": [
+        "{project_dir}/project.json",
+        "{project_dir}/docs/",
+        "{project_dir}/assets/",
+        "{project_dir}/logs/"
+      ],
+      "verification": [
+        "project.json exists and is valid JSON",
+        "assets/ and logs/ directories exist"
+      ],
+      "optional": false
+    },
+    {
+      "id": "source-assets",
+      "title": "Localize source audio and lyrics",
+      "default_skill": "aligning-lyrics",
+      "requires": [
+        "{project_dir}/assets/song.mp3",
+        "{project_dir}/assets/lyrics.txt"
+      ],
+      "produces": [
+        "{project_dir}/assets/aligned_lyrics.json",
+        "{project_dir}/assets/subtitle.srt",
+        "{project_dir}/assets/subtitle.lrc"
+      ],
+      "verification": [
+        "aligned_lyrics.json exists",
+        "line count in aligned_lyrics.json matches sung-line count in lyrics.txt"
+      ],
+      "blocks_if_missing": [
+        "{project_dir}/assets/song.mp3",
+        "{project_dir}/assets/lyrics.txt"
+      ],
+      "optional": false
+    },
+    {
+      "id": "production-pipeline",
+      "title": "Run production pipeline (chapter, shot-list, shot-details, packs)",
+      "default_skill": "running-video-production-pipeline",
+      "requires": [
+        "{project_dir}/assets/aligned_lyrics.json",
+        "{project_dir}/assets/storyboard.json"
+      ],
+      "produces": [
+        "{project_dir}/assets/chapter.json",
+        "{project_dir}/assets/shot-list.json",
+        "{project_dir}/assets/shot-details.json",
+        "{project_dir}/assets/packs/"
+      ],
+      "verification": [
+        "chapter.json exists and has at least one chapter",
+        "shot-list.json exists and scene count matches storyboard",
+        "shot-details.json exists",
+        "packs/ directory contains at least one pack file"
+      ],
+      "optional": false
+    },
+    {
+      "id": "lyric-alignment",
+      "title": "Verify lyric-to-scene alignment",
+      "default_skill": "aligning-lyrics",
+      "requires": [
+        "{project_dir}/assets/aligned_lyrics.json",
+        "{project_dir}/assets/shot-list.json"
+      ],
+      "produces": [],
+      "verification": [
+        "aligned_lyrics.json line count matches shot-list scene count or discrepancy is documented in project.json"
+      ],
+      "optional": true,
+      "note": "Run when shot count and lyric line count diverge. Documents the reconciliation decision in project.json."
+    },
+    {
+      "id": "reference-images",
+      "title": "Generate reference images and start frames",
+      "default_skill": "generating-character-pack",
+      "requires": [
+        "{project_dir}/assets/packs/",
+        "{project_dir}/assets/shot-details.json"
+      ],
+      "produces": [
+        "{project_dir}/assets/reference-frames/",
+        "{project_dir}/assets/packs/actor-*.json"
+      ],
+      "verification": [
+        "reference-frames/ directory exists and contains at least one image per named character",
+        "actor packs include reference_image paths"
+      ],
+      "optional": true,
+      "note": "Required when a character appears in 3 or more scenes. Skip only for single-appearance or abstract visual content."
+    },
+    {
+      "id": "video-prompts",
+      "title": "Write video generation prompts",
+      "default_skill": "writing-video-prompt",
+      "requires": [
+        "{project_dir}/assets/shot-details.json",
+        "{project_dir}/assets/packs/"
+      ],
+      "produces": [
+        "{project_dir}/assets/video-prompts.json"
+      ],
+      "verification": [
+        "video-prompts.json exists",
+        "prompt count matches scene count in shot-details.json"
+      ],
+      "optional": false
+    },
+    {
+      "id": "scene-generation",
+      "title": "First-pass scene generation",
+      "default_skill": "generating-scene-pack",
+      "requires": [
+        "{project_dir}/assets/video-prompts.json",
+        "{project_dir}/assets/packs/"
+      ],
+      "produces": [
+        "{project_dir}/assets/scenes/"
+      ],
+      "verification": [
+        "scenes/ directory exists",
+        "clip count in scenes/ matches scene count in video-prompts.json",
+        "each clip is readable video (non-zero file size)"
+      ],
+      "optional": false
+    },
+    {
+      "id": "draft-compile",
+      "title": "Compile draft video",
+      "default_skill": "compiling-video",
+      "requires": [
+        "{project_dir}/assets/scenes/",
+        "{project_dir}/assets/song.mp3",
+        "{project_dir}/assets/subtitle.srt"
+      ],
+      "produces": [
+        "{project_dir}/output/draft.mp4"
+      ],
+      "verification": [
+        "output/draft.mp4 exists and is non-zero",
+        "video duration is within 10% of song.mp3 duration"
+      ],
+      "optional": false
+    },
+    {
+      "id": "retention-review",
+      "title": "Retention-driven development pass",
+      "default_skill": "retention-driven-development",
+      "requires": [
+        "{project_dir}/output/draft.mp4",
+        "{project_dir}/assets/shot-details.json"
+      ],
+      "produces": [
+        "{project_dir}/logs/retention-report.json",
+        "{project_dir}/assets/scenes/"
+      ],
+      "verification": [
+        "retention-report.json exists",
+        "all scenes scoring below threshold have been replaced or documented as accepted"
+      ],
+      "optional": false
+    },
+    {
+      "id": "recompile",
+      "title": "Recompile after retention pass",
+      "default_skill": "compiling-video",
+      "requires": [
+        "{project_dir}/assets/scenes/",
+        "{project_dir}/assets/song.mp3",
+        "{project_dir}/assets/subtitle.srt",
+        "{project_dir}/logs/retention-report.json"
+      ],
+      "produces": [
+        "{project_dir}/output/final.mp4"
+      ],
+      "verification": [
+        "output/final.mp4 exists and is non-zero",
+        "final.mp4 is newer than draft.mp4"
+      ],
+      "optional": false
+    },
+    {
+      "id": "video-review",
+      "title": "Request video review",
+      "default_skill": "requesting-video-review",
+      "requires": [
+        "{project_dir}/output/final.mp4"
+      ],
+      "produces": [
+        "{project_dir}/logs/review-feedback.md"
+      ],
+      "verification": [
+        "review-feedback.md exists",
+        "review-feedback.md contains an explicit pass or fail decision"
+      ],
+      "optional": false
+    },
+    {
+      "id": "thumbnail",
+      "title": "Generate thumbnail",
+      "default_skill": "generating-thumbnail",
+      "requires": [
+        "{project_dir}/output/final.mp4"
+      ],
+      "produces": [
+        "{project_dir}/output/thumbnail.jpg"
+      ],
+      "verification": [
+        "output/thumbnail.jpg exists and is non-zero",
+        "image dimensions are at least 1280x720"
+      ],
+      "optional": false
+    },
+    {
+      "id": "delivery",
+      "title": "Delivery",
+      "default_skill": null,
+      "requires": [
+        "{project_dir}/output/final.mp4",
+        "{project_dir}/output/thumbnail.jpg",
+        "{project_dir}/logs/review-feedback.md"
+      ],
+      "produces": [],
+      "verification": [
+        "final.mp4 and thumbnail.jpg are present in output/",
+        "review-feedback.md shows a pass decision"
+      ],
+      "optional": false,
+      "note": "No skill for this phase — delivery is platform-specific. The agent or user uploads the files."
+    }
+  ]
+}
