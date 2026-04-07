@@ -7,7 +7,9 @@ description: Use when turning an approved idea into the project plan doc. Export
 
 Write the human-readable production plan for a video project. The canonical workflow artifact is `<base-dir>/docs/plan.md`.
 
-Use `references/storyboard-format.md` and `assets/storyboard.template.js` only when a downstream step explicitly needs a machine-readable storyboard export.
+Throughout this skill, `<base-dir>` means the project root.
+
+Use `./references/storyboard-format.md` and `./assets/storyboard.template.js` only when a downstream step explicitly needs a machine-readable storyboard export.
 
 ## Inputs
 

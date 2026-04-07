@@ -10,7 +10,7 @@ Creates the isolated workspace for a new video production after design approval.
 ## Inputs
 
 - `--base-dir <path>` — project root to create
-- approved design doc at `<base-dir>/docs/idea.md` (or values provided directly)
+- approved design doc at `<base-dir>/docs/idea.md`, or direct values for title, seed, and style when the idea doc does not exist yet
 
 ## Workflow
 
@@ -20,7 +20,7 @@ Creates the isolated workspace for a new video production after design approval.
    ```
    <base-dir>/
    ├── docs/
-   │   ├── idea.md          (already exists from brainstorming)
+   │   ├── idea.md          (existing or created from direct values)
    │   ├── plan.md          (create stub if missing)
    │   └── exec.md          (create stub if missing)
    ├── assets/
@@ -33,7 +33,19 @@ Creates the isolated workspace for a new video production after design approval.
    ├── characters/          ← character packs
    └── chapters/            ← one subdir per chapter
    ```
-4. Initialize `<base-dir>/docs/plan.md` if missing:
+4. If `<base-dir>/docs/idea.md` is still missing after migration, create it from the approved direct values:
+   ```md
+   # Idea: <video title>
+
+   ## Summary
+   - Title: <video title>
+   - Seed: <integer from design>
+   - Style: <style description from design>
+
+   ## Approval
+   - Approved for project setup
+   ```
+5. Initialize `<base-dir>/docs/plan.md` if missing:
    ```md
    # Plan: <project title>
 
@@ -49,7 +61,7 @@ Creates the isolated workspace for a new video production after design approval.
    ## Next Step
    - Write or refine this plan before execution
    ```
-5. Initialize `<base-dir>/docs/exec.md` if missing:
+6. Initialize `<base-dir>/docs/exec.md` if missing:
    ```md
    # Execution Log: <project title>
 
@@ -62,7 +74,7 @@ Creates the isolated workspace for a new video production after design approval.
    ## Review Notes
    - None yet
    ```
-6. Write `<base-dir>/project.json`:
+7. Write `<base-dir>/project.json`:
    ```json
    {
      "$schemaVersion": "1.0",
@@ -76,11 +88,11 @@ Creates the isolated workspace for a new video production after design approval.
      "createdAt": "<ISO timestamp>"
    }
    ```
-7. Confirm workspace is ready.
+8. Confirm workspace is ready.
 
 ## Output
 
-- `<base-dir>/docs/idea.md`
+- `<base-dir>/docs/idea.md` (preserved, migrated, or created from direct values)
 - `<base-dir>/docs/plan.md`
 - `<base-dir>/docs/exec.md`
 - `<base-dir>/assets/images/`
