@@ -62,6 +62,7 @@ Full walkthrough: [`docs/usage.md`](docs/usage.md)
 ### Markdown-First Workflow
 - Canonical workflow files live in `<project-dir>/docs/idea.md`, `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`
 - `SPEC.md` is the project spec yielded from `docs/idea.md`, and `docs/plan.md` manages `SPEC.md` plus the project assets
+- Project defaults such as model, fps, resolution, and asset directories belong in `SPEC.md` as Markdown lists or paragraphs
 - If `SPEC.md` needs a machine-readable snippet, wrap it in a fenced `json` code block
 - JSON is reserved for lower-level script inputs and validated reports where deterministic machine I/O matters
 

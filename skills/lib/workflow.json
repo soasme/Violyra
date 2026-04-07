@@ -7,21 +7,17 @@
       "title": "Set up project workspace",
       "default_skill": "setup-video-project",
       "requires": [
-        "{project_dir}/docs/video-idea.md"
+        "{project_dir}/docs/idea.md"
       ],
       "produces": [
-        "{project_dir}/project.json",
+        "{project_dir}/SPEC.md",
         "{project_dir}/assets/",
         "{project_dir}/docs/",
-        "{project_dir}/logs/",
-        "{project_dir}/final/",
-        "{project_dir}/global/",
-        "{project_dir}/characters/",
-        "{project_dir}/chapters/"
+        "{project_dir}/logs/"
       ],
       "verification": [
-        "project.json exists and is valid JSON",
-        "assets/, logs/, final/, global/, characters/, and chapters/ directories exist"
+        "SPEC.md exists and documents the project defaults in Markdown",
+        "assets/, docs/, and logs/ directories exist"
       ],
       "optional": false,
       "enabled_by_default": true,

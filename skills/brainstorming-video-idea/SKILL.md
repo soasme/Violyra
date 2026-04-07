@@ -13,7 +13,7 @@ Do NOT write any files, create project directories, or transition to setup-video
 
 ## Checklist
 
-1. Explore existing context — lyrics, screenplay, style references, prior `<base-dir>/docs/idea.md`, prior `project.json`, previous runs
+1. Explore existing context — lyrics, screenplay, style references, prior `<base-dir>/docs/idea.md`, prior `<base-dir>/SPEC.md`, previous runs
 2. Ask clarifying questions one at a time
 3. Propose 2–3 directions with trade-offs and a recommendation
 4. Present design in sections and get approval after each section

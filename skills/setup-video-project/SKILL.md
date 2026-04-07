@@ -1,6 +1,6 @@
 ---
 name: setup-video-project
-description: Use after design approval from brainstorming-video-idea. Creates the project workspace, project.json, SPEC.md stub, workflow docs, and standard assets directories.
+description: Use after design approval from brainstorming-video-idea. Creates the project workspace, SPEC.md stub, workflow docs, and standard assets directories.
 ---
 
 # Setup Video Project
@@ -14,7 +14,7 @@ Creates the isolated workspace for a new video production after design approval.
 
 ## Workflow
 
-1. If `<base-dir>/project.json` already exists, confirm with user before overwriting.
+1. If `<base-dir>/SPEC.md` already exists, confirm with user before overwriting its stub content.
 2. If legacy `<base-dir>/docs/video-idea.md` exists and `<base-dir>/docs/idea.md` does not, migrate it to `idea.md`.
 3. Create directory structure:
    ```
@@ -56,6 +56,13 @@ Creates the isolated workspace for a new video production after design approval.
    - Default model: bytedance/seedance-1.5-pro
    - fps: 24
    - resolution: 1920x1080
+
+   ## Asset Directories
+   - `.`
+   - `assets/images`
+   - `assets/videos`
+   - `assets/audios`
+   - `assets/fonts`
 
    ## Assets
    | Path | Purpose | Required by | Status |
@@ -106,21 +113,7 @@ Creates the isolated workspace for a new video production after design approval.
    ## Review Notes
    - None yet
    ```
-8. Write `<base-dir>/project.json`:
-   ```json
-   {
-     "$schemaVersion": "1.0",
-     "title": "<video title>",
-     "seed": <integer from design>,
-     "style": "<style description from design>",
-     "defaultModel": "bytedance/seedance-1.5-pro",
-     "fps": 24,
-     "resolution": "1920x1080",
-     "assetDirs": [".", "assets/images", "assets/videos", "assets/audios", "assets/fonts"],
-     "createdAt": "<ISO timestamp>"
-   }
-   ```
-9. Confirm workspace is ready.
+8. Confirm workspace is ready.
 
 ## Output
 
@@ -133,7 +126,6 @@ Creates the isolated workspace for a new video production after design approval.
 - `<base-dir>/assets/audios/`
 - `<base-dir>/assets/fonts/`
 - `<base-dir>/logs/`
-- `<base-dir>/project.json`
 
 ## After Setup
 
@@ -150,12 +142,24 @@ Transition to `writing-video-plan` to turn the approved idea into a real `SPEC.m
 
 ## Asset Directories
 
-`assetDirs` controls where skills look for project assets and referenced files. Recommended project default: `[".", "assets/images", "assets/videos", "assets/audios", "assets/fonts"]`.
+Record asset lookup order in `SPEC.md` as a Markdown list under `## Asset Directories`. Recommended project default:
 
-To reference assets from a shared library without copying them:
+```md
+## Asset Directories
+- `.`
+- `assets/images`
+- `assets/videos`
+- `assets/audios`
+- `assets/fonts`
+```
 
-```json
-"assetDirs": [".", "/Users/me/studio-assets", "/Volumes/NAS/shared"]
+To reference assets from a shared library without copying them, add more list items:
+
+```md
+## Asset Directories
+- `.`
+- `/Users/me/studio-assets`
+- `/Volumes/NAS/shared`
 ```
 
 Resolution order: first matching path wins. Skills write output only to the project directory. External dirs are treated as read-only in normal production flow unless the user explicitly asks to promote assets there.
@@ -165,4 +169,4 @@ Resolution order: first matching path wins. Skills write output only to the proj
 Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `project_dir`, `project_name`
-**On completion** — key `outputs`: `project_json_path`, `spec_path`, `workflow_docs_ready` (true/false), `dirs_created` (array of created directory paths)
+**On completion** — key `outputs`: `spec_path`, `workflow_docs_ready` (true/false), `dirs_created` (array of created directory paths)

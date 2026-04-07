@@ -71,6 +71,13 @@ Save to `<base-dir>/SPEC.md`:
 - fps: <fps>
 - resolution: <resolution>
 
+## Asset Directories
+- `.`
+- `assets/images`
+- `assets/videos`
+- `assets/audios`
+- `assets/fonts`
+
 ## Style
 - Genre: <genre>
 - Mood: <mood>

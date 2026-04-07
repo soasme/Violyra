@@ -47,7 +47,7 @@ Generated production projects use this layout:
 
 **Markdown-first workflow.** User-facing workflow state lives in `<project-dir>/docs/idea.md`, `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`. `SPEC.md` is derived from the approved idea, and `docs/plan.md` manages that spec plus the project assets. JSON is for lower-level deterministic script I/O, not the primary collaboration surface.
 
-**Project structure belongs in the spec.** Characters, chapter shape, and similar project-level structure should be written in `SPEC.md` as text first. If structured data is needed inside the spec, wrap it in a fenced `json` code block.
+**Project structure belongs in the spec.** Characters, chapter shape, model defaults, and asset directory rules should be written in `SPEC.md` as text first. If structured data is needed inside the spec, wrap it in a fenced `json` code block.
 
 **Pack management before reasoning.** Asset packs (actors, scenes, props, costumes) are populated before cinematic decisions are made. You cannot consistently direct what you have not catalogued.
 
@@ -97,7 +97,7 @@ Each skill's `SKILL.md` has a `## Logging` section (the last section) that speci
 | Skill | When to use |
 |---|---|
 | `brainstorming-video-idea` | Before making any video. Refines rough ideas through questions, explores alternatives, presents design in sections for validation, saves `<project-dir>/docs/idea.md` as the source for the later project spec. |
-| `setup-video-project` | After design approval. Creates isolated workspace for the project dir, initializes `project.json`, scaffolds `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, `<project-dir>/docs/exec.md`, and prepares `<project-dir>/assets/`. |
+| `setup-video-project` | After design approval. Creates isolated workspace for the project dir, scaffolds `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, `<project-dir>/docs/exec.md`, and prepares `<project-dir>/assets/`. |
 | `writing-video-plan` | With approved design in hand. Derives `<project-dir>/SPEC.md` from the idea doc, then breaks work into bite-sized tasks in `<project-dir>/docs/plan.md`, with exact file paths, verification commands, and optional storyboard export. |
 | `executing-video-plan` | With plan in hand. Executes tasks from `<project-dir>/docs/plan.md` against `<project-dir>/SPEC.md`, records outputs and review notes in `<project-dir>/docs/exec.md`, and uses checkpoints when needed. |
 | `retention-driven-development` | After execution, before compiling. Simulates 100 viewers per shot, scores retention, replaces weak shots. Replace, don't patch. |
@@ -183,14 +183,14 @@ These are the canonical human-facing workflow files:
 | `<project-dir>/docs/plan.md` | Approved task plan for managing `SPEC.md`, exact paths, checks, blockers, and next steps |
 | `<project-dir>/docs/exec.md` | Live run log: status, outputs, blockers, approvals, and review findings |
 
-If `SPEC.md` needs machine-readable detail, keep it inside fenced `json` code blocks. Standalone JSON files still exist for the lower-level pipeline where scripts need deterministic validation, such as `project.json`, `shot-list.json`, `shot-details.json`, and `consistency-report.json`.
+If `SPEC.md` needs machine-readable detail, keep it inside fenced `json` code blocks. Standalone JSON files still exist for the lower-level pipeline where scripts need deterministic validation, such as `shot-list.json`, `shot-details.json`, and `consistency-report.json`.
 
 ## Typical Workflows
 
 **Music video (sequential):**
 ```
 brainstorming-video-idea      ← define concept, style, characters
-  → setup-video-project       ← create workspace, initialize project.json
+  → setup-video-project       ← create workspace and scaffold SPEC.md
   → writing-video-plan        ← write <project-dir>/SPEC.md and <project-dir>/docs/plan.md
   → executing-video-plan      ← update <project-dir>/docs/exec.md while dispatching subagents
       → generating-lyrics
@@ -210,7 +210,7 @@ brainstorming-video-idea      ← define concept, style, characters
 **Short drama (sequential):**
 ```
 brainstorming-video-idea      ← define story, characters, visual style
-  → setup-video-project       ← create workspace, initialize project.json
+  → setup-video-project       ← create workspace and scaffold SPEC.md
   → writing-video-plan        ← write <project-dir>/SPEC.md and <project-dir>/docs/plan.md
   → executing-video-plan      ← update <project-dir>/docs/exec.md while dispatching subagents
       → running-video-production-pipeline   ← breakdown → extraction → shot details → consistency

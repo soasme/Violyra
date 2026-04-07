@@ -53,19 +53,46 @@ function resolvePathWithinDir(baseDir, assetPath) {
   throw new Error(`Asset path escapes asset dir: ${assetPath}`)
 }
 
-export function resolveAsset(projectDir, relativePath) {
-  let assetDirs = ['.']
-  const projectJsonPath = join(projectDir, 'project.json')
-  if (existsSync(projectJsonPath)) {
-    try {
-      const config = JSON.parse(readFileSync(projectJsonPath, 'utf8'))
-      if (Array.isArray(config.assetDirs)) assetDirs = config.assetDirs
-    } catch (err) {
-      throw new Error(
-        `Failed to parse project.json in ${projectDir}: ${err instanceof Error ? err.message : String(err)}`
-      )
+function parseAssetDirsFromSpec(specMarkdown) {
+  const lines = specMarkdown.split(/\r?\n/)
+  const headingIndex = lines.findIndex(line => /^##\s+Asset (Directories|Dirs)\b/i.test(line.trim()))
+  if (headingIndex === -1) return null
+
+  const dirs = []
+  for (let i = headingIndex + 1; i < lines.length; i++) {
+    const line = lines[i]
+    const trimmed = line.trim()
+    if (/^##\s+/.test(trimmed)) break
+    if (trimmed.length === 0) continue
+
+    const backtickMatch = trimmed.match(/^[-*]\s+`([^`]+)`(?:\s+[—-]\s+.*)?$/)
+    if (backtickMatch) {
+      dirs.push(backtickMatch[1])
+      continue
     }
+
+    const bulletMatch = trimmed.match(/^[-*]\s+(.+)$/)
+    if (!bulletMatch) continue
+
+    const value = bulletMatch[1].replace(/\s+[—-]\s+.*$/, '').trim()
+    if (value.length > 0) dirs.push(value)
   }
+
+  return dirs.length > 0 ? dirs : null
+}
+
+function readAssetDirsFromSpec(projectDir) {
+  const specPath = join(projectDir, 'SPEC.md')
+  if (!existsSync(specPath)) return null
+  const specMarkdown = readFileSync(specPath, 'utf8')
+  return parseAssetDirsFromSpec(specMarkdown)
+}
+
+export function resolveAsset(projectDir, relativePath) {
+  const assetDirs =
+    readAssetDirsFromSpec(projectDir) ??
+    ['.', 'assets/images', 'assets/videos', 'assets/audios', 'assets/fonts']
+
   for (const dir of assetDirs) {
     const base = isAbsolute(dir) ? dir : join(projectDir, dir)
     const candidate = resolvePathWithinDir(base, relativePath)

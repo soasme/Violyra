@@ -8,12 +8,14 @@ Review `SPEC.md` and `docs/plan.md` after they are written. Fix any issues inlin
 - [ ] `SPEC.md` names the source idea doc and current status
 - [ ] Project contract fields are present: goal, platform, duration, default model, fps, resolution
 - [ ] Required assets are listed with exact paths or clearly marked gaps
+- [ ] Asset directories are listed in Markdown under `## Asset Directories`
 - [ ] Characters and continuity requirements are captured if the project has recurring characters
 - [ ] Chapter or scene structure is concrete enough to plan from
 - [ ] No placeholder text like `TBD`, `fill later`, or `something here`
 
 ### Markdown-First Contract
 - [ ] `SPEC.md` keeps project structure in text instead of assuming `global/`, `characters/`, or `chapters/` directories
+- [ ] Project defaults are expressed as Markdown paragraphs or lists, not a separate JSON config requirement
 - [ ] Any machine-readable snippet inside `SPEC.md` is wrapped in a fenced `json` code block
 - [ ] No standalone JSON artifact is required unless a downstream script actually needs it now
 

@@ -49,8 +49,8 @@
 ### New Skills
 
 **Workflow (5)**
-- `brainstorming-video-idea` — dialogue-driven ideation to design doc and project.json seeds
-- `setup-video-project` — workspace creation and project.json initialization
+- `brainstorming-video-idea` — dialogue-driven ideation to design doc and SPEC seeds
+- `setup-video-project` — workspace creation and SPEC-first workflow scaffolding
 - `executing-video-plan` — task execution with two-stage review (spec compliance + visual quality)
 - `retention-driven-development` — audience simulation loop; replace weak shots, never patch
 - `requesting-video-review` — severity-classified review (Critical / Important / Minor)

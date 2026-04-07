@@ -13,7 +13,7 @@ Use these Markdown files as the main collaboration surface:
 - `docs/plan.md` — approved task plan for managing `SPEC.md`, project assets, blockers, and next steps
 - `docs/exec.md` — live execution log with outputs, blockers, approvals, and review findings
 
-These Markdown files are enough for the workflow layer. Lower-level JSON still exists where scripts need deterministic input or validation, such as `project.json`, `shot-list.json`, and `consistency-report.json`.
+These Markdown files are enough for the workflow layer. Lower-level JSON still exists where scripts need deterministic input or validation, such as `shot-list.json` and `consistency-report.json`.
 
 ## Project Layout
 
@@ -47,7 +47,7 @@ Put project-specific inputs under `assets/`. Examples:
 Many projects follow this shape:
 
 1. Run `brainstorming-video-idea` to converge on the concept and write `<project-dir>/docs/idea.md`.
-2. Run `setup-video-project` to scaffold the workspace, create `project.json`, scaffold `<project-dir>/SPEC.md`, create `<project-dir>/docs/plan.md` / `<project-dir>/docs/exec.md`, and prepare `<project-dir>/assets/`.
+2. Run `setup-video-project` to scaffold the workspace, scaffold `<project-dir>/SPEC.md`, create `<project-dir>/docs/plan.md` / `<project-dir>/docs/exec.md`, and prepare `<project-dir>/assets/`.
 3. Place or generate the required project inputs under `<project-dir>/assets/`.
 4. Run `writing-video-plan` to turn the approved idea into `<project-dir>/SPEC.md` and an actionable `<project-dir>/docs/plan.md`.
 5. Run `executing-video-plan` to execute tasks from `<project-dir>/docs/plan.md`, using `<project-dir>/SPEC.md` as the project contract, and keep `<project-dir>/docs/exec.md` current.
@@ -101,9 +101,24 @@ Do not assume every project uses the same files.
 
 `SPEC.md` stays text-first. If it includes structured data, fence it as `json` inside the Markdown file.
 
+Project defaults that used to live in rigid config files should be recorded in `SPEC.md` as Markdown lists or short paragraphs. For example:
+
+```md
+## Project Defaults
+- Default model: `bytedance/seedance-1.5-pro`
+- fps: `24`
+- resolution: `1920x1080`
+
+## Asset Directories
+- `.`
+- `assets/images`
+- `assets/videos`
+- `assets/audios`
+- `assets/fonts`
+```
+
 Some scripts still require standalone machine-readable files:
 
-- `project.json` — project config and shared asset dirs
 - `assets/videos/storyboard.json` — compile-time scene manifest when `compiling-video` is used
 - `shot-list.json`, `shot-details.json`, `extraction-report.json`, `consistency-report.json` — validated pipeline outputs
 

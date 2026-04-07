@@ -6,7 +6,7 @@ Violyra is a skill repository for music video production. It provides composable
 
 ### Workflow
 - [Brainstorming Video Idea](skills/brainstorming-video-idea/SKILL.md): refine a rough video idea through dialogue into `<project-dir>/docs/idea.md` as the source for later `SPEC.md`.
-- [Setup Video Project](skills/setup-video-project/SKILL.md): create workspace directories, initialize `project.json`, scaffold `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`, and prepare `<project-dir>/assets/`.
+- [Setup Video Project](skills/setup-video-project/SKILL.md): create workspace directories, scaffold `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`, and prepare `<project-dir>/assets/`.
 - [Executing Video Plan](skills/executing-video-plan/SKILL.md): execute `<project-dir>/docs/plan.md` against `<project-dir>/SPEC.md` task-by-task and record progress in `<project-dir>/docs/exec.md`.
 - [Retention-Driven Development](skills/retention-driven-development/SKILL.md): simulate 100 viewers per shot, score retention, regenerate weak shots. Replace, don't patch.
 - [Requesting Video Review](skills/requesting-video-review/SKILL.md): review production progress against `<project-dir>/docs/idea.md`, `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md` by severity.
