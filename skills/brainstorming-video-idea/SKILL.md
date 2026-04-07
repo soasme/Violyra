@@ -1,15 +1,15 @@
 ---
 name: brainstorming-video-idea
-description: Use before making any video. Refines rough ideas through questions, explores visual alternatives, produces a design doc and seeds project.json values.
+description: Use before making any video. Refines rough ideas through questions, explores visual alternatives, and writes the project idea doc plus setup seeds.
 ---
 
 # Brainstorming Video Idea
 
-Helps turn a rough video idea into a fully formed design through natural collaborative dialogue. Covers concept, style, characters, chapter structure, and seed values for `project.json`.
+Helps turn a rough video idea into a fully formed design through natural collaborative dialogue. Covers concept, style, characters, chapter structure, and seed values for project setup.
 
 ## Checklist
 
-1. Check existing context — any lyrics, screenplay, style references, prior `project.json`
+1. Check existing context — any lyrics, screenplay, style references, prior `<base-dir>/docs/idea.md`, prior `project.json`
 2. Ask clarifying questions one at a time:
    - Genre and mood (e.g., cinematic, anime, lo-fi, dark fantasy)
    - Target platform and duration (YouTube MV, TikTok short, etc.)
@@ -18,18 +18,22 @@ Helps turn a rough video idea into a fully formed design through natural collabo
    - Chapter structure — how many chapters/scenes?
 3. Propose 2–3 approaches to the visual concept with trade-offs
 4. Present design in sections, get approval after each section
-5. Write design doc to `<base-dir>/docs/video-idea.md`
+5. Write the approved design doc to `<base-dir>/docs/idea.md`
 6. Transition to `setup-video-project`
 
 ## Design Doc Format
 
-Save to `<base-dir>/docs/video-idea.md`:
+Save to `<base-dir>/docs/idea.md`:
 
 ```
-# Video Idea: <title>
+# Idea: <title>
 
 ## Concept
 <2–3 sentence summary>
+
+## Goals
+- What must the video achieve?
+- What is non-negotiable?
 
 ## Style
 - Genre: <genre>
@@ -48,17 +52,25 @@ Save to `<base-dir>/docs/video-idea.md`:
 |---|---|---|
 | 1 | ... | ... |
 
-## Project Seeds
+## Constraints
+- Duration: <target duration>
+- Platform: <target platform>
+- Safety / content limits: <limits>
+
+## Setup Seeds
 - seed: <integer>
 - style: "<style description>"
 - defaultModel: "bytedance/seedance-1.5-pro"
 - fps: 24
 - resolution: "1920x1080"
+
+## Open Questions
+- <question or `None`>
 ```
 
 ## Output
 
-- `<base-dir>/docs/video-idea.md`
+- `<base-dir>/docs/idea.md`
 
 ## After Approval
 
@@ -69,4 +81,4 @@ Transition to `setup-video-project` with the approved design.
 Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `topic` (the rough video idea), `constraints` (style, duration, format)
-**On completion** — key `outputs`: `design_doc_path`, `project_json_seeds` (true/false)
+**On completion** — key `outputs`: `idea_doc_path`, `setup_seeds_ready` (true/false)

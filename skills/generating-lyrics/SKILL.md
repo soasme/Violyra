@@ -17,7 +17,7 @@ Writes or refines song lyrics through collaborative dialogue. Output is `lyrics.
 
 ## Workflow
 
-1. Gather inputs from user (or infer from `<base-dir>/docs/video-idea.md`)
+1. Gather inputs from user (or infer from `<base-dir>/docs/idea.md`)
 2. Draft lyrics section by section: `[Verse 1]`, `[Chorus]`, `[Verse 2]`, `[Bridge]`, etc.
 3. Present one section at a time to user for feedback
 4. Iterate until each section is approved

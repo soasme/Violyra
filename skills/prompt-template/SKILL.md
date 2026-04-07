@@ -16,7 +16,7 @@ source .env && node skills/prompt-template/scripts/prompt-template.js <subcomman
 ### create
 ```bash
 source .env && node skills/prompt-template/scripts/prompt-template.js create \
-  --base-dir assets/ \
+  --base-dir <project-dir> \
   --name "High-Energy Performance" \
   --category video_prompt \
   --content "{{character}} performing with intense energy, {{cameraMovement}}, {{lighting}}, cinematic 35mm" \

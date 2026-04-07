@@ -16,7 +16,7 @@ source .env && node skills/generating-scene-pack/scripts/scene-pack.js <subcomma
 ### create
 ```bash
 source .env && node skills/generating-scene-pack/scripts/scene-pack.js create \
-  --base-dir assets/ --name "Rooftop at Sunset" \
+  --base-dir <project-dir> --name "Rooftop at Sunset" \
   --description "Urban rooftop, haze, golden hour light, graffiti walls" \
   --tags '["exterior","urban","dusk"]'
 ```

@@ -14,8 +14,8 @@ Source `.env` so `REPLICATE_API_TOKEN` is loaded:
 
 ```bash
 source .env && node .agents/skills/upscaling-video/scripts/upscale.js \
-  --input assets/scenes/1.mp4 \
-  --output assets/scenes-upscaled/1.mp4 \
+  --input assets/videos/scenes/1.mp4 \
+  --output assets/videos/scenes-upscaled/1.mp4 \
   --target-resolution 1080p \
   --target-fps 24
 ```

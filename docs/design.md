@@ -15,7 +15,25 @@ violyra/
 ├── hooks/           # Session lifecycle hooks
 ├── docs/            # This directory: installation, testing, design
 ├── packages/app/    # Optional: Next.js asset explorer for reviewing outputs
-└── assets/          # Working directory for generated media (gitignored)
+└── assets/          # Repo-local scratch area only; real projects keep assets under <project-dir>/assets/
+```
+
+Generated production projects use this layout:
+
+```
+<project-dir>/
+├── docs/
+│   ├── idea.md
+│   ├── plan.md
+│   └── exec.md
+├── assets/
+│   ├── images/
+│   ├── videos/
+│   ├── audios/
+│   └── fonts/
+├── global/
+├── characters/
+└── chapters/
 ```
 
 ## Philosophy
@@ -27,6 +45,8 @@ violyra/
 **Harness over ad-hoc.** Every character, costume, behavior, and scene is defined in a pack before it appears on screen. Nothing is invented in the moment.
 
 **Spec-driven pipeline.** Define the spec first. Clarity always wins over improvisation.
+
+**Markdown-first workflow.** User-facing workflow state lives in `<project-dir>/docs/idea.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`. JSON is for lower-level deterministic script I/O, not the primary collaboration surface.
 
 **Pack management before reasoning.** Asset packs (actors, scenes, props, costumes) are populated before cinematic decisions are made. You cannot consistently direct what you have not catalogued.
 
@@ -75,12 +95,12 @@ Each skill's `SKILL.md` has a `## Logging` section (the last section) that speci
 
 | Skill | When to use |
 |---|---|
-| `brainstorming-video-idea` | Before making any video. Refines rough ideas through questions, explores alternatives, presents design in sections for validation, saves design document. |
-| `setup-video-project` | After design approval. Creates isolated workspace for base dir, initializes `project.json` with global seed, style, and model defaults. |
-| `writing-plans` | With approved design in hand. Breaks work into bite-sized tasks (2–5 min each) with exact file paths, complete steps, and verification commands. |
-| `executing-video-plan` | With plan in hand. Dispatches a fresh subagent per task with two-stage review (spec compliance, then spec/asset quality), or executes in batches with human checkpoints. |
+| `brainstorming-video-idea` | Before making any video. Refines rough ideas through questions, explores alternatives, presents design in sections for validation, saves `<project-dir>/docs/idea.md`. |
+| `setup-video-project` | After design approval. Creates isolated workspace for the project dir, initializes `project.json`, scaffolds `<project-dir>/docs/plan.md` and `<project-dir>/docs/exec.md`, and prepares `<project-dir>/assets/`. |
+| `writing-video-plan` | With approved design in hand. Breaks work into bite-sized tasks in `<project-dir>/docs/plan.md`, with exact file paths, verification commands, and optional storyboard export. |
+| `executing-video-plan` | With plan in hand. Executes tasks from `<project-dir>/docs/plan.md`, records outputs and review notes in `<project-dir>/docs/exec.md`, and uses checkpoints when needed. |
 | `retention-driven-development` | After execution, before compiling. Simulates 100 viewers per shot, scores retention, replaces weak shots. Replace, don't patch. |
-| `requesting-video-review` | Between tasks or after the full pipeline. Reviews progress against plan, reports issues by severity. Critical issues block progress. |
+| `requesting-video-review` | Between tasks or after the full pipeline. Reviews progress against `<project-dir>/docs/idea.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`; critical issues block progress. |
 | `scoring-narrative-quality` | After `compiling-video`. Scores the assembled video on a 5-dimension narrative rubric (hook, pacing, emotional arc, visual variety, payoff). Composite score 0–100. If < 70, recommends a targeted `retention-driven-development` pass. |
 
 ### Music Production Skills
@@ -117,7 +137,7 @@ Each skill's `SKILL.md` has a `## Logging` section (the last section) that speci
 
 | Skill | When to use |
 |---|---|
-| `writing-video-plan` | To write a lyric-driven storyboard from lyrics, style, and requirements. |
+| `writing-video-plan` | To write `<project-dir>/docs/plan.md` from lyrics, style, and requirements, with optional storyboard export. |
 | `writing-seedance15-prompt` | To write motion-focused Seedance 1.5 prompts from shot details. |
 | `writing-seedance20-prompt` | To write motion-focused Seedance 2.0 prompts with multi-shot support. |
 | `writing-veo31-prompt` | To write cinematic Veo 3.1 prompts with native audio cues and R2V mode. |
@@ -151,18 +171,30 @@ Each skill's `SKILL.md` has a `## Logging` section (the last section) that speci
 |---|---|
 | `downloading-youtube-video` | To download a YouTube URL to local files using yt-dlp. |
 
+## Workflow Documents
+
+These are the canonical human-facing workflow files:
+
+| File | Purpose |
+|---|---|
+| `<project-dir>/docs/idea.md` | Approved concept, constraints, goals, chapter shape, and setup seeds |
+| `<project-dir>/docs/plan.md` | Approved task plan with exact paths, checks, blockers, and next steps |
+| `<project-dir>/docs/exec.md` | Live run log: status, outputs, blockers, approvals, and review findings |
+
+Machine-readable JSON files still exist for the lower-level pipeline where scripts need deterministic validation, such as `project.json`, `shot-list.json`, `shot-details.json`, and `consistency-report.json`.
+
 ## Typical Workflows
 
 **Music video (sequential):**
 ```
 brainstorming-video-idea      ← define concept, style, characters
   → setup-video-project       ← create workspace, initialize project.json
-  → writing-plans             ← break production into tasks
-  → executing-video-plan      ← dispatch subagents per task with two-stage review
+  → writing-video-plan        ← write <project-dir>/docs/plan.md
+  → executing-video-plan      ← update <project-dir>/docs/exec.md while dispatching subagents
       → generating-lyrics
       → generating-song
       → aligning-lyrics
-      → writing-video-plan
+      → [optional storyboard export]
       → running-video-production-pipeline   ← breakdown → extraction → shot details → consistency
       → writing-seedance20-prompt | writing-veo31-prompt   ← per scene
       → using-replicate-model | using-falai-model          ← generate video
@@ -177,8 +209,8 @@ brainstorming-video-idea      ← define concept, style, characters
 ```
 brainstorming-video-idea      ← define story, characters, visual style
   → setup-video-project       ← create workspace, initialize project.json
-  → writing-plans             ← break production into tasks
-  → executing-video-plan      ← dispatch subagents per task with two-stage review
+  → writing-video-plan        ← write <project-dir>/docs/plan.md
+  → executing-video-plan      ← update <project-dir>/docs/exec.md while dispatching subagents
       → running-video-production-pipeline   ← breakdown → extraction → shot details → consistency
       → [prompt writing per shot]
       → using-replicate-model | using-falai-model   ← generate video per shot

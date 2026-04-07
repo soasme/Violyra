@@ -1,6 +1,6 @@
 # Storyboard Format
 
-Use this contract for both `assets/storyboard.json` and `assets/storyboard.js`.
+Use this contract for both `<project-dir>/assets/videos/storyboard.json` and `<project-dir>/assets/videos/storyboard.js`.
 
 ## Root Object
 

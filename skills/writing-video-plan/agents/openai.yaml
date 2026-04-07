@@ -1,4 +1,4 @@
 interface:
-  display_name: "MV Storyboard Writer"
-  short_description: "Write lyric-driven storyboard scenes for music videos."
-  default_prompt: "Given lyrics, style, and constraints, write a storyboard object with scene prompts."
+  display_name: "Video Plan Writer"
+  short_description: "Write the project plan first; export storyboard JSON only if needed."
+  default_prompt: "Use $writing-video-plan to write the project plan first and export storyboard JSON only if downstream tooling needs it."

@@ -49,7 +49,7 @@ The skills in this repo rely on the following tools. Install them before using:
 
 API keys needed (add to `.env`):
 - `REPLICATE_API_TOKEN` — for Replicate-based skills
-- `OPENAI_API_KEY` — for storyboard writer agent
+- `OPENAI_API_KEY` — for plan-writing / ideation agent flows
 
 ---
 
@@ -59,7 +59,7 @@ API keys needed (add to `.env`):
 |-------|-------------|
 | [generating-seedance15-video](../skills/generating-seedance15-video/SKILL.md) | Generate scene MP4s with Replicate Seedance 1.5 |
 | [writing-seedance15-prompt](../skills/writing-seedance15-prompt/SKILL.md) | Write motion-focused prompts for Seedance |
-| [writing-video-plan](../skills/writing-video-plan/SKILL.md) | Generate lyric-driven storyboards |
+| [writing-video-plan](../skills/writing-video-plan/SKILL.md) | Write Markdown-first production plans; export storyboard JSON only when needed |
 | [compiling-video](../skills/compiling-video/SKILL.md) | Compile scenes into a full music video |
 | [aligning-lyrics](../skills/aligning-lyrics/SKILL.md) | Align lyrics to audio with WhisperX |
 | [generating-voiceover](../skills/generating-voiceover/SKILL.md) | Generate and normalize TTS audio |

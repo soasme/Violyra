@@ -11,8 +11,8 @@ import {
 describe(".agents/skills/compiling-video/scripts/compile.js", () => {
   describe("buildDefaultOutputPath", () => {
     it("builds default output filename from song path", () => {
-      expect(buildDefaultOutputPath("assets/song.mp3")).toBe(
-        "assets/final/song.full-song.1080p.mp4"
+      expect(buildDefaultOutputPath("assets/audios/song.mp3")).toBe(
+        "assets/videos/final/song.full-song.1080p.mp4"
       );
     });
   });

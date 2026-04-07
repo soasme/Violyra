@@ -13,10 +13,10 @@ Source `.env` so `REPLICATE_API_TOKEN` is loaded:
 ## Workflow
 
 1. Generate a thumbnail from prompt text:
-`source .env && node .agents/skills/generating-thumbnail/scripts/generate.js --prompt "YouTube thumbnail, dramatic split-light portrait, bold headline area, high contrast, clean background" --output assets/thumbnails/episode-01.jpg --aspect-ratio 16:9 --resolution 2K`
+`source .env && node .agents/skills/generating-thumbnail/scripts/generate.js --prompt "YouTube thumbnail, dramatic split-light portrait, bold headline area, high contrast, clean background" --output assets/images/thumbnails/episode-01.jpg --aspect-ratio 16:9 --resolution 2K`
 
 2. Optionally provide one or more reference images:
-`source .env && node .agents/skills/generating-thumbnail/scripts/generate.js --prompt "YouTube thumbnail for coding tutorial, laptop close-up, energetic composition, clear title-safe space" --image assets/ref/host.png --image https://example.com/product.png --output assets/thumbnails/tutorial.jpg`
+`source .env && node .agents/skills/generating-thumbnail/scripts/generate.js --prompt "YouTube thumbnail for coding tutorial, laptop close-up, energetic composition, clear title-safe space" --image assets/images/ref/host.png --image https://example.com/product.png --output assets/images/thumbnails/tutorial.jpg`
 
 3. Verify output file exists at `--output`.
 
@@ -25,7 +25,7 @@ Local `--image` paths are uploaded to Replicate Files API automatically. Hosted 
 ## Key Options
 
 - `--prompt`: required text prompt.
-- `--output`: required local output path (for example `assets/thumbnails/video-42.jpg`).
+- `--output`: required local output path (for example `assets/images/thumbnails/video-42.jpg`).
 - `--image`: optional reference image; repeat flag or use comma-separated values.
 - `--aspect-ratio`: `match_input_image | 1:1 | 2:3 | 3:2 | 3:4 | 4:3 | 4:5 | 5:4 | 9:16 | 16:9 | 21:9` (default `16:9`).
 - `--resolution`: `1K | 2K | 4K` (default `2K`).

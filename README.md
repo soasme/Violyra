@@ -13,11 +13,11 @@ No database. No UI. No LLM calls in code. Just files, scripts, and clear instruc
 Violyra follows a production pipeline modeled on real film workflows:
 
 ```
-brainstorming-video-idea
-  → setup-video-project
-  → writing-plans
-  → executing-video-plan
-      → [music / script / storyboard]
+brainstorming-video-idea   → <project-dir>/docs/idea.md
+  → setup-video-project    → scaffold <project-dir>/docs/plan.md + <project-dir>/docs/exec.md
+  → writing-video-plan     → <project-dir>/docs/plan.md
+  → executing-video-plan   → <project-dir>/docs/exec.md
+      → [music / script / storyboard export when needed]
       → running-video-production-pipeline ← breakdown → extraction → shot details → consistency
       → [video generation per scene]
       → compiling-video
@@ -37,6 +37,16 @@ Each step is a composable skill. Run the full pipeline or pick individual skills
 - **Execution** — dispatch subagents per task with two-stage review (spec compliance + asset quality)
 - **Retention-driven development** — simulate audience behavior, score retention, replace weak scenes automatically
 
+### Markdown-First Workflow
+- Canonical workflow docs live in `<project-dir>/docs/idea.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`
+- These three files capture intent, plan, and actual execution state
+- JSON is reserved for lower-level script inputs and validated reports where deterministic machine I/O matters
+
+### Project Layout
+- Each production project owns its own `<project-dir>/docs/`
+- Each production project owns its own `<project-dir>/assets/`
+- Standard asset buckets are `<project-dir>/assets/images`, `<project-dir>/assets/videos`, `<project-dir>/assets/audios`, and `<project-dir>/assets/fonts`
+
 ### Production Pipeline
 - **Script breakdown** — any text (lyrics, screenplay, brief) → indexed shot list + chapter
 - **Entity extraction** — shot list → actor, scene, prop, costume packs
@@ -55,7 +65,7 @@ Each step is a composable skill. Run the full pipeline or pick individual skills
 - Voiceover generation with loudness normalization (EBU R128)
 
 ### Video Generation & Post
-- Storyboard writing from lyrics + style
+- Planning from lyrics + style, with optional storyboard export
 - Seedance 1.5 prompt writing and scene generation (via Replicate)
 - Scene upscaling with Topaz (via Replicate)
 - Foreground extraction to transparent PNG
@@ -140,6 +150,8 @@ source .env && node skills/<skill-name>/scripts/<action>.js --help
 ```
 
 See [`docs/design.md`](docs/design.md) for the full skill library and [`docs/design-docs/2026-03-27-production-pipeline-design.md`](docs/design-docs/2026-03-27-production-pipeline-design.md) for production pipeline schemas, data flow, and script CLI contracts.
+
+For the user-facing happy path, see [`docs/usage.md`](docs/usage.md).
 
 ---
 

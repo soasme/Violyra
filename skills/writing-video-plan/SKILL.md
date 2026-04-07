@@ -1,82 +1,90 @@
 ---
 name: writing-video-plan
-description: Generate or revise music-video storyboards from lyrics and visual style. Use when asked to write scene-by-scene output for assets/storyboard.js with section labels and motion prompts.
+description: Use when turning an approved idea into the project plan doc. Exports storyboard JSON under project assets/videos only when needed.
 ---
 
-# MV Storyboard Writer
+# Writing Video Plan
 
-Write storyboard data that matches the project storyboard contract and is ready for Seedance-style scene generation.
+Write the human-readable production plan for a music video. The canonical workflow artifact is `<base-dir>/docs/plan.md`.
 
-Reference the exact field contract in `references/storyboard-format.md`.
-Use the reusable template in `assets/storyboard.template.js` when starting from scratch.
+Use `references/storyboard-format.md` and `assets/storyboard.template.js` only when a downstream step explicitly needs a machine-readable storyboard export.
 
 ## Inputs
 
-Collect these before writing scenes:
+Collect these before writing the plan:
 
-1. `lyrics`: full lyrics or sectioned lyrics.
-2. `user_requirements`: explicit constraints (scene count, characters, pacing, safety, platform, duration).
-3. `style`: visual language, camera behavior, mood, and era references.
-4. `song_title`: title for storyboard metadata.
+1. Approved idea doc at `<base-dir>/docs/idea.md` when available.
+2. `lyrics`: full lyrics or sectioned lyrics.
+3. `user_requirements`: explicit constraints (scene count, characters, pacing, safety, platform, duration).
+4. `style`: visual language, camera behavior, mood, and era references.
+5. `song_title`: title for plan metadata.
 
 If any input is missing, make a reasonable assumption and state it briefly.
 
 ## Workflow
 
-1. Split lyrics into sections (intro, verse, chorus, bridge, outro) when possible.
-2. Map lyric lines to scenes.
-3. Set a single `character` focus per scene unless ensemble is required.
-4. Write the `prompt` with concrete motion and camera direction:
-- subject action
-- environment motion
-- camera movement
-- optional transition cue
-5. Keep prompts visual and actionable, not abstract.
-6. Validate structure and IDs against `references/storyboard-format.md`.
-7. Output storyboard file.
+1. Read the approved context in `<base-dir>/docs/idea.md` and inspect what already exists in the project.
+2. Clarify open questions before planning if key constraints are missing.
+3. Break the work into short executable tasks with exact file paths, deliverables, and verification steps.
+4. For scene work, describe the intent in Markdown first:
+   - lyric or script lines covered
+   - visual beat
+   - character focus
+   - camera / motion intent
+   - blocking dependencies
+5. Call out blockers, review gates, and the natural next step after each task.
+6. Write or update `<base-dir>/docs/plan.md`.
+7. Export `<base-dir>/assets/videos/storyboard.json` or `<base-dir>/assets/videos/storyboard.js` only when the user asks for it or a downstream script needs it immediately.
 
 ## Output Rules
 
-1. Default output path: `assets/storyboard.json`.
-2. If user explicitly asks for JS format, output `assets/storyboard.js` using the same object shape as JSON.
-3. Preserve lyric lines exactly unless user asks to rewrite/adapt them.
-4. Use increasing integer `scene_id` values starting at `1`.
-5. Include `duration` only when a scene needs non-default length.
+1. Default output path: `<base-dir>/docs/plan.md`.
+2. The plan is the source of truth for users and agents.
+3. Preserve lyric lines exactly unless the user asks to rewrite or adapt them.
+4. If a storyboard export is required, keep it secondary to the Markdown plan and validate it against `references/storyboard-format.md`.
+5. If user explicitly asks for JS format, export `<base-dir>/assets/videos/storyboard.js`; otherwise use `<base-dir>/assets/videos/storyboard.json`.
 
-## Scene Writing Guidance
+## Plan Format
 
-1. Keep each scene tied to one to four lyric lines.
-2. Match the pacing of the music section:
-- intro/outro: wider staging, setup/payoff
-- verse: narrative progression
-- chorus: recognizable motif with escalating energy
-3. Repeated choruses should reuse core motif but vary angle, motion, or camera move.
-4. Default to PG-safe visuals unless user requests otherwise.
-5. Resolve requirement conflicts by prioritizing explicit user constraints and note tradeoffs.
+Save to `<base-dir>/docs/plan.md`:
 
-## Quick Start
+```md
+# Plan: <title>
 
-Use this structure:
+## Current State
+- Idea doc: `docs/idea.md`
+- Inputs present: <lyrics, audio, refs, packs>
+- Assumptions: <brief list>
 
-```json
-{
-  "model": "seedance15",
-  "song_title": "<title>",
-  "scenes": [
-    {
-      "scene_id": 1,
-      "section": "Verse 1",
-      "character": "Lead",
-      "lyrics": ["<line 1>", "<line 2>"],
-      "prompt": "<motion + camera prompt>"
-    }
-  ]
-}
+## Targets
+- Deliverable: <what this run should produce>
+- Quality bar: <what counts as acceptable>
+
+## Tasks
+- [ ] Task 1 — <short title>
+  Files: <exact paths>
+  Do: <plain-language instructions>
+  Verify: <command or check>
+  Next: <what this unlocks>
+
+## Scene Intent
+| Scene | Lyrics / lines | Visual beat | Camera / motion | Notes |
+|---|---|---|---|---|
+| 1 | ... | ... | ... | ... |
+
+## Blockers
+- <blocker or `None`>
+
+## Optional Exports
+- `<base-dir>/assets/videos/storyboard.json` only if downstream tooling needs it now
+
+## Next Step
+- Use `executing-video-plan` and update `<base-dir>/docs/exec.md`
 ```
 
 ## Logging
 
 Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
-**On invocation** — key `inputs`: `lyrics_path`, `style`, `aspect_ratio`
-**On completion** — key `outputs`: `storyboard_path`, `shot_count`
+**On invocation** — key `inputs`: `idea_doc_path`, `lyrics_path`, `style`
+**On completion** — key `outputs`: `plan_path`, `storyboard_exported` (true/false), `shot_count`
