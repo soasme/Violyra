@@ -10,7 +10,7 @@ Creates the isolated workspace for a new video production after design approval.
 ## Inputs
 
 - `--base-dir <path>` — project root to create
-- Approved design doc at `<base-dir>/docs/idea.md` (or values provided directly)
+- approved design doc at `<base-dir>/docs/idea.md` (or values provided directly)
 
 ## Workflow
 
@@ -28,6 +28,7 @@ Creates the isolated workspace for a new video production after design approval.
    │   ├── videos/
    │   ├── audios/
    │   └── fonts/
+   ├── logs/                ← production.jsonl and review logs
    ├── global/              ← actor/scene/prop/costume packs
    ├── characters/          ← character packs
    └── chapters/            ← one subdir per chapter
@@ -86,6 +87,7 @@ Creates the isolated workspace for a new video production after design approval.
 - `<base-dir>/assets/videos/`
 - `<base-dir>/assets/audios/`
 - `<base-dir>/assets/fonts/`
+- `<base-dir>/logs/`
 - `<base-dir>/project.json`
 - `<base-dir>/global/`, `<base-dir>/characters/`, `<base-dir>/chapters/` (empty directories)
 
@@ -95,9 +97,10 @@ Transition to `writing-video-plan` to turn the approved idea into an executable 
 
 ## Project Layout Rules
 
-- Workflow documents live under `<base-dir>/docs/`
-- Generated media and media-adjacent artifacts live under `<base-dir>/assets/`
-- Standard asset buckets are `<base-dir>/assets/images/`, `<base-dir>/assets/videos/`, `<base-dir>/assets/audios/`, and `<base-dir>/assets/fonts/`
+- workflow documents live under `<base-dir>/docs/`
+- generated media and media-adjacent artifacts live under `<base-dir>/assets/`
+- standard asset buckets are `<base-dir>/assets/images/`, `<base-dir>/assets/videos/`, `<base-dir>/assets/audios/`, and `<base-dir>/assets/fonts/`
+- logs live under `<base-dir>/logs/`
 
 ## Asset Directories
 
@@ -109,7 +112,7 @@ To reference assets from a shared library without copying them:
 "assetDirs": [".", "/Users/me/studio-assets", "/Volumes/NAS/shared"]
 ```
 
-Resolution order: first matching path wins. Skills write output only to the project directory — external dirs are treated as read-only in normal production flow. An agent may write to an external dir only when the user explicitly instructs it to move or promote assets.
+Resolution order: first matching path wins. Skills write output only to the project directory. External dirs are treated as read-only in normal production flow unless the user explicitly asks to promote assets there.
 
 ## Logging
 

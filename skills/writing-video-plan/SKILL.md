@@ -1,11 +1,11 @@
 ---
 name: writing-video-plan
-description: Use when turning an approved idea into the project plan doc. Exports storyboard JSON under project assets/videos only when needed.
+description: Use when turning an approved idea into the project plan doc. Export storyboard JSON under project assets/videos only when needed.
 ---
 
 # Writing Video Plan
 
-Write the human-readable production plan for a music video. The canonical workflow artifact is `<base-dir>/docs/plan.md`.
+Write the human-readable production plan for a video project. The canonical workflow artifact is `<base-dir>/docs/plan.md`.
 
 Use `references/storyboard-format.md` and `assets/storyboard.template.js` only when a downstream step explicitly needs a machine-readable storyboard export.
 
@@ -13,36 +13,38 @@ Use `references/storyboard-format.md` and `assets/storyboard.template.js` only w
 
 Collect these before writing the plan:
 
-1. Approved idea doc at `<base-dir>/docs/idea.md` when available.
-2. `lyrics`: full lyrics or sectioned lyrics.
-3. `user_requirements`: explicit constraints (scene count, characters, pacing, safety, platform, duration).
-4. `style`: visual language, camera behavior, mood, and era references.
-5. `song_title`: title for plan metadata.
+1. approved idea doc at `<base-dir>/docs/idea.md`
+2. source assets declared in the idea doc
+3. project-specific narrative source such as lyrics, screenplay, story brief, or voiceover notes
+4. explicit `user_requirements`
+5. style, pacing, and camera constraints
 
-If any input is missing, make a reasonable assumption and state it briefly.
+If an input required to author the plan is missing, stop and ask for that specific file or clarification. Do not invent source text.
 
 ## Workflow
 
-1. Read the approved context in `<base-dir>/docs/idea.md` and inspect what already exists in the project.
-2. Clarify open questions before planning if key constraints are missing.
-3. Break the work into short executable tasks with exact file paths, deliverables, and verification steps.
-4. For scene work, describe the intent in Markdown first:
+1. Read `<base-dir>/docs/idea.md` and inspect what already exists in the project.
+2. Read the declared source assets and preserve narrative text exactly unless the user asks to rewrite it.
+3. Clarify open questions before planning if key constraints are missing.
+4. Break the work into short executable tasks with exact file paths, deliverables, and verification steps.
+5. For scene work, describe the intent in Markdown first:
    - lyric or script lines covered
    - visual beat
    - character focus
-   - camera / motion intent
+   - camera or motion intent
    - blocking dependencies
-5. Call out blockers, review gates, and the natural next step after each task.
-6. Write or update `<base-dir>/docs/plan.md`.
-7. Export `<base-dir>/assets/videos/storyboard.json` or `<base-dir>/assets/videos/storyboard.js` only when the user asks for it or a downstream script needs it immediately.
+6. Call out blockers, review gates, and the natural next step after each task.
+7. Write or update `<base-dir>/docs/plan.md`.
+8. Export `<base-dir>/assets/videos/storyboard.json` or `<base-dir>/assets/videos/storyboard.js` only when the user asks for it or a downstream script needs it immediately.
+9. If available, self-review the written plan with `plan-document-reviewer-prompt.md`.
 
 ## Output Rules
 
-1. Default output path: `<base-dir>/docs/plan.md`.
-2. The plan is the source of truth for users and agents.
-3. Preserve lyric lines exactly unless the user asks to rewrite or adapt them.
-4. If a storyboard export is required, keep it secondary to the Markdown plan and validate it against `references/storyboard-format.md`.
-5. If user explicitly asks for JS format, export `<base-dir>/assets/videos/storyboard.js`; otherwise use `<base-dir>/assets/videos/storyboard.json`.
+1. Default output path: `<base-dir>/docs/plan.md`
+2. The plan is the source of truth for users and agents
+3. Preserve source text exactly unless the user asks to adapt it
+4. If a storyboard export is required, keep it secondary to the Markdown plan and validate it against `references/storyboard-format.md`
+5. If the user explicitly asks for JS format, export `<base-dir>/assets/videos/storyboard.js`; otherwise use `<base-dir>/assets/videos/storyboard.json`
 
 ## Plan Format
 
@@ -53,6 +55,7 @@ Save to `<base-dir>/docs/plan.md`:
 
 ## Current State
 - Idea doc: `docs/idea.md`
+- Source assets: <resolved file paths>
 - Inputs present: <lyrics, audio, refs, packs>
 - Assumptions: <brief list>
 
@@ -68,7 +71,7 @@ Save to `<base-dir>/docs/plan.md`:
   Next: <what this unlocks>
 
 ## Scene Intent
-| Scene | Lyrics / lines | Visual beat | Camera / motion | Notes |
+| Scene | Source lines | Visual beat | Camera / motion | Notes |
 |---|---|---|---|---|
 | 1 | ... | ... | ... | ... |
 
@@ -82,9 +85,15 @@ Save to `<base-dir>/docs/plan.md`:
 - Use `executing-video-plan` and update `<base-dir>/docs/exec.md`
 ```
 
+## After Writing
+
+Tell the user:
+
+> "Production plan written to `<base-dir>/docs/plan.md`. If needed, I can also export `<base-dir>/assets/videos/storyboard.json` for downstream tooling. Next step: run `executing-video-plan`."
+
 ## Logging
 
-Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See `skills/lib/logging-guide.md`.
 
-**On invocation** — key `inputs`: `idea_doc_path`, `lyrics_path`, `style`
-**On completion** — key `outputs`: `plan_path`, `storyboard_exported` (true/false), `shot_count`
+- **On invocation** — event `invoked`, inputs: `idea_doc_path`, `source_assets`, `style`
+- **On completion** — event `completed`, outputs: `plan_path`, `storyboard_exported` (true/false), `shot_count`

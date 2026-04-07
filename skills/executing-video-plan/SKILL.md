@@ -1,59 +1,82 @@
 ---
 name: executing-video-plan
-description: Use when executing the project plan task-by-task. Records progress, outputs, blockers, and review notes in the execution log.
+description: Execute the project plan phase by phase. Reads the plan doc, updates the execution log, and reports blockers in plan terms.
 ---
 
 # Executing Video Plan
 
-Loads the approved production plan, reviews it critically, then executes tasks with two-stage review per task. `<base-dir>/docs/exec.md` is the live execution ledger.
+Load the approved production plan, find the next actionable work, execute it, and keep `<base-dir>/docs/exec.md` as the live execution ledger.
 
 ## Inputs
 
 - A written production plan at `<base-dir>/docs/plan.md` (or another explicitly provided plan path)
 - `--base-dir <path>` — project root
 
+If the plan does not exist, tell the user to run `writing-video-plan` first.
+
 ## Workflow
 
 ### Step 1: Load and Review Plan
 
 1. Read `<base-dir>/docs/plan.md`
-2. Review critically — identify questions or concerns
-3. If concerns: raise with user before starting
-4. Ensure `<base-dir>/docs/exec.md` exists
-5. If no concerns: proceed
+2. Review critically for ambiguities, missing prerequisites, or contradictory instructions
+3. Ensure `<base-dir>/docs/exec.md` exists
+4. If there are blocking concerns, raise them before starting
 
-### Step 2: Execute Tasks
+### Step 2: Determine the Next Actionable Work
 
-For each task:
-1. Mark in-progress in `<base-dir>/docs/exec.md`
+Walk the plan in order and identify:
+
+- the first incomplete task or phase whose prerequisites are satisfied
+- the first incomplete task or phase that is blocked by a missing artifact
+
+Report blockers in plan terms, using the file paths and checks already recorded in the plan.
+
+### Step 3: Execute
+
+For each task or phase you execute:
+
+1. Mark it in-progress in `<base-dir>/docs/exec.md`
 2. Execute steps exactly as written
-3. Two-stage review:
-   - **Stage 1 — Spec compliance:** Does the output match the task contract in `<base-dir>/docs/plan.md`? Correct file path, format, duration, resolution, or schema?
-   - **Stage 2 — Quality:** Does the output actually meet the bar for the task? Review files, metadata, previews, and user-facing usefulness.
-4. Record outputs, blockers, and review notes in `<base-dir>/docs/exec.md`
-5. Mark completed or blocked in `<base-dir>/docs/exec.md`
+3. Record outputs, blockers, and notes in `<base-dir>/docs/exec.md`
+4. Mark it completed or blocked in `<base-dir>/docs/exec.md`
 
-**Parallelism:** Scenes within a chapter can run in parallel. Chapters must be sequential.
+### Step 4: Two-Stage Review
 
-### Step 3: Complete
+For each completed task or phase:
 
-After all tasks complete and verified, summarize the run in `<base-dir>/docs/exec.md` and transition to the next phase, usually `retention-driven-development`.
+1. **Stage 1 — Spec compliance:** Does the output match the task contract in `<base-dir>/docs/plan.md`? Correct file path, format, duration, resolution, or schema?
+2. **Stage 2 — Quality:** Does the output actually meet the bar for the task? Review files, metadata, previews, and user-facing usefulness.
 
-## When to Stop
+If Stage 2 fails, retry the generation or fix once before marking the task complete.
 
-Stop immediately and ask the user when:
-- Missing dependency (pack file, chapter file, audio)
-- Generation fails after retry
-- Instruction in plan is unclear
-- Verification fails repeatedly
+### Step 5: Parallelism
+
+Scenes within a chapter can run in parallel. Chapters should stay sequential unless the plan explicitly says otherwise.
+
+### Step 6: Completion
+
+After all tasks complete and verify cleanly, summarize the run in `<base-dir>/docs/exec.md` and transition to the next phase, usually `retention-driven-development`.
+
+## When to Stop and Ask
+
+Stop immediately when:
+
+- a required artifact is missing and cannot be produced automatically
+- generation fails after one retry
+- a plan instruction is ambiguous
+- review fails repeatedly for the same artifact
 
 ## After Execution
 
-`<base-dir>/docs/plan.md` remains the approved plan. `<base-dir>/docs/exec.md` captures what actually happened. Transition to `retention-driven-development` once execution is materially complete.
+`<base-dir>/docs/plan.md` remains the approved plan. `<base-dir>/docs/exec.md` captures what actually happened.
+
+If the plan includes explicit retention, review, thumbnail, or delivery tasks, do not silently skip them.
 
 ## Logging
 
-Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See `skills/lib/logging-guide.md`.
 
-**On invocation** — key `inputs`: `plan_path`, `task_id`
-**On completion** — key `outputs`: `exec_path`, `task_status` (`passed`/`failed`), `artifacts` (array of output file paths)
+- **On invocation** — event `invoked`, inputs: `plan_path`, `task_id`
+- **On completion** — event `completed`, outputs: `exec_path`, `task_status` (`passed`/`failed`), `artifacts` (array of output file paths)
+- **On block** — event `failed`, notes: `missing_artifact`, `recommended_next_action`

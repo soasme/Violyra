@@ -5,13 +5,13 @@ description: Use between major phases or after the full pipeline. Reviews progre
 
 # Requesting Video Review
 
-Dispatches a reviewer with production context to catch issues before they cascade.
+Dispatch or perform a structured review with production context so issues are caught before they cascade.
 
 ## When to Request
 
-- After each major phase (storyboard, generation, post-production)
+- After each major phase
 - Before final delivery
-- When stuck — fresh perspective helps
+- When stuck and a fresh pass is useful
 
 ## How to Request
 
@@ -19,17 +19,24 @@ Dispatches a reviewer with production context to catch issues before they cascad
    - `<base-dir>/docs/idea.md`
    - `<base-dir>/docs/plan.md`
    - `<base-dir>/docs/exec.md`
-   - `<chapter-dir>/retention-report.json`
-   - Shot-by-shot diff: planned vs. actual file paths, durations, any regenerated shots
-2. Review against intent, plan, and actual execution state
-3. Reviewer classifies issues by severity:
-   - **Critical** — missing scenes, broken audio sync, unresolved consistency issues → blocks delivery
-   - **Important** — visual quality below bar, shot doesn't match shot-detail spec → fix before next phase
-   - **Minor** — style drift, minor pacing issue → log for next version
-4. Act on feedback:
-   - Fix Critical immediately before proceeding
-   - Fix Important before delivering
-   - Append Minor notes to the `## Review Notes` section in `<base-dir>/docs/exec.md`
+   - `<chapter-dir>/retention-report.json` if a retention pass ran
+   - final render path if one exists
+   - shot-by-shot diff: planned vs actual file paths, durations, any regenerated shots
+2. Review against intent, plan, and actual execution state.
+3. Classify issues by severity:
+   - **Critical** — missing scenes, broken audio sync, unresolved consistency issues; blocks delivery
+   - **Important** — visual quality below bar, shot does not match the spec; fix before next phase
+   - **Minor** — style drift or pacing issues; log for the next version
+4. Write `<base-dir>/logs/review-feedback.md` with:
+   - `Status: pass` or `Status: fail`
+   - critical findings
+   - important findings
+   - minor findings
+   - recommended next action
+5. Act on feedback:
+   - fix Critical immediately before proceeding
+   - fix Important before delivering
+   - append Minor notes to the `## Review Notes` section in `<base-dir>/docs/exec.md`
 
 ## After Review
 
@@ -40,4 +47,4 @@ If no Critical or Important issues remain, the production is ready for delivery.
 Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `project_dir`, `idea_path`, `plan_path`, `exec_path`
-**On completion** — key `outputs`: `critical_count`, `important_count`, `minor_count`, `blocked` (true if critical > 0)
+**On completion** — key `outputs`: `review_feedback_path`, `critical_count`, `important_count`, `minor_count`, `blocked` (true if critical > 0)

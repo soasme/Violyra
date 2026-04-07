@@ -29,6 +29,28 @@ Each step is a composable skill. Run the full pipeline or pick individual skills
 
 ---
 
+## Usage
+
+```bash
+# brainstorm and approve the idea
+/brainstorming-video-idea
+
+# set up the project workspace
+/setup-video-project
+
+# copy your project assets into assets/<project>/
+
+# write the production plan
+/writing-video-plan
+
+# run the next phase and repeat as the project advances
+/executing-video-plan
+```
+
+Full walkthrough: [`docs/usage.md`](docs/usage.md)
+
+---
+
 ## Features
 
 ### Workflow
