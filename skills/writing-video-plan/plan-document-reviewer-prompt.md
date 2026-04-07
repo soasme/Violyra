@@ -25,13 +25,15 @@ Review `SPEC.md` and `PLAN.md` after they are written. Fix any issues inline. On
 - [ ] If `# Idea` marks an input required before planning, the plan reflects that dependency explicitly
 
 ### Plan Buildability
+- [ ] `PLAN.md` is organized by top-level `# Iteration N` sections
+- [ ] The latest iteration reflects the most recent user request without deleting prior iterations
 - [ ] `PLAN.md` references `SPEC.md` and the real asset paths under `project/assets/`
 - [ ] Tasks are separated clearly enough that an agent can tell spec work from asset work
 - [ ] Every task has exact files, a concrete action, and a verification step
 - [ ] Blockers and next step are explicit
 
 ### Execution Readiness
-- [ ] The first incomplete task is actionable without guessing
+- [ ] The first incomplete task in the latest iteration is actionable without guessing
 - [ ] Optional storyboard export is treated as optional unless a downstream script needs it
 - [ ] Nothing in the plan requires hidden repo knowledge outside `SPEC.md` and the declared asset paths
 

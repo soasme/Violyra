@@ -21,7 +21,7 @@ Dispatch or perform a structured review with production context so issues are ca
    - `<chapter-dir>/retention-report.json` if a retention pass ran
    - final render path if one exists
    - shot-by-shot diff: planned vs actual file paths, durations, any regenerated shots
-2. Review against intent, project spec, plan, and actual execution state.
+2. Review against intent, project spec, the latest iteration in the plan, and actual execution state.
 3. Classify issues by severity:
    - **Critical** — missing scenes, broken audio sync, unresolved consistency issues; blocks delivery
    - **Important** — visual quality below bar, shot does not match `SPEC.md` or the plan; fix before next phase
@@ -35,7 +35,7 @@ Dispatch or perform a structured review with production context so issues are ca
 5. Act on feedback:
    - fix Critical immediately before proceeding
    - fix Important before delivering
-   - append Minor notes to the `## Review Notes` section in `<base-dir>/PLAN.md`
+   - append Minor notes to the `## Review Notes` section of the latest `# Iteration N` in `<base-dir>/PLAN.md`
 
 ## After Review
 

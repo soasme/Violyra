@@ -22,21 +22,22 @@ If the plan or spec does not exist, tell the user to run `writing-video-plan` fi
 1. Read `<base-dir>/PLAN.md`
 2. Read `<base-dir>/SPEC.md`
 3. Review critically for ambiguities, missing prerequisites, or contradictory instructions
-4. Ensure `<base-dir>/PLAN.md` has clear task states, blockers, and run notes
-5. If there are blocking concerns, raise them before starting
+4. Identify the latest top-level `# Iteration N`
+5. Ensure that latest iteration has clear task states, blockers, and run notes
+6. If there are blocking concerns, raise them before starting
 
 ### Step 2: Determine the Next Actionable Work
 
-Walk the plan in order and identify:
+Walk the latest iteration in order and identify:
 
 - the first incomplete task or phase whose prerequisites are satisfied
 - the first incomplete task or phase that is blocked by a missing artifact
 
-Report blockers in plan terms, using the file paths and checks already recorded in the plan.
+Report blockers in plan terms, using the file paths and checks already recorded in the latest iteration.
 
 ### Step 3: Execute
 
-For each task or phase you execute:
+For each task or phase you execute in the latest iteration:
 
 1. Mark it in-progress in `<base-dir>/PLAN.md`
 2. Execute steps exactly as written
@@ -54,7 +55,7 @@ If Stage 2 fails, retry the generation or fix once before marking the task compl
 
 ### Step 5: Parallelism
 
-Asset tasks can run in parallel when the plan says they are independent. Spec-editing tasks should stay sequential unless the plan explicitly isolates them.
+Asset tasks can run in parallel when the latest iteration says they are independent. Spec-editing tasks should stay sequential unless the plan explicitly isolates them.
 
 ### Step 6: Completion
 
@@ -69,9 +70,11 @@ Stop immediately when:
 - a plan instruction is ambiguous
 - review fails repeatedly for the same artifact
 
+If the user asks to change scope, priorities, or deliverables after planning has already started, append a new top-level `# Iteration N` to `<base-dir>/PLAN.md` and execute against that latest iteration instead of rewriting the earlier ones.
+
 ## After Execution
 
-`<base-dir>/SPEC.md` remains the project contract. `<base-dir>/PLAN.md` remains the approved coordination plan and execution ledger.
+`<base-dir>/SPEC.md` remains the project contract. `<base-dir>/PLAN.md` remains the approved coordination plan and execution ledger, with the newest `# Iteration N` section taking precedence for current work.
 
 If the plan includes explicit retention, review, thumbnail, or delivery tasks, do not silently skip them.
 

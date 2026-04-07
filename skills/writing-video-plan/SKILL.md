@@ -38,8 +38,10 @@ If an input required to author the spec or plan is missing, stop and ask for tha
    - blocking dependencies
 7. Call out blockers, review gates, and the natural next step after each task.
 8. Write or update `<base-dir>/PLAN.md` so it manages `SPEC.md` and the project scratch area.
-9. Export `<base-dir>/project/assets/videos/storyboard.json` or `<base-dir>/project/assets/videos/storyboard.js` only when the user asks for it or a downstream script needs it immediately.
-10. If available, self-review the written spec and plan with `plan-document-reviewer-prompt.md`.
+9. If `<base-dir>/PLAN.md` does not exist yet, start it with `# Iteration 1`.
+10. If the user is changing an existing plan, append a new top-level `# Iteration N` section instead of rewriting the previous iterations.
+11. Export `<base-dir>/project/assets/videos/storyboard.json` or `<base-dir>/project/assets/videos/storyboard.js` only when the user asks for it or a downstream script needs it immediately.
+12. If available, self-review the written spec and plan with `plan-document-reviewer-prompt.md`.
 
 ## Output Rules
 
@@ -47,10 +49,13 @@ If an input required to author the spec or plan is missing, stop and ask for tha
 2. Default plan path: `<base-dir>/PLAN.md`
 3. `SPEC.md` is the human-readable project contract with the approved idea in `# Idea`
 4. `PLAN.md` manages `SPEC.md`, `project/assets/`, blockers, review notes, and execution order
-5. Preserve source text exactly unless the user asks to adapt it
-6. If `SPEC.md` needs machine-readable detail, wrap it in a fenced `json` code block instead of creating standalone JSON unless a downstream script needs the file immediately
-7. If a storyboard export is required, keep it secondary to the Markdown spec and plan, and validate it against `references/storyboard-format.md`
-8. If the user explicitly asks for JS format, export `<base-dir>/project/assets/videos/storyboard.js`; otherwise use `<base-dir>/project/assets/videos/storyboard.json`
+5. `PLAN.md` is append-only by top-level `# Iteration N` sections
+6. The first planning pass creates `# Iteration 1`
+7. Later user-directed changes append `# Iteration 2`, `# Iteration 3`, and so on, preserving earlier iterations as history
+8. Preserve source text exactly unless the user asks to adapt it
+9. If `SPEC.md` needs machine-readable detail, wrap it in a fenced `json` code block instead of creating standalone JSON unless a downstream script needs the file immediately
+10. If a storyboard export is required, keep it secondary to the Markdown spec and plan, and validate it against `references/storyboard-format.md`
+11. If the user explicitly asks for JS format, export `<base-dir>/project/assets/videos/storyboard.js`; otherwise use `<base-dir>/project/assets/videos/storyboard.json`
 
 ## Spec Format
 
@@ -116,7 +121,10 @@ Save to `<base-dir>/SPEC.md`:
 Save to `<base-dir>/PLAN.md`:
 
 ```md
-# Plan: <title>
+# Iteration 1
+
+## Goal
+- Initial planning pass for <title>
 
 ## Current State
 - Project spec: `SPEC.md`
@@ -161,11 +169,41 @@ Save to `<base-dir>/PLAN.md`:
 - Use `executing-video-plan` to work through `SPEC.md`, asset tasks, and update `<base-dir>/PLAN.md`
 ```
 
+When the user later asks for changes, append another block like:
+
+```md
+# Iteration 2
+
+## Trigger
+- User requested: <concise summary of the change>
+
+## Current State
+- Carry forward any relevant current artifacts or constraints
+
+## Spec Tasks
+- [ ] Adjust `SPEC.md` for the requested change
+
+## Asset Tasks
+- [ ] Add or revise the affected asset work
+
+## Blockers
+- <blocker or `None`>
+
+## Review Notes
+- <finding or `None`>
+
+## Run Notes
+- <date>: iteration appended from user feedback
+
+## Next Step
+- Execute the latest iteration and preserve earlier iterations as history
+```
+
 ## After Writing
 
 Tell the user:
 
-> "Project spec written to `<base-dir>/SPEC.md` and plan written to `<base-dir>/PLAN.md`. If needed, I can also export `<base-dir>/project/assets/videos/storyboard.json` for downstream tooling. Next step: run `executing-video-plan`."
+> "Project spec written to `<base-dir>/SPEC.md` and plan updated in `<base-dir>/PLAN.md`. If needed, I can also export `<base-dir>/project/assets/videos/storyboard.json` for downstream tooling. Next step: run `executing-video-plan` against the latest iteration."
 
 ## Logging
 

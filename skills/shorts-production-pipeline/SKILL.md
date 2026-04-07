@@ -9,7 +9,7 @@ Top-level orchestrator for a complete short drama production. No lyrics or song 
 
 Maintain these workflow docs throughout the run:
 - `<project-dir>/SPEC.md` — project spec with the approved idea in `# Idea`
-- `<project-dir>/PLAN.md` — approved task plan for `SPEC.md` and `project/assets/`
+- `<project-dir>/PLAN.md` — iteration-based task plan for `SPEC.md` and `project/assets/`
 
 ## Inputs
 
@@ -46,7 +46,7 @@ brainstorming-video-idea   (skip with --skip-brainstorm)
 
 Pause for user confirmation after each phase before proceeding. Show what was produced and ask: "Continue to [next phase]? (Y/N)"
 
-Update `<project-dir>/PLAN.md` at each checkpoint with status, outputs, and approval notes.
+Update `<project-dir>/PLAN.md` at each checkpoint with status, outputs, and approval notes in the latest `# Iteration N`, or append a new iteration if the user changes direction.
 
 ## Error Handling
 

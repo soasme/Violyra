@@ -43,7 +43,7 @@ Generated production projects use this layout:
 
 **Spec-driven pipeline.** Define the spec first. Clarity always wins over improvisation.
 
-**Markdown-first workflow.** User-facing workflow state lives in `<project-dir>/SPEC.md` and `<project-dir>/PLAN.md`. The approved idea lives in the `# Idea` section of `SPEC.md`, and `PLAN.md` manages that spec plus the `project/` scratch area. JSON is for lower-level deterministic script I/O, not the primary collaboration surface.
+**Markdown-first workflow.** User-facing workflow state lives in `<project-dir>/SPEC.md` and `<project-dir>/PLAN.md`. The approved idea lives in the `# Idea` section of `SPEC.md`, and `PLAN.md` manages that spec plus the `project/` scratch area. `PLAN.md` is append-only by top-level `# Iteration N` sections so follow-up user changes extend the plan instead of erasing prior decisions. JSON is for lower-level deterministic script I/O, not the primary collaboration surface.
 
 **Project structure belongs in the spec.** Characters, chapter shape, model defaults, and asset directory rules should be written in `SPEC.md` as text first. If structured data is needed inside the spec, wrap it in a fenced `json` code block.
 
@@ -177,7 +177,7 @@ These are the canonical human-facing workflow files:
 | File | Purpose |
 |---|---|
 | `<project-dir>/SPEC.md` | Project spec with the approved idea in `# Idea`; characters, chapter structure, required assets, and other text-first project contract details |
-| `<project-dir>/PLAN.md` | Approved task plan for managing `SPEC.md`, exact paths, review notes, blockers, and next steps |
+| `<project-dir>/PLAN.md` | Iteration-based task plan for managing `SPEC.md`, exact paths, review notes, blockers, and next steps; later user changes append new `# Iteration N` sections |
 
 If `SPEC.md` needs machine-readable detail, keep it inside fenced `json` code blocks. Standalone JSON files still exist for the lower-level pipeline where scripts need deterministic validation, such as `shot-list.json`, `shot-details.json`, and `consistency-report.json`.
 

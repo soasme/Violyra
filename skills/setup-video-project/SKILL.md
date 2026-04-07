@@ -80,7 +80,10 @@ Creates the isolated workspace for a new video production after idea approval.
    ```
 6. Initialize `<base-dir>/PLAN.md` if missing:
    ```md
-   # Plan: <project title>
+   # Iteration 1
+
+   ## Goal
+   - Initial planning pass for <project title>
 
    ## Current State
    - Idea approved in `SPEC.md`
@@ -107,7 +110,8 @@ Creates the isolated workspace for a new video production after idea approval.
    ## Next Step
    - Write or refine this plan to manage `SPEC.md` and `project/` before execution
    ```
-7. Confirm workspace is ready.
+7. If the user later asks to change scope, priorities, or deliverables, append `# Iteration 2`, `# Iteration 3`, and so on. Do not erase earlier iterations; keep them as plan history.
+8. Confirm workspace is ready.
 
 ## Output
 
@@ -122,7 +126,7 @@ Creates the isolated workspace for a new video production after idea approval.
 
 ## After Setup
 
-Transition to `writing-video-plan` to turn the approved idea into a full `SPEC.md` plus an executable `PLAN.md`. For direct manual runs, `executing-video-plan` should treat `PLAN.md` as the source of truth for next actions and `SPEC.md` as the project contract.
+Transition to `writing-video-plan` to turn the approved idea into a full `SPEC.md` plus an executable `PLAN.md`. For direct manual runs, `executing-video-plan` should treat the latest `# Iteration N` in `PLAN.md` as the source of truth for next actions and `SPEC.md` as the project contract.
 
 ## Project Layout Rules
 

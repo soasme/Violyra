@@ -9,7 +9,9 @@ Unless stated otherwise, paths below are relative to `<project-dir>`.
 Use these Markdown files as the main collaboration surface:
 
 - `SPEC.md` — the project spec; keep it text-first, keep the approved idea in `# Idea`, and wrap any machine-readable snippet in a fenced `json` code block
-- `PLAN.md` — approved task plan for managing `SPEC.md`, `project/assets/`, blockers, review notes, and next steps
+- `PLAN.md` — iteration-based task plan for managing `SPEC.md`, `project/assets/`, blockers, review notes, and next steps
+
+`PLAN.md` should use top-level sections like `# Iteration 1`, `# Iteration 2`, and so on. The initial planning pass creates `# Iteration 1`. Later user-directed changes append a new iteration instead of overwriting the earlier plan history.
 
 These Markdown files are enough for the workflow layer. Lower-level JSON still exists where scripts need deterministic input or validation, such as `shot-list.json` and `consistency-report.json`.
 
@@ -45,8 +47,8 @@ Many projects follow this shape:
 1. Run `brainstorming-video-idea` to converge on the concept and write the approved idea into `<project-dir>/SPEC.md`.
 2. Run `setup-video-project` to scaffold the workspace, preserve or scaffold `<project-dir>/SPEC.md`, create `<project-dir>/PLAN.md`, and prepare `<project-dir>/project/`.
 3. Place or generate the required project inputs under `<project-dir>/project/assets/`.
-4. Run `writing-video-plan` to refine `<project-dir>/SPEC.md` and write an actionable `<project-dir>/PLAN.md`.
-5. Run `executing-video-plan` to execute tasks from `<project-dir>/PLAN.md`, using `<project-dir>/SPEC.md` as the project contract, and keep `PLAN.md` current.
+4. Run `writing-video-plan` to refine `<project-dir>/SPEC.md` and write `<project-dir>/PLAN.md` starting at `# Iteration 1`.
+5. Run `executing-video-plan` to execute tasks from the latest iteration in `<project-dir>/PLAN.md`, using `<project-dir>/SPEC.md` as the project contract, and keep `PLAN.md` current.
 6. Run `retention-driven-development` and `requesting-video-review` before delivery, and record review results in `<project-dir>/PLAN.md` plus `<project-dir>/project/logs/` when needed.
 
 ## Choosing The Right Workflow
@@ -89,7 +91,7 @@ The right rule is:
 1. Put project inputs under `<project-dir>/project/assets/`
 2. Make the required inputs explicit in the `# Idea` section of `<project-dir>/SPEC.md`
 3. Let `writing-video-plan` carry those requirements through the rest of `<project-dir>/SPEC.md`
-4. Let `<project-dir>/PLAN.md` manage the work against `SPEC.md` and the actual asset paths
+4. Let `<project-dir>/PLAN.md` manage the work against `SPEC.md` and the actual asset paths, appending a new `# Iteration N` when the user changes direction
 
 Do not assume every project uses the same files.
 

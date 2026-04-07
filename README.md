@@ -63,6 +63,7 @@ Full walkthrough: [`docs/usage.md`](docs/usage.md)
 - Canonical workflow files live in `<project-dir>/SPEC.md` and `<project-dir>/PLAN.md`
 - The approved idea lives in the `# Idea` section of `SPEC.md`
 - `PLAN.md` manages `SPEC.md` plus the scratch area under `<project-dir>/project/`
+- `PLAN.md` is organized as `# Iteration N`; follow-up user-directed changes append a new iteration instead of rewriting history
 - Project defaults such as model, fps, resolution, and asset directories belong in `SPEC.md` as Markdown lists or paragraphs
 - If `SPEC.md` needs a machine-readable snippet, wrap it in a fenced `json` code block
 - JSON is reserved for lower-level script inputs and validated reports where deterministic machine I/O matters
