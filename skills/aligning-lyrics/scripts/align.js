@@ -12,10 +12,10 @@ const REPLICATE_API_BASE = "https://api.replicate.com/v1";
 const REPLICATE_FILES_URL = `${REPLICATE_API_BASE}/files`;
 const DEFAULT_POLL_INTERVAL_MS = 1000;
 
-const DEFAULT_APPROX_OUTPUT_PATH = "assets/audios/approximate-lyric-segmentation.json";
-const DEFAULT_JSON_OUTPUT_PATH = "assets/audios/aligned_lyrics.json";
-const DEFAULT_SRT_OUTPUT_PATH = "assets/audios/subtitle.srt";
-const DEFAULT_LRC_OUTPUT_PATH = "assets/audios/subtitle.lrc";
+const DEFAULT_APPROX_OUTPUT_PATH = "project/assets/audios/approximate-lyric-segmentation.json";
+const DEFAULT_JSON_OUTPUT_PATH = "project/assets/audios/aligned_lyrics.json";
+const DEFAULT_SRT_OUTPUT_PATH = "project/assets/audios/subtitle.srt";
+const DEFAULT_LRC_OUTPUT_PATH = "project/assets/audios/subtitle.lrc";
 
 const DEFAULT_MIN_SIMILARITY = 0.58;
 const DEFAULT_HARD_FLOOR_SIMILARITY = 0.35;

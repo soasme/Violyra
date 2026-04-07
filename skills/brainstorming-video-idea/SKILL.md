@@ -1,6 +1,6 @@
 ---
 name: brainstorming-video-idea
-description: Use before making any video. Negotiates the creative plan through dialogue and writes the approved project idea doc plus setup seeds.
+description: Use before making any video. Negotiates the creative plan through dialogue and writes the approved project idea into SPEC.md plus setup seeds.
 ---
 
 # Brainstorming Video Idea
@@ -13,11 +13,11 @@ Do NOT write any files, create project directories, or transition to setup-video
 
 ## Checklist
 
-1. Explore existing context — lyrics, screenplay, style references, prior `<base-dir>/docs/idea.md`, prior `<base-dir>/SPEC.md`, previous runs
+1. Explore existing context — lyrics, screenplay, style references, prior `<base-dir>/SPEC.md`, previous runs
 2. Ask clarifying questions one at a time
 3. Propose 2–3 directions with trade-offs and a recommendation
 4. Present design in sections and get approval after each section
-5. After explicit approval, write the design doc to `<base-dir>/docs/idea.md` as the source for the later project `SPEC.md`
+5. After explicit approval, write the approved idea into the `# Idea` section of `<base-dir>/SPEC.md`
 6. If available, review the written doc with `spec-document-reviewer-prompt.md`
 7. Transition to `setup-video-project`
 
@@ -59,10 +59,15 @@ Present in sections and get approval after each:
 
 ## Design Doc Format
 
-Save to `<base-dir>/docs/idea.md`:
+Save to `<base-dir>/SPEC.md`:
 
 ```md
-# Idea: <title>
+# Spec: <title>
+
+# Status
+- Idea approved
+
+# Idea
 
 ## Concept
 <2–3 sentence summary>
@@ -91,7 +96,7 @@ Save to `<base-dir>/docs/idea.md`:
 ## Source Assets
 | Path | Purpose | Required before planning? | Required before execution? | Status |
 |---|---|---|---|---|
-| assets/... | lyrics / screenplay / song / stills / footage | yes/no | yes/no | present / to be added / to be generated |
+| project/assets/... | lyrics / screenplay / song / stills / footage | yes/no | yes/no | present / to be added / to be generated |
 
 ## Chapter Breakdown
 | Chapter | Title | Raw text summary |
@@ -110,10 +115,10 @@ Save to `<base-dir>/docs/idea.md`:
 
 ## Setup Seeds
 - seed: <integer>
-- style: "<style description>"
-- defaultModel: "bytedance/seedance-1.5-pro"
+- style: <style description>
+- defaultModel: bytedance/seedance-1.5-pro
 - fps: 24
-- resolution: "1920x1080"
+- resolution: 1920x1080
 
 ## Open Questions
 - <question or `None`>
@@ -121,15 +126,15 @@ Save to `<base-dir>/docs/idea.md`:
 
 ## Output
 
-- `<base-dir>/docs/idea.md`
+- `<base-dir>/SPEC.md`
 
 ## After Approval
 
-Transition to `setup-video-project` with the approved design. `writing-video-plan` should later derive `<base-dir>/SPEC.md` from this approved idea doc.
+Transition to `setup-video-project` with the approved design already captured in `<base-dir>/SPEC.md`. `writing-video-plan` should later refine the rest of the spec around that approved `# Idea` section.
 
 ## Logging
 
-Log to `{project_dir}/logs/production.jsonl`. See `skills/lib/logging-guide.md`.
+Log to `{project_dir}/project/logs/production.jsonl`. See `skills/lib/logging-guide.md`.
 
 - **On invocation** — event `invoked`, inputs: `topic`, `constraints`
-- **On completion** — event `completed`, outputs: `idea_doc_path`, `setup_seeds_ready` (true/false)
+- **On completion** — event `completed`, outputs: `spec_path`, `setup_seeds_ready` (true/false)

@@ -76,11 +76,19 @@ describe('resolveAsset', () => {
     expect(result).toBe(join(tmpDir, 'image.png'))
   })
 
-  it('uses the standard asset buckets by default', () => {
-    mkdirSync(join(tmpDir, 'assets', 'images'), { recursive: true })
-    writeFileSync(join(tmpDir, 'assets', 'images', 'image.png'), 'data')
+  it('supports top-level Asset Directories heading in SPEC.md', () => {
+    writeFileSync(join(tmpDir, 'SPEC.md'), '# Spec\n\n# Asset Directories\n- `project/assets/images`\n')
+    mkdirSync(join(tmpDir, 'project', 'assets', 'images'), { recursive: true })
+    writeFileSync(join(tmpDir, 'project', 'assets', 'images', 'image.png'), 'data')
     const result = resolveAsset(tmpDir, 'image.png')
-    expect(result).toBe(join(tmpDir, 'assets', 'images', 'image.png'))
+    expect(result).toBe(join(tmpDir, 'project', 'assets', 'images', 'image.png'))
+  })
+
+  it('uses the standard asset buckets by default', () => {
+    mkdirSync(join(tmpDir, 'project', 'assets', 'images'), { recursive: true })
+    writeFileSync(join(tmpDir, 'project', 'assets', 'images', 'image.png'), 'data')
+    const result = resolveAsset(tmpDir, 'image.png')
+    expect(result).toBe(join(tmpDir, 'project', 'assets', 'images', 'image.png'))
   })
 
   it('falls back to external dir when not found locally and listed in SPEC.md', () => {

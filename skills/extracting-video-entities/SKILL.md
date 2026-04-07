@@ -55,7 +55,7 @@ source .env && node skills/extracting-video-entities/scripts/validate-extraction
 
 ## Logging
 
-Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `shot_list_path`
 **On completion** — key `outputs`: `actor_count`, `scene_count`, `prop_count`, `costume_count`

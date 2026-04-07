@@ -13,10 +13,10 @@ No database. No UI. No LLM calls in code. Just files, scripts, and clear instruc
 Violyra follows a production pipeline modeled on real film workflows:
 
 ```
-brainstorming-video-idea   → <project-dir>/docs/idea.md
-  → setup-video-project    → scaffold <project-dir>/SPEC.md + <project-dir>/docs/plan.md + <project-dir>/docs/exec.md
-  → writing-video-plan     → <project-dir>/SPEC.md + <project-dir>/docs/plan.md
-  → executing-video-plan   → <project-dir>/docs/exec.md
+brainstorming-video-idea   → <project-dir>/SPEC.md (# Idea)
+  → setup-video-project    → scaffold <project-dir>/PLAN.md + <project-dir>/project/
+  → writing-video-plan     → refine <project-dir>/SPEC.md + <project-dir>/PLAN.md
+  → executing-video-plan   → update <project-dir>/PLAN.md
       → [music / script / storyboard export when needed]
       → running-video-production-pipeline ← breakdown → extraction → shot details → consistency
       → [video generation per scene]
@@ -38,7 +38,7 @@ Each step is a composable skill. Run the full pipeline or pick individual skills
 # set up the project workspace
 /setup-video-project
 
-# place project assets under <project-dir>/assets/
+# place project assets under <project-dir>/project/assets/
 
 # write the production plan
 /writing-video-plan
@@ -54,23 +54,25 @@ Full walkthrough: [`docs/usage.md`](docs/usage.md)
 ## Features
 
 ### Workflow
-- **Brainstorming** — refine rough ideas, explore alternatives, produce a design doc
+- **Brainstorming** — refine rough ideas, explore alternatives, and lock the approved idea into `SPEC.md`
 - **Planning** — derive a project spec, then break production into bite-sized tasks with exact file paths and verification commands
-- **Execution** — dispatch subagents per task with two-stage review (spec compliance + asset quality)
+- **Execution** — dispatch subagents per task with two-stage review and update `PLAN.md` as work progresses
 - **Retention-driven development** — simulate audience behavior, score retention, replace weak scenes automatically
 
 ### Markdown-First Workflow
-- Canonical workflow files live in `<project-dir>/docs/idea.md`, `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`
-- `SPEC.md` is the project spec yielded from `docs/idea.md`, and `docs/plan.md` manages `SPEC.md` plus the project assets
+- Canonical workflow files live in `<project-dir>/SPEC.md` and `<project-dir>/PLAN.md`
+- The approved idea lives in the `# Idea` section of `SPEC.md`
+- `PLAN.md` manages `SPEC.md` plus the scratch area under `<project-dir>/project/`
 - Project defaults such as model, fps, resolution, and asset directories belong in `SPEC.md` as Markdown lists or paragraphs
 - If `SPEC.md` needs a machine-readable snippet, wrap it in a fenced `json` code block
 - JSON is reserved for lower-level script inputs and validated reports where deterministic machine I/O matters
 
 ### Project Layout
 - Each production project owns its own `<project-dir>/SPEC.md`
-- Each production project owns its own `<project-dir>/docs/`
-- Each production project owns its own `<project-dir>/assets/`
-- Standard asset buckets are `<project-dir>/assets/images`, `<project-dir>/assets/videos`, `<project-dir>/assets/audios`, and `<project-dir>/assets/fonts`
+- Each production project owns its own `<project-dir>/PLAN.md`
+- Each production project owns its own `<project-dir>/project/` scratch area
+- Standard asset buckets are `<project-dir>/project/assets/images`, `<project-dir>/project/assets/videos`, `<project-dir>/project/assets/audios`, and `<project-dir>/project/assets/fonts`
+- Scratch logs live under `<project-dir>/project/logs/`
 
 ### Production Pipeline
 - **Script breakdown** — any text (lyrics, screenplay, brief) → indexed shot list + chapter

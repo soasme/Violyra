@@ -55,14 +55,14 @@ function resolvePathWithinDir(baseDir, assetPath) {
 
 function parseAssetDirsFromSpec(specMarkdown) {
   const lines = specMarkdown.split(/\r?\n/)
-  const headingIndex = lines.findIndex(line => /^##\s+Asset (Directories|Dirs)\b/i.test(line.trim()))
+  const headingIndex = lines.findIndex(line => /^#{1,6}\s+Asset (Directories|Dirs)\b/i.test(line.trim()))
   if (headingIndex === -1) return null
 
   const dirs = []
   for (let i = headingIndex + 1; i < lines.length; i++) {
     const line = lines[i]
     const trimmed = line.trim()
-    if (/^##\s+/.test(trimmed)) break
+    if (/^#{1,6}\s+/.test(trimmed)) break
     if (trimmed.length === 0) continue
 
     const backtickMatch = trimmed.match(/^[-*]\s+`([^`]+)`(?:\s+[—-]\s+.*)?$/)
@@ -91,7 +91,7 @@ function readAssetDirsFromSpec(projectDir) {
 export function resolveAsset(projectDir, relativePath) {
   const assetDirs =
     readAssetDirsFromSpec(projectDir) ??
-    ['.', 'assets/images', 'assets/videos', 'assets/audios', 'assets/fonts']
+    ['.', 'project/assets', 'project/assets/images', 'project/assets/videos', 'project/assets/audios', 'project/assets/fonts']
 
   for (const dir of assetDirs) {
     const base = isAbsolute(dir) ? dir : join(projectDir, dir)

@@ -17,7 +17,7 @@ Writes or refines song lyrics through collaborative dialogue. Output is `lyrics.
 
 ## Workflow
 
-1. Gather inputs from user (or infer from `<base-dir>/docs/idea.md`)
+1. Gather inputs from user (or infer from the `# Idea` section of `<base-dir>/SPEC.md`)
 2. Draft lyrics section by section: `[Verse 1]`, `[Chorus]`, `[Verse 2]`, `[Bridge]`, etc.
 3. Present one section at a time to user for feedback
 4. Iterate until each section is approved
@@ -49,7 +49,7 @@ Transition to `generating-song`.
 
 ## Logging
 
-Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `theme`, `style`, `structure` (verse/chorus/bridge counts)
 **On completion** — key `outputs`: `lyrics_path`, `line_count`

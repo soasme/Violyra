@@ -29,7 +29,7 @@ Same `--base-dir`, `--id`, `--filter` flags. Update accepts `--actor-id`, `--cos
 
 ## Logging
 
-Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `character_name`, `actor_ref`, `action` (`create`/`update`/`list`)
 **On completion** — key `outputs`: `pack_path`, `character_count`

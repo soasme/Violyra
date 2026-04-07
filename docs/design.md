@@ -15,7 +15,7 @@ violyra/
 ├── hooks/           # Session lifecycle hooks
 ├── docs/            # This directory: installation, testing, design
 ├── packages/app/    # Optional: Next.js asset explorer for reviewing outputs
-└── assets/          # Repo-local scratch area only; real projects keep assets under <project-dir>/assets/
+└── assets/          # Repo-local scratch area only; real projects keep scratch material under <project-dir>/project/
 ```
 
 Generated production projects use this layout:
@@ -23,16 +23,14 @@ Generated production projects use this layout:
 ```
 <project-dir>/
 ├── SPEC.md
-├── docs/
-│   ├── idea.md
-│   ├── plan.md
-│   └── exec.md
-├── assets/
-│   ├── images/
-│   ├── videos/
-│   ├── audios/
-│   └── fonts/
-└── logs/
+├── PLAN.md
+└── project/
+    ├── assets/
+    │   ├── images/
+    │   ├── videos/
+    │   ├── audios/
+    │   └── fonts/
+    └── logs/
 ```
 
 ## Philosophy
@@ -45,7 +43,7 @@ Generated production projects use this layout:
 
 **Spec-driven pipeline.** Define the spec first. Clarity always wins over improvisation.
 
-**Markdown-first workflow.** User-facing workflow state lives in `<project-dir>/docs/idea.md`, `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`. `SPEC.md` is derived from the approved idea, and `docs/plan.md` manages that spec plus the project assets. JSON is for lower-level deterministic script I/O, not the primary collaboration surface.
+**Markdown-first workflow.** User-facing workflow state lives in `<project-dir>/SPEC.md` and `<project-dir>/PLAN.md`. The approved idea lives in the `# Idea` section of `SPEC.md`, and `PLAN.md` manages that spec plus the `project/` scratch area. JSON is for lower-level deterministic script I/O, not the primary collaboration surface.
 
 **Project structure belongs in the spec.** Characters, chapter shape, model defaults, and asset directory rules should be written in `SPEC.md` as text first. If structured data is needed inside the spec, wrap it in a fenced `json` code block.
 
@@ -55,7 +53,7 @@ Generated production projects use this layout:
 
 **CLI-first and testable.** Every script has flags, defaults, `--help`, and a `__test__.js` companion. Always run scripts via `source .env && <command>` to load environment variables from `.env`.
 
-**Observable by default.** Every skill invocation is logged to `{project_dir}/logs/production.jsonl`. The log is the ground truth for what happened, what was retried, and what was scored.
+**Observable by default.** Every skill invocation is logged to `{project_dir}/project/logs/production.jsonl`. The log is the ground truth for what happened, what was retried, and what was scored.
 
 ## Harness & Observability
 
@@ -72,7 +70,7 @@ Generated production projects use this layout:
 
 ### JSONL production log (v1.3.0+)
 
-Every skill writes to `{project_dir}/logs/production.jsonl` — an append-only log where each line is a JSON event. This creates a traceable audit trail for the entire pipeline run.
+Every skill writes to `{project_dir}/project/logs/production.jsonl` — an append-only log where each line is a JSON event. This creates a traceable audit trail for the entire pipeline run.
 
 **Log entry schema:**
 
@@ -96,12 +94,12 @@ Each skill's `SKILL.md` has a `## Logging` section (the last section) that speci
 
 | Skill | When to use |
 |---|---|
-| `brainstorming-video-idea` | Before making any video. Refines rough ideas through questions, explores alternatives, presents design in sections for validation, saves `<project-dir>/docs/idea.md` as the source for the later project spec. |
-| `setup-video-project` | After design approval. Creates isolated workspace for the project dir, scaffolds `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, `<project-dir>/docs/exec.md`, and prepares `<project-dir>/assets/`. |
-| `writing-video-plan` | With approved design in hand. Derives `<project-dir>/SPEC.md` from the idea doc, then breaks work into bite-sized tasks in `<project-dir>/docs/plan.md`, with exact file paths, verification commands, and optional storyboard export. |
-| `executing-video-plan` | With plan in hand. Executes tasks from `<project-dir>/docs/plan.md` against `<project-dir>/SPEC.md`, records outputs and review notes in `<project-dir>/docs/exec.md`, and uses checkpoints when needed. |
+| `brainstorming-video-idea` | Before making any video. Refines rough ideas through questions, explores alternatives, presents design in sections for validation, and writes the approved concept into the `# Idea` section of `<project-dir>/SPEC.md`. |
+| `setup-video-project` | After idea approval. Creates isolated workspace for the project dir, preserves or scaffolds `<project-dir>/SPEC.md`, creates `<project-dir>/PLAN.md`, and prepares `<project-dir>/project/`. |
+| `writing-video-plan` | With approved design in hand. Refines `<project-dir>/SPEC.md`, then breaks work into bite-sized tasks in `<project-dir>/PLAN.md`, with exact file paths, verification commands, and optional storyboard export. |
+| `executing-video-plan` | With plan in hand. Executes tasks from `<project-dir>/PLAN.md` against `<project-dir>/SPEC.md`, records outputs and review notes in `PLAN.md`, and uses checkpoints when needed. |
 | `retention-driven-development` | After execution, before compiling. Simulates 100 viewers per shot, scores retention, replaces weak shots. Replace, don't patch. |
-| `requesting-video-review` | Between tasks or after the full pipeline. Reviews progress against `<project-dir>/docs/idea.md`, `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`; critical issues block progress. |
+| `requesting-video-review` | Between tasks or after the full pipeline. Reviews progress against `<project-dir>/SPEC.md`, `<project-dir>/PLAN.md`, and project outputs; critical issues block progress. |
 | `scoring-narrative-quality` | After `compiling-video`. Scores the assembled video on a 5-dimension narrative rubric (hook, pacing, emotional arc, visual variety, payoff). Composite score 0–100. If < 70, recommends a targeted `retention-driven-development` pass. |
 
 ### Music Production Skills
@@ -138,7 +136,7 @@ Each skill's `SKILL.md` has a `## Logging` section (the last section) that speci
 
 | Skill | When to use |
 |---|---|
-| `writing-video-plan` | To derive `<project-dir>/SPEC.md` from the approved idea, write `<project-dir>/docs/plan.md`, and export storyboard JSON only when needed. |
+| `writing-video-plan` | To refine `<project-dir>/SPEC.md`, write `<project-dir>/PLAN.md`, and export storyboard JSON only when needed. |
 | `writing-seedance15-prompt` | To write motion-focused Seedance 1.5 prompts from shot details. |
 | `writing-seedance20-prompt` | To write motion-focused Seedance 2.0 prompts with multi-shot support. |
 | `writing-veo31-prompt` | To write cinematic Veo 3.1 prompts with native audio cues and R2V mode. |
@@ -178,10 +176,8 @@ These are the canonical human-facing workflow files:
 
 | File | Purpose |
 |---|---|
-| `<project-dir>/docs/idea.md` | Approved concept, constraints, goals, chapter shape, and setup seeds |
-| `<project-dir>/SPEC.md` | Project spec derived from the idea doc; characters, chapter structure, required assets, and any text-first project contract details |
-| `<project-dir>/docs/plan.md` | Approved task plan for managing `SPEC.md`, exact paths, checks, blockers, and next steps |
-| `<project-dir>/docs/exec.md` | Live run log: status, outputs, blockers, approvals, and review findings |
+| `<project-dir>/SPEC.md` | Project spec with the approved idea in `# Idea`; characters, chapter structure, required assets, and other text-first project contract details |
+| `<project-dir>/PLAN.md` | Approved task plan for managing `SPEC.md`, exact paths, review notes, blockers, and next steps |
 
 If `SPEC.md` needs machine-readable detail, keep it inside fenced `json` code blocks. Standalone JSON files still exist for the lower-level pipeline where scripts need deterministic validation, such as `shot-list.json`, `shot-details.json`, and `consistency-report.json`.
 
@@ -191,8 +187,8 @@ If `SPEC.md` needs machine-readable detail, keep it inside fenced `json` code bl
 ```
 brainstorming-video-idea      ← define concept, style, characters
   → setup-video-project       ← create workspace and scaffold SPEC.md
-  → writing-video-plan        ← write <project-dir>/SPEC.md and <project-dir>/docs/plan.md
-  → executing-video-plan      ← update <project-dir>/docs/exec.md while dispatching subagents
+  → writing-video-plan        ← write <project-dir>/SPEC.md and <project-dir>/PLAN.md
+  → executing-video-plan      ← update <project-dir>/PLAN.md while dispatching subagents
       → generating-lyrics
       → generating-song
       → aligning-lyrics
@@ -211,8 +207,8 @@ brainstorming-video-idea      ← define concept, style, characters
 ```
 brainstorming-video-idea      ← define story, characters, visual style
   → setup-video-project       ← create workspace and scaffold SPEC.md
-  → writing-video-plan        ← write <project-dir>/SPEC.md and <project-dir>/docs/plan.md
-  → executing-video-plan      ← update <project-dir>/docs/exec.md while dispatching subagents
+  → writing-video-plan        ← write <project-dir>/SPEC.md and <project-dir>/PLAN.md
+  → executing-video-plan      ← update <project-dir>/PLAN.md while dispatching subagents
       → running-video-production-pipeline   ← breakdown → extraction → shot details → consistency
       → [prompt writing per shot]
       → using-replicate-model | using-falai-model   ← generate video per shot

@@ -8,10 +8,8 @@ Unless stated otherwise, paths below are relative to `<project-dir>`.
 
 Use these Markdown files as the main collaboration surface:
 
-- `docs/idea.md` — approved concept, constraints, source assets, and setup seeds
-- `SPEC.md` — the project spec yielded from `docs/idea.md`; keep it text-first and wrap any machine-readable snippet in a fenced `json` code block
-- `docs/plan.md` — approved task plan for managing `SPEC.md`, project assets, blockers, and next steps
-- `docs/exec.md` — live execution log with outputs, blockers, approvals, and review findings
+- `SPEC.md` — the project spec; keep it text-first, keep the approved idea in `# Idea`, and wrap any machine-readable snippet in a fenced `json` code block
+- `PLAN.md` — approved task plan for managing `SPEC.md`, `project/assets/`, blockers, review notes, and next steps
 
 These Markdown files are enough for the workflow layer. Lower-level JSON still exists where scripts need deterministic input or validation, such as `shot-list.json` and `consistency-report.json`.
 
@@ -20,19 +18,17 @@ These Markdown files are enough for the workflow layer. Lower-level JSON still e
 ```text
 <project-dir>/
 ├── SPEC.md
-├── docs/
-│   ├── idea.md
-│   ├── plan.md
-│   └── exec.md
-├── assets/
-│   ├── images/
-│   ├── videos/
-│   ├── audios/
-│   └── fonts/
-└── logs/
+├── PLAN.md
+└── project/
+    ├── assets/
+    │   ├── images/
+    │   ├── videos/
+    │   ├── audios/
+    │   └── fonts/
+    └── logs/
 ```
 
-Put project-specific inputs under `assets/`. Examples:
+Put project-specific inputs under `project/assets/`. Examples:
 
 - lyrics
 - song audio
@@ -46,12 +42,12 @@ Put project-specific inputs under `assets/`. Examples:
 
 Many projects follow this shape:
 
-1. Run `brainstorming-video-idea` to converge on the concept and write `<project-dir>/docs/idea.md`.
-2. Run `setup-video-project` to scaffold the workspace, scaffold `<project-dir>/SPEC.md`, create `<project-dir>/docs/plan.md` / `<project-dir>/docs/exec.md`, and prepare `<project-dir>/assets/`.
-3. Place or generate the required project inputs under `<project-dir>/assets/`.
-4. Run `writing-video-plan` to turn the approved idea into `<project-dir>/SPEC.md` and an actionable `<project-dir>/docs/plan.md`.
-5. Run `executing-video-plan` to execute tasks from `<project-dir>/docs/plan.md`, using `<project-dir>/SPEC.md` as the project contract, and keep `<project-dir>/docs/exec.md` current.
-6. Run `retention-driven-development` and `requesting-video-review` before delivery, and record review results in `<project-dir>/docs/exec.md`.
+1. Run `brainstorming-video-idea` to converge on the concept and write the approved idea into `<project-dir>/SPEC.md`.
+2. Run `setup-video-project` to scaffold the workspace, preserve or scaffold `<project-dir>/SPEC.md`, create `<project-dir>/PLAN.md`, and prepare `<project-dir>/project/`.
+3. Place or generate the required project inputs under `<project-dir>/project/assets/`.
+4. Run `writing-video-plan` to refine `<project-dir>/SPEC.md` and write an actionable `<project-dir>/PLAN.md`.
+5. Run `executing-video-plan` to execute tasks from `<project-dir>/PLAN.md`, using `<project-dir>/SPEC.md` as the project contract, and keep `PLAN.md` current.
+6. Run `retention-driven-development` and `requesting-video-review` before delivery, and record review results in `<project-dir>/PLAN.md` plus `<project-dir>/project/logs/` when needed.
 
 ## Choosing The Right Workflow
 
@@ -90,10 +86,10 @@ Examples:
 
 The right rule is:
 
-1. Put project inputs under `<project-dir>/assets/`
-2. Make the required inputs explicit in `<project-dir>/docs/idea.md`
-3. Let `writing-video-plan` carry those requirements into `<project-dir>/SPEC.md`
-4. Let `<project-dir>/docs/plan.md` manage the work against `SPEC.md` and the actual asset paths
+1. Put project inputs under `<project-dir>/project/assets/`
+2. Make the required inputs explicit in the `# Idea` section of `<project-dir>/SPEC.md`
+3. Let `writing-video-plan` carry those requirements through the rest of `<project-dir>/SPEC.md`
+4. Let `<project-dir>/PLAN.md` manage the work against `SPEC.md` and the actual asset paths
 
 Do not assume every project uses the same files.
 
@@ -109,17 +105,18 @@ Project defaults that used to live in rigid config files should be recorded in `
 - fps: `24`
 - resolution: `1920x1080`
 
-## Asset Directories
+# Asset Directories
 - `.`
-- `assets/images`
-- `assets/videos`
-- `assets/audios`
-- `assets/fonts`
+- `project/assets`
+- `project/assets/images`
+- `project/assets/videos`
+- `project/assets/audios`
+- `project/assets/fonts`
 ```
 
 Some scripts still require standalone machine-readable files:
 
-- `assets/videos/storyboard.json` — compile-time scene manifest when `compiling-video` is used
+- `project/assets/videos/storyboard.json` — compile-time scene manifest when `compiling-video` is used
 - `shot-list.json`, `shot-details.json`, `extraction-report.json`, `consistency-report.json` — validated pipeline outputs
 
-Rule of thumb: think and collaborate in `docs/idea.md`, `SPEC.md`, `docs/plan.md`, and `docs/exec.md` first, then export JSON only when a script genuinely needs it.
+Rule of thumb: think and collaborate in `SPEC.md` and `PLAN.md` first, then export JSON only when a script genuinely needs it.

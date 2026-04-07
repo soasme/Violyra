@@ -33,7 +33,7 @@ File: `<base-dir>/global/templates/<id>/template.json`.
 
 ## Logging
 
-Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `template_name`, `variables` (list of slot names), `action` (`create`/`render`/`list`)
 **On completion** — key `outputs`: `template_path`, `rendered_output_path` (if `action` is `render`)

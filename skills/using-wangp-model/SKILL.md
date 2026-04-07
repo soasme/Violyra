@@ -91,7 +91,7 @@ See `skills/lib/manifest-utils.js` for all helper functions.
 
 ## Logging
 
-Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `model`, `input_paths` (array), `output_dir`
 **On completion** — key `outputs`: `output_paths` (array), `job_id`

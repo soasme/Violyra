@@ -14,8 +14,8 @@ Source `.env` so `REPLICATE_API_TOKEN` is loaded:
 
 ```bash
 source .env && node .agents/skills/upscaling-video/scripts/upscale.js \
-  --input assets/videos/scenes/1.mp4 \
-  --output assets/videos/scenes-upscaled/1.mp4 \
+  --input project/assets/videos/scenes/1.mp4 \
+  --output project/assets/videos/scenes-upscaled/1.mp4 \
   --target-resolution 1080p \
   --target-fps 24
 ```
@@ -25,7 +25,7 @@ For full MV compile, use:
 
 ## Logging
 
-Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `input_video`, `scale_factor`
 **On completion** — key `outputs`: `output_video`, `resolution`

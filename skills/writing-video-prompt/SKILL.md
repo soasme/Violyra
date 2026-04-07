@@ -67,7 +67,7 @@ For models not listed, apply universal principles only and default to one infere
 
 ## Logging
 
-Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `shot_id` (or `shot_ids` for multi-shot), `model`
 **On completion** — key `outputs`: `prompt_length`, `shot_count`, `mode` (`single`/`multi`)

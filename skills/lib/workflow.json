@@ -6,18 +6,17 @@
       "id": "project-setup",
       "title": "Set up project workspace",
       "default_skill": "setup-video-project",
-      "requires": [
-        "{project_dir}/docs/idea.md"
-      ],
+      "requires": [],
       "produces": [
         "{project_dir}/SPEC.md",
-        "{project_dir}/assets/",
-        "{project_dir}/docs/",
-        "{project_dir}/logs/"
+        "{project_dir}/PLAN.md",
+        "{project_dir}/project/",
+        "{project_dir}/project/assets/",
+        "{project_dir}/project/logs/"
       ],
       "verification": [
         "SPEC.md exists and documents the project defaults in Markdown",
-        "assets/, docs/, and logs/ directories exist"
+        "PLAN.md exists and project/assets/ plus project/logs/ directories exist"
       ],
       "optional": false,
       "enabled_by_default": true,
@@ -43,8 +42,8 @@
       "title": "Run production pipeline for the primary chapter",
       "default_skill": "running-video-production-pipeline",
       "requires": [
-        "{project_dir}/assets/storyboard.json",
-        "{project_dir}/assets/lyrics.txt"
+        "{project_dir}/project/assets/videos/storyboard.json",
+        "{project_dir}/project/assets/lyrics.txt"
       ],
       "produces": [
         "{chapter_dir}/chapter.json",
@@ -70,11 +69,11 @@
       "title": "Review lyric-to-scene mapping if counts diverge",
       "default_skill": null,
       "requires": [
-        "{project_dir}/assets/aligned_lyrics.json",
+        "{project_dir}/project/assets/audios/aligned_lyrics.json",
         "{chapter_dir}/shot-list.json"
       ],
       "produces": [
-        "{project_dir}/logs/lyric-scene-reconciliation.md"
+        "{project_dir}/project/logs/lyric-scene-reconciliation.md"
       ],
       "verification": [
         "lyric-scene-reconciliation.md documents either no mismatch or the explicit reconciliation decision"
@@ -92,8 +91,8 @@
         "{chapter_dir}/shot-details.json"
       ],
       "produces": [
-        "{project_dir}/assets/reference-images/",
-        "{project_dir}/assets/start-frames/"
+        "{project_dir}/project/assets/reference-images/",
+        "{project_dir}/project/assets/start-frames/"
       ],
       "verification": [
         "reference-images/ contains at least one image per recurring character when enabled",
@@ -147,17 +146,17 @@
       "title": "Compile the first full draft",
       "default_skill": "compiling-video",
       "requires": [
-        "{project_dir}/assets/storyboard.json",
-        "{project_dir}/assets/aligned_lyrics.json",
-        "{project_dir}/assets/song.mp3",
+        "{project_dir}/project/assets/videos/storyboard.json",
+        "{project_dir}/project/assets/audios/aligned_lyrics.json",
+        "{project_dir}/project/assets/audios/song.mp3",
         "{chapter_dir}/scenes/",
         "{chapter_dir}/scene-generation.manifest.json"
       ],
       "produces": [
-        "{project_dir}/final/draft.mp4"
+        "{project_dir}/project/assets/videos/final/draft.mp4"
       ],
       "verification": [
-        "final/draft.mp4 exists and is non-zero",
+        "project/assets/videos/final/draft.mp4 exists and is non-zero",
         "draft.mp4 duration is within 10% of song.mp3 duration"
       ],
       "optional": false,
@@ -188,19 +187,19 @@
       "title": "Recompile after retention pass",
       "default_skill": "compiling-video",
       "requires": [
-        "{project_dir}/assets/storyboard.json",
-        "{project_dir}/assets/aligned_lyrics.json",
-        "{project_dir}/assets/song.mp3",
+        "{project_dir}/project/assets/videos/storyboard.json",
+        "{project_dir}/project/assets/audios/aligned_lyrics.json",
+        "{project_dir}/project/assets/audios/song.mp3",
         "{chapter_dir}/scenes/",
         "{chapter_dir}/scene-generation.manifest.json",
         "{chapter_dir}/retention-report.json"
       ],
       "produces": [
-        "{project_dir}/final/final.mp4"
+        "{project_dir}/project/assets/videos/final/final.mp4"
       ],
       "verification": [
-        "final/final.mp4 exists and is non-zero",
-        "final/final.mp4 is newer than final/draft.mp4"
+        "project/assets/videos/final/final.mp4 exists and is non-zero",
+        "project/assets/videos/final/final.mp4 is newer than project/assets/videos/final/draft.mp4"
       ],
       "optional": false,
       "enabled_by_default": true,
@@ -211,10 +210,10 @@
       "title": "Request final video review",
       "default_skill": "requesting-video-review",
       "requires": [
-        "{project_dir}/final/final.mp4"
+        "{project_dir}/project/assets/videos/final/final.mp4"
       ],
       "produces": [
-        "{project_dir}/logs/review-feedback.md"
+        "{project_dir}/project/logs/review-feedback.md"
       ],
       "verification": [
         "review-feedback.md exists",
@@ -229,13 +228,13 @@
       "title": "Generate thumbnail candidates and select the winner",
       "default_skill": "generating-thumbnail",
       "requires": [
-        "{project_dir}/final/final.mp4"
+        "{project_dir}/project/assets/videos/final/final.mp4"
       ],
       "produces": [
-        "{project_dir}/final/thumbnail.jpg"
+        "{project_dir}/project/assets/videos/final/thumbnail.jpg"
       ],
       "verification": [
-        "final/thumbnail.jpg exists and is non-zero",
+        "project/assets/videos/final/thumbnail.jpg exists and is non-zero",
         "thumbnail dimensions are at least 1280x720"
       ],
       "optional": false,
@@ -247,14 +246,14 @@
       "title": "Deliver approved assets to the publishing platform",
       "default_skill": null,
       "requires": [
-        "{project_dir}/final/final.mp4",
-        "{project_dir}/final/thumbnail.jpg",
-        "{project_dir}/logs/review-feedback.md"
+        "{project_dir}/project/assets/videos/final/final.mp4",
+        "{project_dir}/project/assets/videos/final/thumbnail.jpg",
+        "{project_dir}/project/logs/review-feedback.md"
       ],
       "produces": [],
       "verification": [
         "review-feedback.md shows Status: pass",
-        "final/final.mp4 and final/thumbnail.jpg are ready for upload"
+        "project/assets/videos/final/final.mp4 and project/assets/videos/final/thumbnail.jpg are ready for upload"
       ],
       "optional": false,
       "enabled_by_default": true,

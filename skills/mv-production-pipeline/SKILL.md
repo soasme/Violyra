@@ -8,10 +8,8 @@ description: Use to run the complete music video workflow from lyrics to final c
 Top-level orchestrator for a complete music video production. Runs all skills in sequence with user approval checkpoints between major phases.
 
 Maintain these workflow docs throughout the run:
-- `<project-dir>/docs/idea.md` — approved concept
-- `<project-dir>/SPEC.md` — project spec derived from the idea
-- `<project-dir>/docs/plan.md` — approved task plan for `SPEC.md` and assets
-- `<project-dir>/docs/exec.md` — live execution and review log
+- `<project-dir>/SPEC.md` — project spec with the approved idea in `# Idea`
+- `<project-dir>/PLAN.md` — approved task plan for `SPEC.md` and `project/assets/`
 
 ## Inputs
 
@@ -31,7 +29,7 @@ generating-lyrics          (skip with --skip-lyrics)
                            ← CHECKPOINT: confirm before planning
 
 [Phase 2: Planning & Breakdown]
-  → writing-video-plan                ← writes `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and optionally exports storyboard JSON
+  → writing-video-plan                ← writes `<project-dir>/SPEC.md`, `<project-dir>/PLAN.md`, and optionally exports storyboard JSON
   → running-video-production-pipeline   (per chapter)
                            ← CHECKPOINT: confirm before generation
 
@@ -51,7 +49,7 @@ generating-lyrics          (skip with --skip-lyrics)
 
 Pause for user confirmation after each phase before proceeding. Show what was produced and ask: "Continue to [next phase]? (Y/N)"
 
-Update `<project-dir>/docs/exec.md` at each checkpoint with status, outputs, and approval notes.
+Update `<project-dir>/PLAN.md` at each checkpoint with status, outputs, and approval notes.
 
 ## Error Handling
 
@@ -59,7 +57,7 @@ Stop and report at any skill failure. Show which skill failed and what files are
 
 ## Logging
 
-Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `project_dir`, `lyrics_path`
 **On completion** — key `outputs`: `final_video_path`, `duration_s`

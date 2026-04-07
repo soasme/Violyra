@@ -8,10 +8,8 @@ description: Use to run the complete short drama workflow from screenplay to fin
 Top-level orchestrator for a complete short drama production. No lyrics or song phase — screenplay is the primary input. Video generation model is user-chosen.
 
 Maintain these workflow docs throughout the run:
-- `<project-dir>/docs/idea.md` — approved concept
-- `<project-dir>/SPEC.md` — project spec derived from the idea
-- `<project-dir>/docs/plan.md` — approved task plan for `SPEC.md` and assets
-- `<project-dir>/docs/exec.md` — live execution and review log
+- `<project-dir>/SPEC.md` — project spec with the approved idea in `# Idea`
+- `<project-dir>/PLAN.md` — approved task plan for `SPEC.md` and `project/assets/`
 
 ## Inputs
 
@@ -27,7 +25,7 @@ Maintain these workflow docs throughout the run:
 [Phase 1: Setup]
 brainstorming-video-idea   (skip with --skip-brainstorm)
   → setup-video-project
-  → writing-video-plan      ← writes `<project-dir>/SPEC.md` and `<project-dir>/docs/plan.md` for the run
+  → writing-video-plan      ← writes `<project-dir>/SPEC.md` and `<project-dir>/PLAN.md` for the run
                            ← CHECKPOINT: confirm before breakdown
 
 [Phase 2: Breakdown]
@@ -48,7 +46,7 @@ brainstorming-video-idea   (skip with --skip-brainstorm)
 
 Pause for user confirmation after each phase before proceeding. Show what was produced and ask: "Continue to [next phase]? (Y/N)"
 
-Update `<project-dir>/docs/exec.md` at each checkpoint with status, outputs, and approval notes.
+Update `<project-dir>/PLAN.md` at each checkpoint with status, outputs, and approval notes.
 
 ## Error Handling
 
@@ -56,7 +54,7 @@ Stop and report at any skill failure. Ask user whether to retry, skip, or abort.
 
 ## Logging
 
-Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `project_dir`, `screenplay_path`
 **On completion** — key `outputs`: `final_video_path`, `duration_s`
