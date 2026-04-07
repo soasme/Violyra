@@ -1,27 +1,29 @@
 ---
 name: executing-video-plan
-description: Execute the project plan phase by phase. Reads the plan doc, updates the execution log, and reports blockers in plan terms.
+description: Execute the project plan against SPEC.md phase by phase. Reads the plan doc, updates the execution log, and reports blockers in plan terms.
 ---
 
 # Executing Video Plan
 
-Load the approved production plan, find the next actionable work, execute it, and keep `<base-dir>/docs/exec.md` as the live execution ledger.
+Load the approved production plan, execute it against `<base-dir>/SPEC.md` and the actual project assets, and keep `<base-dir>/docs/exec.md` as the live execution ledger.
 
 ## Inputs
 
 - A written production plan at `<base-dir>/docs/plan.md` (or another explicitly provided plan path)
+- A project spec at `<base-dir>/SPEC.md`
 - `--base-dir <path>` — project root
 
-If the plan does not exist, tell the user to run `writing-video-plan` first.
+If the plan or spec does not exist, tell the user to run `writing-video-plan` first.
 
 ## Workflow
 
 ### Step 1: Load and Review Plan
 
 1. Read `<base-dir>/docs/plan.md`
-2. Review critically for ambiguities, missing prerequisites, or contradictory instructions
-3. Ensure `<base-dir>/docs/exec.md` exists
-4. If there are blocking concerns, raise them before starting
+2. Read `<base-dir>/SPEC.md`
+3. Review critically for ambiguities, missing prerequisites, or contradictory instructions
+4. Ensure `<base-dir>/docs/exec.md` exists
+5. If there are blocking concerns, raise them before starting
 
 ### Step 2: Determine the Next Actionable Work
 
@@ -45,14 +47,14 @@ For each task or phase you execute:
 
 For each completed task or phase:
 
-1. **Stage 1 — Spec compliance:** Does the output match the task contract in `<base-dir>/docs/plan.md`? Correct file path, format, duration, resolution, or schema?
+1. **Stage 1 — Spec compliance:** Does the output match the task contract in `<base-dir>/docs/plan.md` and `<base-dir>/SPEC.md`? Correct file path, format, duration, resolution, or schema?
 2. **Stage 2 — Quality:** Does the output actually meet the bar for the task? Review files, metadata, previews, and user-facing usefulness.
 
 If Stage 2 fails, retry the generation or fix once before marking the task complete.
 
 ### Step 5: Parallelism
 
-Scenes within a chapter can run in parallel. Chapters should stay sequential unless the plan explicitly says otherwise.
+Asset tasks can run in parallel when the plan says they are independent. Spec-editing tasks should stay sequential unless the plan explicitly isolates them.
 
 ### Step 6: Completion
 
@@ -69,7 +71,7 @@ Stop immediately when:
 
 ## After Execution
 
-`<base-dir>/docs/plan.md` remains the approved plan. `<base-dir>/docs/exec.md` captures what actually happened.
+`<base-dir>/SPEC.md` remains the project contract. `<base-dir>/docs/plan.md` remains the approved coordination plan. `<base-dir>/docs/exec.md` captures what actually happened.
 
 If the plan includes explicit retention, review, thumbnail, or delivery tasks, do not silently skip them.
 

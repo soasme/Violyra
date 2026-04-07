@@ -6,18 +6,20 @@ Unless stated otherwise, paths below are relative to `<project-dir>`.
 
 ## Canonical Workflow Files
 
-Use these three files as the main collaboration surface:
+Use these Markdown files as the main collaboration surface:
 
 - `docs/idea.md` — approved concept, constraints, source assets, and setup seeds
-- `docs/plan.md` — approved task plan with exact paths, checks, blockers, and next steps
+- `SPEC.md` — the project spec yielded from `docs/idea.md`; keep it text-first and wrap any machine-readable snippet in a fenced `json` code block
+- `docs/plan.md` — approved task plan for managing `SPEC.md`, project assets, blockers, and next steps
 - `docs/exec.md` — live execution log with outputs, blockers, approvals, and review findings
 
-These three files are enough for the workflow layer. Lower-level JSON still exists where scripts need deterministic input or validation, such as `project.json`, `shot-list.json`, and `consistency-report.json`.
+These Markdown files are enough for the workflow layer. Lower-level JSON still exists where scripts need deterministic input or validation, such as `project.json`, `shot-list.json`, and `consistency-report.json`.
 
 ## Project Layout
 
 ```text
 <project-dir>/
+├── SPEC.md
 ├── docs/
 │   ├── idea.md
 │   ├── plan.md
@@ -27,10 +29,7 @@ These three files are enough for the workflow layer. Lower-level JSON still exis
 │   ├── videos/
 │   ├── audios/
 │   └── fonts/
-├── logs/
-├── global/
-├── characters/
-└── chapters/
+└── logs/
 ```
 
 Put project-specific inputs under `assets/`. Examples:
@@ -48,10 +47,10 @@ Put project-specific inputs under `assets/`. Examples:
 Many projects follow this shape:
 
 1. Run `brainstorming-video-idea` to converge on the concept and write `<project-dir>/docs/idea.md`.
-2. Run `setup-video-project` to scaffold the workspace, create `project.json`, create `<project-dir>/docs/plan.md` / `<project-dir>/docs/exec.md`, and prepare `<project-dir>/assets/`.
+2. Run `setup-video-project` to scaffold the workspace, create `project.json`, scaffold `<project-dir>/SPEC.md`, create `<project-dir>/docs/plan.md` / `<project-dir>/docs/exec.md`, and prepare `<project-dir>/assets/`.
 3. Place or generate the required project inputs under `<project-dir>/assets/`.
-4. Run `writing-video-plan` to turn the approved idea into an actionable `<project-dir>/docs/plan.md`.
-5. Run `executing-video-plan` to execute tasks from `<project-dir>/docs/plan.md` and keep `<project-dir>/docs/exec.md` current.
+4. Run `writing-video-plan` to turn the approved idea into `<project-dir>/SPEC.md` and an actionable `<project-dir>/docs/plan.md`.
+5. Run `executing-video-plan` to execute tasks from `<project-dir>/docs/plan.md`, using `<project-dir>/SPEC.md` as the project contract, and keep `<project-dir>/docs/exec.md` current.
 6. Run `retention-driven-development` and `requesting-video-review` before delivery, and record review results in `<project-dir>/docs/exec.md`.
 
 ## Choosing The Right Workflow
@@ -93,16 +92,19 @@ The right rule is:
 
 1. Put project inputs under `<project-dir>/assets/`
 2. Make the required inputs explicit in `<project-dir>/docs/idea.md`
-3. Let `writing-video-plan` derive the execution requirements from that project context
+3. Let `writing-video-plan` carry those requirements into `<project-dir>/SPEC.md`
+4. Let `<project-dir>/docs/plan.md` manage the work against `SPEC.md` and the actual asset paths
 
 Do not assume every project uses the same files.
 
 ## When JSON Is Still Expected
 
-Some scripts still require machine-readable files:
+`SPEC.md` stays text-first. If it includes structured data, fence it as `json` inside the Markdown file.
+
+Some scripts still require standalone machine-readable files:
 
 - `project.json` — project config and shared asset dirs
 - `assets/videos/storyboard.json` — compile-time scene manifest when `compiling-video` is used
 - `shot-list.json`, `shot-details.json`, `extraction-report.json`, `consistency-report.json` — validated pipeline outputs
 
-Rule of thumb: think and collaborate in Markdown first, then export JSON only when a script genuinely needs it.
+Rule of thumb: think and collaborate in `docs/idea.md`, `SPEC.md`, `docs/plan.md`, and `docs/exec.md` first, then export JSON only when a script genuinely needs it.

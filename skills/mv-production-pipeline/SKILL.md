@@ -9,7 +9,8 @@ Top-level orchestrator for a complete music video production. Runs all skills in
 
 Maintain these workflow docs throughout the run:
 - `<project-dir>/docs/idea.md` — approved concept
-- `<project-dir>/docs/plan.md` — approved task plan
+- `<project-dir>/SPEC.md` — project spec derived from the idea
+- `<project-dir>/docs/plan.md` — approved task plan for `SPEC.md` and assets
 - `<project-dir>/docs/exec.md` — live execution and review log
 
 ## Inputs
@@ -30,7 +31,7 @@ generating-lyrics          (skip with --skip-lyrics)
                            ← CHECKPOINT: confirm before planning
 
 [Phase 2: Planning & Breakdown]
-  → writing-video-plan                ← writes `<project-dir>/docs/plan.md` and optionally exports storyboard JSON
+  → writing-video-plan                ← writes `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and optionally exports storyboard JSON
   → running-video-production-pipeline   (per chapter)
                            ← CHECKPOINT: confirm before generation
 

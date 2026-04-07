@@ -1,4 +1,4 @@
 interface:
-  display_name: "Video Plan Writer"
-  short_description: "Write the project plan first; export storyboard JSON only if needed."
-  default_prompt: "Use $writing-video-plan to write the project plan first and export storyboard JSON only if downstream tooling needs it."
+  display_name: "Project Spec Writer"
+  short_description: "Derive SPEC.md and the project plan first; export storyboard JSON only if needed."
+  default_prompt: "Use $writing-video-plan to derive SPEC.md from the approved idea, write the project plan, and export storyboard JSON only if downstream tooling needs it."

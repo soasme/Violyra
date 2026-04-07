@@ -9,7 +9,8 @@ Top-level orchestrator for a complete short drama production. No lyrics or song 
 
 Maintain these workflow docs throughout the run:
 - `<project-dir>/docs/idea.md` — approved concept
-- `<project-dir>/docs/plan.md` — approved task plan
+- `<project-dir>/SPEC.md` — project spec derived from the idea
+- `<project-dir>/docs/plan.md` — approved task plan for `SPEC.md` and assets
 - `<project-dir>/docs/exec.md` — live execution and review log
 
 ## Inputs
@@ -26,7 +27,7 @@ Maintain these workflow docs throughout the run:
 [Phase 1: Setup]
 brainstorming-video-idea   (skip with --skip-brainstorm)
   → setup-video-project
-  → writing-video-plan      ← writes `<project-dir>/docs/plan.md` for the run
+  → writing-video-plan      ← writes `<project-dir>/SPEC.md` and `<project-dir>/docs/plan.md` for the run
                            ← CHECKPOINT: confirm before breakdown
 
 [Phase 2: Breakdown]

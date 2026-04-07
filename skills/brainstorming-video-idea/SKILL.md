@@ -17,7 +17,7 @@ Do NOT write any files, create project directories, or transition to setup-video
 2. Ask clarifying questions one at a time
 3. Propose 2–3 directions with trade-offs and a recommendation
 4. Present design in sections and get approval after each section
-5. After explicit approval, write the design doc to `<base-dir>/docs/idea.md`
+5. After explicit approval, write the design doc to `<base-dir>/docs/idea.md` as the source for the later project `SPEC.md`
 6. If available, review the written doc with `spec-document-reviewer-prompt.md`
 7. Transition to `setup-video-project`
 
@@ -125,7 +125,7 @@ Save to `<base-dir>/docs/idea.md`:
 
 ## After Approval
 
-Transition to `setup-video-project` with the approved design.
+Transition to `setup-video-project` with the approved design. `writing-video-plan` should later derive `<base-dir>/SPEC.md` from this approved idea doc.
 
 ## Logging
 

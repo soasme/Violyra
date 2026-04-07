@@ -14,8 +14,8 @@ Violyra follows a production pipeline modeled on real film workflows:
 
 ```
 brainstorming-video-idea   → <project-dir>/docs/idea.md
-  → setup-video-project    → scaffold <project-dir>/docs/plan.md + <project-dir>/docs/exec.md
-  → writing-video-plan     → <project-dir>/docs/plan.md
+  → setup-video-project    → scaffold <project-dir>/SPEC.md + <project-dir>/docs/plan.md + <project-dir>/docs/exec.md
+  → writing-video-plan     → <project-dir>/SPEC.md + <project-dir>/docs/plan.md
   → executing-video-plan   → <project-dir>/docs/exec.md
       → [music / script / storyboard export when needed]
       → running-video-production-pipeline ← breakdown → extraction → shot details → consistency
@@ -38,7 +38,7 @@ Each step is a composable skill. Run the full pipeline or pick individual skills
 # set up the project workspace
 /setup-video-project
 
-# copy your project assets into assets/<project>/
+# place project assets under <project-dir>/assets/
 
 # write the production plan
 /writing-video-plan
@@ -55,16 +55,18 @@ Full walkthrough: [`docs/usage.md`](docs/usage.md)
 
 ### Workflow
 - **Brainstorming** — refine rough ideas, explore alternatives, produce a design doc
-- **Planning** — break production into bite-sized tasks with exact file paths and verification commands
+- **Planning** — derive a project spec, then break production into bite-sized tasks with exact file paths and verification commands
 - **Execution** — dispatch subagents per task with two-stage review (spec compliance + asset quality)
 - **Retention-driven development** — simulate audience behavior, score retention, replace weak scenes automatically
 
 ### Markdown-First Workflow
-- Canonical workflow docs live in `<project-dir>/docs/idea.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`
-- These three files capture intent, plan, and actual execution state
+- Canonical workflow files live in `<project-dir>/docs/idea.md`, `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`
+- `SPEC.md` is the project spec yielded from `docs/idea.md`, and `docs/plan.md` manages `SPEC.md` plus the project assets
+- If `SPEC.md` needs a machine-readable snippet, wrap it in a fenced `json` code block
 - JSON is reserved for lower-level script inputs and validated reports where deterministic machine I/O matters
 
 ### Project Layout
+- Each production project owns its own `<project-dir>/SPEC.md`
 - Each production project owns its own `<project-dir>/docs/`
 - Each production project owns its own `<project-dir>/assets/`
 - Standard asset buckets are `<project-dir>/assets/images`, `<project-dir>/assets/videos`, `<project-dir>/assets/audios`, and `<project-dir>/assets/fonts`
@@ -76,6 +78,7 @@ Full walkthrough: [`docs/usage.md`](docs/usage.md)
 - **Consistency check** — detect character/scene drift across shots; produce an optimized shot list
 
 ### Asset Management
+- Project-level characters, chapter structure, and other workflow-facing spec details live in `SPEC.md`
 - Typed, versioned JSON packs for actors, characters, scenes, props, costumes
 - Reusable prompt templates with `{{variable}}` slots
 - Global (cross-project) and project-scoped asset separation

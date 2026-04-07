@@ -5,11 +5,11 @@ Violyra is a skill repository for music video production. It provides composable
 ## Skills
 
 ### Workflow
-- [Brainstorming Video Idea](skills/brainstorming-video-idea/SKILL.md): refine a rough video idea through dialogue into `<project-dir>/docs/idea.md` and setup seeds.
-- [Setup Video Project](skills/setup-video-project/SKILL.md): create workspace directories, initialize `project.json`, scaffold `<project-dir>/docs/plan.md` and `<project-dir>/docs/exec.md`, and prepare `<project-dir>/assets/`.
-- [Executing Video Plan](skills/executing-video-plan/SKILL.md): execute `<project-dir>/docs/plan.md` task-by-task and record progress in `<project-dir>/docs/exec.md`.
+- [Brainstorming Video Idea](skills/brainstorming-video-idea/SKILL.md): refine a rough video idea through dialogue into `<project-dir>/docs/idea.md` as the source for later `SPEC.md`.
+- [Setup Video Project](skills/setup-video-project/SKILL.md): create workspace directories, initialize `project.json`, scaffold `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md`, and prepare `<project-dir>/assets/`.
+- [Executing Video Plan](skills/executing-video-plan/SKILL.md): execute `<project-dir>/docs/plan.md` against `<project-dir>/SPEC.md` task-by-task and record progress in `<project-dir>/docs/exec.md`.
 - [Retention-Driven Development](skills/retention-driven-development/SKILL.md): simulate 100 viewers per shot, score retention, regenerate weak shots. Replace, don't patch.
-- [Requesting Video Review](skills/requesting-video-review/SKILL.md): review production progress against `<project-dir>/docs/idea.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md` by severity.
+- [Requesting Video Review](skills/requesting-video-review/SKILL.md): review production progress against `<project-dir>/docs/idea.md`, `<project-dir>/SPEC.md`, `<project-dir>/docs/plan.md`, and `<project-dir>/docs/exec.md` by severity.
 
 ### Music Production
 - [Generating Lyrics](skills/generating-lyrics/SKILL.md): write or refine song lyrics with verse/chorus/bridge markers before audio generation.
@@ -32,7 +32,7 @@ Violyra is a skill repository for music video production. It provides composable
 - [Running Video Production Pipeline](skills/running-video-production-pipeline/SKILL.md): orchestrate breaking-down → extracting → enriching → checking for a chapter.
 
 ### Video Generation
-- [Writing Video Plan](skills/writing-video-plan/SKILL.md): write `<project-dir>/docs/plan.md` first, then export storyboard JSON only when needed.
+- [Writing Video Plan](skills/writing-video-plan/SKILL.md): derive `<project-dir>/SPEC.md` from `<project-dir>/docs/idea.md`, then write `<project-dir>/docs/plan.md`; export storyboard JSON only when needed.
 - [Writing Seedance15 Prompt](skills/writing-seedance15-prompt/SKILL.md): write motion-focused Seedance prompts from shot details.
 - [Generating Seedance15 Video](skills/generating-seedance15-video/SKILL.md): generate scene videos with Seedance 1.5 via Replicate.
 - [Upscaling Video](skills/upscaling-video/SKILL.md): upscale scene clips with Topaz via Replicate.
