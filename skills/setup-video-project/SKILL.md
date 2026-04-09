@@ -11,6 +11,7 @@ Creates the isolated workspace for a new video production after idea approval.
 
 - `--base-dir <path>` — project root to create
 - approved idea in `<base-dir>/SPEC.md` under `# Idea`, or direct values for title, seed, and style when the spec does not exist yet
+- this skill writes the approved idea into `SPEC.md`; it does not create a separate idea document
 
 ## Workflow
 
@@ -121,6 +122,8 @@ Creates the isolated workspace for a new video production after idea approval.
 - `<base-dir>/assets/audios/`
 - `<base-dir>/assets/fonts/`
 - `<base-dir>/logs/`
+
+The approved idea remains in `SPEC.md` under `# Idea`, including direct-value setup runs.
 
 ## After Setup
 

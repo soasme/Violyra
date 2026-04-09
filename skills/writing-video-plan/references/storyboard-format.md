@@ -2,6 +2,8 @@
 
 Use this contract for both `<base-dir>/assets/videos/storyboard.json` and `<base-dir>/assets/videos/storyboard.js`.
 
+Throughout this reference, `<base-dir>` means the project root used by `writing-video-plan`.
+
 ## Root Object
 
 ```json
