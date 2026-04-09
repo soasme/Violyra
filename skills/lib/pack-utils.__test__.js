@@ -1,6 +1,6 @@
 // skills/lib/pack-utils.__test__.js
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { mkdtempSync, rmSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import {
@@ -63,56 +63,66 @@ describe('listPacksInDir', () => {
 })
 
 describe('resolveAsset', () => {
-  it('finds asset in project dir when no project.json exists', () => {
+  it('finds asset in project dir when no SPEC.md exists', () => {
     writeFileSync(join(tmpDir, 'image.png'), 'data')
     const result = resolveAsset(tmpDir, 'image.png')
     expect(result).toBe(join(tmpDir, 'image.png'))
   })
 
-  it('finds asset in project dir when assetDirs is ["."]', () => {
-    writeFileSync(join(tmpDir, 'project.json'), JSON.stringify({ $schemaVersion: '1.0', assetDirs: ['.'] }))
+  it('finds asset in project dir when SPEC.md asset directories include "."', () => {
+    writeFileSync(join(tmpDir, 'SPEC.md'), '# Spec\n\n## Asset Directories\n- `.`\n')
     writeFileSync(join(tmpDir, 'image.png'), 'data')
     const result = resolveAsset(tmpDir, 'image.png')
     expect(result).toBe(join(tmpDir, 'image.png'))
   })
 
-  it('falls back to external dir when not found locally', () => {
+  it('supports top-level Asset Directories heading in SPEC.md', () => {
+    writeFileSync(join(tmpDir, 'SPEC.md'), '# Spec\n\n# Asset Directories\n- `assets/images`\n')
+    mkdirSync(join(tmpDir, 'assets', 'images'), { recursive: true })
+    writeFileSync(join(tmpDir, 'assets', 'images', 'image.png'), 'data')
+    const result = resolveAsset(tmpDir, 'image.png')
+    expect(result).toBe(join(tmpDir, 'assets', 'images', 'image.png'))
+  })
+
+  it('uses the standard asset buckets by default', () => {
+    mkdirSync(join(tmpDir, 'assets', 'images'), { recursive: true })
+    writeFileSync(join(tmpDir, 'assets', 'images', 'image.png'), 'data')
+    const result = resolveAsset(tmpDir, 'image.png')
+    expect(result).toBe(join(tmpDir, 'assets', 'images', 'image.png'))
+  })
+
+  it('falls back to external dir when not found locally and listed in SPEC.md', () => {
     const ext = mkdtempSync(join(tmpdir(), 'ext-'))
     try {
       writeFileSync(join(ext, 'shared.png'), 'data')
-      writeFileSync(join(tmpDir, 'project.json'), JSON.stringify({
-        $schemaVersion: '1.0',
-        assetDirs: ['.', ext]
-      }))
+      writeFileSync(join(tmpDir, 'SPEC.md'), `# Spec\n\n## Asset Directories\n- \`.\`\n- \`${ext}\`\n`)
       expect(resolveAsset(tmpDir, 'shared.png')).toBe(join(ext, 'shared.png'))
     } finally {
       rmSync(ext, { recursive: true, force: true })
     }
   })
 
-  it('returns local file over external when both exist', () => {
+  it('returns local file over external when both exist in SPEC.md asset directories', () => {
     const ext = mkdtempSync(join(tmpdir(), 'ext-'))
     try {
       writeFileSync(join(tmpDir, 'image.png'), 'local')
       writeFileSync(join(ext, 'image.png'), 'external')
-      writeFileSync(join(tmpDir, 'project.json'), JSON.stringify({
-        $schemaVersion: '1.0',
-        assetDirs: ['.', ext]
-      }))
+      writeFileSync(join(tmpDir, 'SPEC.md'), `# Spec\n\n## Asset Directories\n- \`.\`\n- \`${ext}\`\n`)
       expect(resolveAsset(tmpDir, 'image.png')).toBe(join(tmpDir, 'image.png'))
     } finally {
       rmSync(ext, { recursive: true, force: true })
     }
   })
 
-  it('throws when asset not found in any dir', () => {
-    writeFileSync(join(tmpDir, 'project.json'), JSON.stringify({ $schemaVersion: '1.0', assetDirs: ['.'] }))
+  it('throws when asset not found in any SPEC.md asset directory', () => {
+    writeFileSync(join(tmpDir, 'SPEC.md'), '# Spec\n\n## Asset Directories\n- `.`\n')
     expect(() => resolveAsset(tmpDir, 'missing.png')).toThrow('Asset not found: missing.png')
   })
 
-  it('throws when project.json is invalid', () => {
-    writeFileSync(join(tmpDir, 'project.json'), '{not valid json')
-    expect(() => resolveAsset(tmpDir, 'image.png')).toThrow(`Failed to parse project.json in ${tmpDir}`)
+  it('ignores unrelated JSON files and still uses default asset directories', () => {
+    writeFileSync(join(tmpDir, 'notes.json'), '{"hello":"world"}')
+    writeFileSync(join(tmpDir, 'legacy.png'), 'data')
+    expect(resolveAsset(tmpDir, 'legacy.png')).toBe(join(tmpDir, 'legacy.png'))
   })
 
   it('rejects absolute asset paths', () => {

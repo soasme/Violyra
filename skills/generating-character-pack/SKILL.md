@@ -16,7 +16,7 @@ source .env && node skills/generating-character-pack/scripts/character-pack.js <
 ### create
 ```bash
 source .env && node skills/generating-character-pack/scripts/character-pack.js create \
-  --base-dir assets/ --name "Mia — Stage Role" \
+  --base-dir <project-dir> --name "Mia — Stage Role" \
   --actor-id actor_lz4x7 \
   --costume-id costume_lz4xa \
   --prop-ids '["prop_lz4xb"]' \

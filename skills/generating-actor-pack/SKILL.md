@@ -16,7 +16,7 @@ source .env && node skills/generating-actor-pack/scripts/actor-pack.js <subcomma
 ### create
 ```bash
 source .env && node skills/generating-actor-pack/scripts/actor-pack.js create \
-  --base-dir assets/ --name "Mia" \
+  --base-dir <project-dir> --name "Mia" \
   --appearance "short black hair, slim build, ~20s, distinctive freckles" \
   --description "Lead performer" --tags '["lead","female"]'
 ```
@@ -25,25 +25,25 @@ Returns the created pack JSON. File: `<base-dir>/global/actors/<id>/pack.json`.
 ### read
 ```bash
 source .env && node skills/generating-actor-pack/scripts/actor-pack.js read \
-  --base-dir assets/ --id actor_lz4x7
+  --base-dir <project-dir> --id actor_lz4x7
 ```
 
 ### update
 ```bash
 source .env && node skills/generating-actor-pack/scripts/actor-pack.js update \
-  --base-dir assets/ --id actor_lz4x7 --appearance "short black hair, updated"
+  --base-dir <project-dir> --id actor_lz4x7 --appearance "short black hair, updated"
 ```
 
 ### delete
 ```bash
 source .env && node skills/generating-actor-pack/scripts/actor-pack.js delete \
-  --base-dir assets/ --id actor_lz4x7
+  --base-dir <project-dir> --id actor_lz4x7
 ```
 
 ### list
 ```bash
 source .env && node skills/generating-actor-pack/scripts/actor-pack.js list \
-  --base-dir assets/ [--filter mia]
+  --base-dir <project-dir> [--filter mia]
 ```
 
 ## Schema

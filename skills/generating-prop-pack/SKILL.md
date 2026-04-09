@@ -16,7 +16,7 @@ source .env && node skills/generating-prop-pack/scripts/prop-pack.js <subcommand
 ### create
 ```bash
 source .env && node skills/generating-prop-pack/scripts/prop-pack.js create \
-  --base-dir assets/ --name "Vintage Guitar" \
+  --base-dir <project-dir> --name "Vintage Guitar" \
   --description "Worn sunburst Telecaster, scratched body" \
   --tags '["instrument","music"]'
 ```

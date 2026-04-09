@@ -1,50 +1,54 @@
-# Violyra Usage Guide
+# Usage
 
-Violyra is a skill library for AI agents doing video production work. It is not a single fixed pipeline. You choose the skills that fit the project type: music video, short drama, anime short, narrated explainer, mixed-media edit, and so on.
+Violyra is a skill library for AI agents doing video production work. It is not a single rigid pipeline, but it should still feel Markdown-first and project-local rather than repo-global or JSON-heavy.
 
-Use this guide as the general entry point. For the full architecture and skill catalog, see [design.md](./design.md).
+Unless stated otherwise, paths below are relative to `<project-dir>`.
 
-## Before You Start
+## Canonical Workflow Files
 
-- Install dependencies at the repo root with `pnpm install`
-- Put required credentials in `.env`
-- Create a project workspace under `assets/`
-- Keep project-specific files inside that workspace
+Use these Markdown files as the main collaboration surface:
 
-Typical project workspace after setup:
+- `SPEC.md` — the project spec; keep it text-first, keep the approved idea in `# Idea`, and wrap any machine-readable snippet in a fenced `json` code block
+- `PLAN.md` — iteration-based task plan for managing `SPEC.md`, `assets/`, blockers, review notes, and next steps
+
+`PLAN.md` should use top-level sections like `# Iteration 1`, `# Iteration 2`, and so on. The initial planning pass creates `# Iteration 1`. Later user-directed changes append a new iteration instead of overwriting the earlier plan history.
+
+These Markdown files are enough for the workflow layer. Lower-level JSON still exists where scripts need deterministic input or validation, such as `shot-list.json` and `consistency-report.json`.
+
+## Project Layout
 
 ```text
-assets/<project>/
-├── assets/        # input files and generated intermediate assets
-├── docs/          # idea docs, plans, review notes
-├── logs/          # production.jsonl and other run artifacts
-├── final/         # final renders and delivery assets
-├── global/        # global packs created during extraction / planning
-├── characters/    # project-scoped character packs
-└── chapters/      # chapter-level breakdown and generation outputs
+<project-dir>/
+├── SPEC.md
+├── PLAN.md
+├── assets/
+│   ├── images/
+│   ├── videos/
+│   ├── audios/
+│   └── fonts/
+└── logs/
 ```
+
+Put project-specific inputs under `assets/`. Examples:
+
+- lyrics
+- song audio
+- screenplay or story brief
+- voiceover audio
+- reference stills
+- source footage
+- downloaded media
 
 ## Basic Flow
 
 Many projects follow this shape:
 
-```bash
-# define the concept and constraints
-/brainstorming-video-idea
-
-# create the project workspace
-/setup-video-project
-
-# copy the project's input files into assets/<project>/assets/
-
-# write the production plan for this specific project
-/writing-video-plan
-
-# run the next phase and repeat as the project advances
-/executing-video-plan
-```
-
-The important part is not the exact file names. The important part is that the project's required inputs live under `assets/<project>/assets/` and are declared clearly in the project's design / idea document so the planner can derive the production requirements from the actual project.
+1. Run `brainstorming-video-idea` to converge on the concept and write the approved idea into `<project-dir>/SPEC.md`.
+2. Run `setup-video-project` to scaffold the workspace, preserve or scaffold `<project-dir>/SPEC.md`, create `<project-dir>/PLAN.md`, and prepare `<project-dir>/assets/` plus `<project-dir>/logs/`.
+3. Place or generate the required project inputs under `<project-dir>/assets/`.
+4. Run `writing-video-plan` to refine `<project-dir>/SPEC.md` and write `<project-dir>/PLAN.md` starting at `# Iteration 1`.
+5. Run `executing-video-plan` to execute tasks from the latest iteration in `<project-dir>/PLAN.md`, using `<project-dir>/SPEC.md` as the project contract, and keep `PLAN.md` current.
+6. Run `retention-driven-development` and `requesting-video-review` before delivery, and record review results in `<project-dir>/PLAN.md` plus `<project-dir>/logs/` when needed.
 
 ## Choosing The Right Workflow
 
@@ -56,11 +60,10 @@ Typical sequence:
 
 1. `brainstorming-video-idea`
 2. `setup-video-project`
-3. place source assets in `assets/`
-4. `writing-video-plan`
-5. `executing-video-plan`
-6. `retention-driven-development`
-7. `requesting-video-review`
+3. `writing-video-plan`
+4. `executing-video-plan`
+5. `retention-driven-development`
+6. `requesting-video-review`
 
 ### Full-pipeline workflow
 
@@ -68,8 +71,6 @@ Use this when the project cleanly matches one of Violyra's end-to-end pipeline p
 
 - `mv-production-pipeline` for music-video style productions
 - `shorts-production-pipeline` for short-form narrative productions
-
-Use these when you want one higher-level workflow instead of manually stepping through planning and execution.
 
 ### Direct skill workflow
 
@@ -82,164 +83,41 @@ Examples:
 - already have prompts and want generation: `using-replicate-model` or `using-falai-model`
 - already have scenes and want final assembly: `compiling-video`
 
-## Source Assets
+## Source Assets Rule
 
-Violyra supports different project inputs. Do not assume every project uses the same files.
+The right rule is:
 
-Examples of valid source assets:
+1. Put project inputs under `<project-dir>/assets/`
+2. Make the required inputs explicit in the `# Idea` section of `<project-dir>/SPEC.md`
+3. Let `writing-video-plan` carry those requirements through the rest of `<project-dir>/SPEC.md`
+4. Let `<project-dir>/PLAN.md` manage the work against `SPEC.md` and the actual asset paths, appending a new `# Iteration N` when the user changes direction
 
-- lyrics
-- song audio
-- screenplay
-- story brief
-- voiceover audio
-- reference images
-- source footage
-- a YouTube URL to download from
+Do not assume every project uses the same files.
 
-The correct rule is:
+## When JSON Is Still Expected
 
-1. Put project inputs under `assets/<project>/assets/`
-2. Make the required inputs explicit in the project's design / idea document
-3. Let the planning skill derive the execution requirements from that project context
+`SPEC.md` stays text-first. If it includes structured data, fence it as `json` inside the Markdown file.
 
-## Typical Project Patterns
+Project defaults that used to live in rigid config files should be recorded in `SPEC.md` as Markdown lists or short paragraphs. For example:
 
-These are examples, not hard rules. The exact phase order should come from the approved idea doc and the production plan written for that project.
+```md
+## Project Defaults
+- Default model: `bytedance/seedance-1.5-pro`
+- fps: `24`
+- resolution: `1920x1080`
 
-### Music Video
+# Asset Directories
+- `.`
+- `assets`
+- `assets/images`
+- `assets/videos`
+- `assets/audios`
+- `assets/fonts`
+```
 
-Common inputs:
+Some scripts still require standalone machine-readable files:
 
-- lyrics
-- song audio, or lyrics plus a song-generation step
-- style direction
-- recurring characters if applicable
+- `assets/videos/storyboard.json` — compile-time scene manifest when `compiling-video` is used
+- `shot-list.json`, `shot-details.json`, `extraction-report.json`, `consistency-report.json` — validated pipeline outputs
 
-Common sequence:
-
-1. `generating-lyrics` if lyrics do not exist yet
-2. `generating-song` if audio does not exist yet
-3. `aligning-lyrics`
-4. `writing-video-plan`
-5. `running-video-production-pipeline`
-6. prompt writing
-7. video generation
-8. `compiling-video`
-9. `retention-driven-development`
-10. `requesting-video-review`
-11. `generating-thumbnail`
-
-### Short Drama / Narrative
-
-Common inputs:
-
-- screenplay or story brief
-- character definitions
-- reference images or look references
-- optional voiceover or dialogue assets
-
-Common sequence:
-
-1. `brainstorming-video-idea`
-2. `setup-video-project`
-3. `writing-video-plan`
-4. `running-video-production-pipeline`
-5. prompt writing
-6. video generation
-7. `compiling-video`
-8. `retention-driven-development`
-9. `requesting-video-review`
-
-### Mixed or Custom Project
-
-If the project is unusual, use the skill library compositionally instead of forcing it into one template.
-
-Start from:
-
-1. `brainstorming-video-idea`
-2. `setup-video-project`
-3. place the required inputs in `assets/`
-4. use `writing-video-plan` to make the project-specific phase order explicit
-
-## Core Skill Groups
-
-### Workflow
-
-- `brainstorming-video-idea`
-- `setup-video-project`
-- `writing-video-plan`
-- `executing-video-plan`
-- `retention-driven-development`
-- `requesting-video-review`
-
-### Production Pipeline
-
-- `breaking-down-video-script`
-- `extracting-video-entities`
-- `enriching-shot-details`
-- `checking-consistency`
-- `running-video-production-pipeline`
-
-### Generation
-
-- `writing-video-prompt`
-- `using-replicate-model`
-- `using-falai-model`
-- `upscaling-video`
-- `extracting-foreground`
-- `generating-thumbnail`
-
-### Audio / Music
-
-- `generating-lyrics`
-- `generating-song`
-- `aligning-lyrics`
-- `generating-voiceover`
-
-## Review And Iteration
-
-Violyra is built for iteration, not one-pass perfection.
-
-Use these review loops deliberately:
-
-- `retention-driven-development` when generated scenes are weak or uneven
-- `requesting-video-review` before delivery or after any major production milestone
-- `scoring-narrative-quality` after full compile when you want a whole-video narrative score
-
-The general rule is:
-
-1. generate a draft
-2. review it
-3. replace weak pieces
-4. recompile
-5. review again
-
-## Common Questions
-
-### What do I put in `assets/`?
-
-Whatever the project depends on: lyrics, screenplay, song audio, reference stills, source footage, voiceover, downloads, or generated intermediates.
-
-### Do I need all workflow skills every time?
-
-No. Some projects need the full concept → plan → execution flow. Some only need one skill.
-
-### Is `writing-video-plan` only for music videos?
-
-No. It should describe the production steps for the current project. The exact source assets and phase requirements should come from the project context, not from a single hardcoded file list.
-
-### When should I use the full pipeline skills?
-
-When the project clearly matches them:
-
-- `mv-production-pipeline` for music videos
-- `shorts-production-pipeline` for short-form narrative work
-
-Otherwise, compose the lower-level skills yourself.
-
-## Next References
-
-- [design.md](./design.md) for architecture and skill inventory
-- [installation.md](./installation.md) for setup
-- [testing.md](./testing.md) for repo verification
+Rule of thumb: think and collaborate in `SPEC.md` and `PLAN.md` first, then export JSON only when a script genuinely needs it.

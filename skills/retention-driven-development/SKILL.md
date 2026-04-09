@@ -1,6 +1,6 @@
 ---
 name: retention-driven-development
-description: Use after all scenes are generated. Simulates 100 viewers per shot, scores retention, regenerates weak shots (score < threshold). Replace, don't patch.
+description: Use after all scenes are generated. Simulates 100 viewers per shot, scores retention, and regenerates weak shots below a threshold. Replace, don't patch.
 ---
 
 # Retention-Driven Development

@@ -1,132 +1,87 @@
 ---
 name: executing-video-plan
-description: Execute a video production plan phase by phase. Reads production-plan.json, finds the next actionable phase, and reports blockers in plan terms. Run after writing-video-plan.
+description: Execute the project plan against SPEC.md phase by phase. Reads PLAN.md, updates it in place, and reports blockers in plan terms.
 ---
 
 # Executing Video Plan
 
-Load the production plan, find the next actionable phase, execute it, and continue until blocked or complete.
+Load the approved production plan, execute it against `<base-dir>/SPEC.md` and the actual project assets, and keep `<base-dir>/PLAN.md` as the live coordination ledger.
 
 ## Inputs
 
-- `{project_dir}/assets/production-plan.json` — execution manifest written by `writing-video-plan`
-- `{project_dir}/docs/video-plan.md` — human runbook for context
-- Current workspace state
+- A written production plan at `<base-dir>/PLAN.md` (or another explicitly provided plan path)
+- A project spec at `<base-dir>/SPEC.md`
+- `--base-dir <path>` — project root
 
-If `production-plan.json` does not exist, tell the user to run `writing-video-plan` first.
+If the plan or spec does not exist, tell the user to run `writing-video-plan` first.
 
 ## Workflow
 
-### Step 1: Load the Plan
+### Step 1: Load and Review Plan
 
-Read `{project_dir}/assets/production-plan.json`. Read `{project_dir}/docs/video-plan.md` for context.
+1. Read `<base-dir>/PLAN.md`
+2. Read `<base-dir>/SPEC.md`
+3. Review critically for ambiguities, missing prerequisites, or contradictory instructions
+4. Identify the latest top-level `# Iteration N`
+5. Ensure that latest iteration has clear task states, blockers, and run notes
+6. If there are blocking concerns, raise them before starting
 
-### Step 2: Determine Current Phase
+### Step 2: Determine the Next Actionable Work
 
-Walk the phase list in order. For each phase:
-1. Skip phases marked `"status": "completed"` or `"status": "skipped"`.
-2. For phases marked `"optional": true`, treat them as non-blocking unless `"enabled": true` or `"status": "in-progress"`.
-3. If a phase is `"manual": true`, do not try to execute a skill for it. It is either a manual checkpoint or a manual delivery step.
-4. For each considered phase, check whether all `requires` artifacts exist in the workspace.
+Walk the latest iteration in order and identify:
 
-The first considered phase with all `requires` satisfied is the **next actionable phase**.
-The first considered phase with a missing `requires` artifact is the **current blocked phase**.
+- the first incomplete task or phase whose prerequisites are satisfied
+- the first incomplete task or phase that is blocked by a missing artifact
 
-Supported statuses in `production-plan.json`:
+Report blockers in plan terms, using the file paths and checks already recorded in the latest iteration.
 
-- `pending`
-- `in-progress`
-- `completed`
-- `skipped`
+### Step 3: Execute
 
-### Step 3a: If an Executable Phase is Runnable
+For each task or phase you execute in the latest iteration:
 
-Report:
+1. Mark it in-progress in `<base-dir>/PLAN.md`
+2. Execute steps exactly as written
+3. Record outputs, blockers, and notes in `<base-dir>/PLAN.md`
+4. Mark it completed or blocked in `<base-dir>/PLAN.md`
 
-> **Current phase:** {phase id} — {phase title}
-> **Skill:** `{default_skill}`
-> **Required inputs:** {list of requires}
-> **Expected outputs:** {list of produces}
->
-> Starting now.
+### Step 4: Two-Stage Review
 
-Execute the phase using the named default skill. Follow that skill's instructions exactly.
+For each completed task or phase:
 
-After execution, verify each artifact in `produces`. If all pass: update `production-plan.json` to set `"status": "completed"` for this phase. Continue to the next phase.
+1. **Stage 1 — Spec compliance:** Does the output match the task contract in `<base-dir>/PLAN.md` and `<base-dir>/SPEC.md`? Correct file path, format, duration, resolution, or schema?
+2. **Stage 2 — Quality:** Does the output actually meet the bar for the task? Review files, metadata, previews, and user-facing usefulness.
 
-### Step 3b: If a Manual Phase is Actionable
-
-Report:
-
-> **Current phase:** {phase id} — {phase title}
-> **Status:** waiting for manual action
-> **Required inputs:** {list of requires}
-> **Verify before marking complete:** {phase.verification}
-> **Notes:** {phase.note if present}
-
-Do not attempt to execute a null/default skill. Pause and wait for the user to complete the manual step or provide the missing artifact. Once the user confirms the step is complete, mark the phase `"status": "completed"` and continue.
-
-### Step 3c: If a Phase is Blocked
-
-Report in plan terms:
-
-> **Current phase:** {phase id} — {phase title}
-> **Status:** blocked
-> **Missing:** `{path to missing artifact}`
-> **Once provided:** run `{default_skill}` if this is an executable phase, or complete the manual step and mark it done
-> **Next phases waiting:** {list of downstream phases}
->
-> Execution is paused. Once the missing input is available, run `executing-video-plan` again to continue.
-
-Do not report phases that are not yet expected. If `production-pipeline` is not reached, a missing `{chapter_dir}/shot-details.json` is not a blocker — it simply has not been produced yet.
-
-### Step 4: Two-Stage Review Per Phase
-
-For each completed phase:
-
-1. **Stage 1 — Spec compliance:** Do produced artifacts exist at the expected paths? Do file counts match plan expectations?
-2. **Stage 2 — Asset quality:** For generated video clips — review file metadata and any available preview. Flag clips with zero size, wrong duration, or obvious generation failure.
-
-If Stage 2 fails, retry the generation for that scene/artifact before marking the phase complete.
+If Stage 2 fails, retry the generation or fix once before marking the task complete.
 
 ### Step 5: Parallelism
 
-For `scene-generation` phase only: scenes within the current chapter can be dispatched in parallel. Save clips under `{chapter_dir}/scenes/` and maintain `scene-generation.manifest.json` alongside them.
+Asset tasks can run in parallel when the latest iteration says they are independent. Spec-editing tasks should stay sequential unless the plan explicitly isolates them.
 
-All other phases are sequential.
+### Step 6: Completion
 
-### Step 6: Late Phases — Retention and Review
-
-Treat `retention-review`, `recompile`, `video-review`, `thumbnail`, and `delivery` as explicit phases. Do not skip them or treat them as informal advice.
-
-Default sequence after `draft-compile`:
-1. `retention-review` — run `retention-driven-development`
-2. `recompile` — run `compiling-video` again
-3. `video-review` — run `requesting-video-review`
-4. `thumbnail` — run `generating-thumbnail` (requires `final/final.mp4`)
-5. `delivery` — user or agent uploads `final/final.mp4` and `final/thumbnail.jpg`
-
-### Step 7: Completion
-
-When all phases reach `"status": "completed"`, report:
-
-> **All phases complete.**
-> Final video: `{project_dir}/final/final.mp4`
-> Thumbnail: `{project_dir}/final/thumbnail.jpg`
-> Review log: `{project_dir}/logs/review-feedback.md`
+After all tasks complete and verify cleanly, summarize the run in `<base-dir>/PLAN.md` and transition to the next phase, usually `retention-driven-development`.
 
 ## When to Stop and Ask
 
 Stop immediately when:
-- A `requires` artifact is missing and cannot be produced automatically
-- Generation fails after one retry
-- A plan instruction is ambiguous
-- Two-stage review fails repeatedly for the same artifact
+
+- a required artifact is missing and cannot be produced automatically
+- generation fails after one retry
+- a plan instruction is ambiguous
+- review fails repeatedly for the same artifact
+
+If the user asks to change scope, priorities, or deliverables after planning has already started, append a new top-level `# Iteration N` to `<base-dir>/PLAN.md` and execute against that latest iteration instead of rewriting the earlier ones.
+
+## After Execution
+
+`<base-dir>/SPEC.md` remains the project contract. `<base-dir>/PLAN.md` remains the approved coordination plan and execution ledger, with the newest `# Iteration N` section taking precedence for current work.
+
+If the plan includes explicit retention, review, thumbnail, or delivery tasks, do not silently skip them.
 
 ## Logging
 
 Log to `{project_dir}/logs/production.jsonl`. See `skills/lib/logging-guide.md`.
 
-- **On invocation** — event `invoked`, inputs: `production_plan_path`, `current_phase`
-- **On phase completion** — event `completed`, outputs: `phase_id`, `artifacts` (array of produced file paths)
-- **On block** — event `failed`, notes: `phase_id`, `missing_artifact`, `recommended_skill`
+- **On invocation** — event `invoked`, inputs: `plan_path`, `task_id`
+- **On completion** — event `completed`, outputs: `plan_path`, `task_status` (`passed`/`failed`), `artifacts` (array of output file paths)
+- **On block** — event `failed`, notes: `missing_artifact`, `recommended_next_action`

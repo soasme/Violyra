@@ -27,7 +27,7 @@ function printUsage() {
 
 Options:
   --input, -i             Input video path or URL (required)
-  --output, -o            Output file path (default: <input>.upscaled.<ext> for local files, otherwise assets/upscaled.mp4)
+  --output, -o            Output file path (default: <input>.upscaled.<ext> for local files, otherwise assets/videos/upscaled.mp4)
   --target-resolution     Target resolution: 720p | 1080p | 4k (default: ${DEFAULT_TARGET_RESOLUTION})
   --target-fps            Target fps: ${MIN_TARGET_FPS}-${MAX_TARGET_FPS} (default: ${DEFAULT_TARGET_FPS})
   --poll-interval-ms      Poll interval in milliseconds (default: ${DEFAULT_POLL_INTERVAL_MS})
@@ -109,7 +109,7 @@ export async function ensureParentDirectory(filePath) {
 
 export function buildDefaultOutputPath(inputValue) {
   if (isHttpUrl(inputValue) || isDataUri(inputValue)) {
-    return "assets/upscaled.mp4";
+    return "assets/videos/upscaled.mp4";
   }
 
   const extension = extname(inputValue);

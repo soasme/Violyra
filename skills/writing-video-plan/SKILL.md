@@ -1,194 +1,212 @@
 ---
 name: writing-video-plan
-description: Write the production plan for an approved video idea. Emits storyboard.json, video-plan.md (13-phase runbook), and production-plan.json (execution manifest). Run after brainstorming-video-idea.
+description: Use when refining SPEC.md and writing PLAN.md. Export storyboard JSON under assets/videos only when needed.
 ---
 
 # Writing Video Plan
 
-Turn an approved `video-idea.md` into a full production plan. Produces three artifacts with different jobs: a creative scene input for generation, a human-readable runbook, and a machine-readable execution manifest.
+Write the human-readable project spec and production plan for a video project. The canonical workflow artifacts are `<base-dir>/SPEC.md` and `<base-dir>/PLAN.md`.
+
+Throughout this skill, `<base-dir>` means the project root.
+
+Use `./references/storyboard-format.md` and `./assets/storyboard.template.js` only when a downstream step explicitly needs a machine-readable storyboard export.
 
 ## Inputs
 
-Collect before writing:
+Collect these before writing the spec and plan:
 
-1. `{project_dir}/docs/video-idea.md` — approved design doc from brainstorming
-2. Project-specific files declared in `video-idea.md` under `## Source Assets`
-3. `skills/lib/workflow.json` — canonical phase definitions (read to populate production-plan.json)
-4. `user_requirements` — any additional constraints the user specified
+1. approved idea already recorded in the `# Idea` section of `<base-dir>/SPEC.md`
+2. source assets declared in the spec
+3. project-specific narrative source such as lyrics, screenplay, story brief, or voiceover notes
+4. explicit `user_requirements`
+5. style, pacing, and camera constraints
 
-If `video-idea.md` does not exist, do not proceed. Ask the user to run `brainstorming-video-idea` first.
-
-Treat `video-idea.md` as the source of truth for required assets. The user can place any project-specific files under `{project_dir}/assets/` and declare them in `## Source Assets`.
-
-Do not invent source text. If the storyboard depends on lyrics, screenplay text, or another narrative source, read it from the declared asset path and preserve it exactly.
-
-## Outputs
-
-| File | Job |
-|---|---|
-| `{project_dir}/assets/storyboard.json` | Scene-level creative input for video generation |
-| `{project_dir}/docs/video-plan.md` | Human runbook — phases, artifacts, next steps |
-| `{project_dir}/assets/production-plan.json` | Machine execution manifest consumed by `executing-video-plan` |
+If an input required to author the spec or plan is missing, stop and ask for that specific file or clarification. Do not invent source text.
 
 ## Workflow
 
-### Step 1: Write `storyboard.json`
+1. Read `<base-dir>/SPEC.md`, starting with the `# Idea` section, and inspect what already exists in the project.
+2. Read the declared source assets and preserve narrative text exactly unless the user asks to rewrite it.
+3. Clarify open questions before planning if key constraints are missing.
+4. Write or update `<base-dir>/SPEC.md` as the project contract, preserving the approved `# Idea` section.
+5. Break the work into short executable tasks with exact file paths, deliverables, and verification steps.
+6. For scene work, describe the intent in Markdown first:
+   - lyric or script lines covered
+   - visual beat
+   - character focus
+   - camera or motion intent
+   - blocking dependencies
+7. Call out blockers, review gates, and the natural next step after each task.
+8. Write or update `<base-dir>/PLAN.md` so it manages `SPEC.md`, `assets/`, and `logs/`.
+9. If `<base-dir>/PLAN.md` does not exist yet, start it with `# Iteration 1`.
+10. If the user is changing an existing plan, append a new top-level `# Iteration N` section instead of rewriting the previous iterations.
+11. Export `<base-dir>/assets/videos/storyboard.json` or `<base-dir>/assets/videos/storyboard.js` only when the user asks for it or a downstream script needs it immediately.
+12. If available, self-review the written spec and plan with `plan-document-reviewer-prompt.md`.
 
-Follow the existing storyboard contract in `references/storyboard-format.md`.
+## Output Rules
 
-- Read the narrative source declared in `video-idea.md`.
-  - For lyric-driven projects: read the declared lyrics file under `assets/`, treat lines prefixed with `#` as non-sung section markers, and split sung lyrics into sections.
-  - For screenplay-driven projects: read the declared screenplay / treatment / brief file under `assets/`.
-  - If the narrative source needed to author the storyboard is missing, stop and ask for that specific file path from `## Source Assets`.
-- Map source text to scenes according to the approved design. Default lyric-driven ratio: 2 sung lines per scene.
-- Set one `character` focus per scene unless ensemble is required.
-- Write a concrete `prompt` with subject action, environment motion, and camera movement.
-- Default output: `{project_dir}/assets/storyboard.json`
+1. Default spec path: `<base-dir>/SPEC.md`
+2. Default plan path: `<base-dir>/PLAN.md`
+3. `SPEC.md` is the human-readable project contract with the approved idea in `# Idea`
+4. `PLAN.md` manages `SPEC.md`, `assets/`, blockers, review notes, and execution order
+5. `PLAN.md` is append-only by top-level `# Iteration N` sections
+6. The first planning pass creates `# Iteration 1`
+7. Later user-directed changes append `# Iteration 2`, `# Iteration 3`, and so on, preserving earlier iterations as history
+8. Preserve source text exactly unless the user asks to adapt it
+9. If `SPEC.md` needs machine-readable detail, wrap it in a fenced `json` code block instead of creating standalone JSON unless a downstream script needs the file immediately
+10. If a storyboard export is required, keep it secondary to the Markdown spec and plan, and validate it against `references/storyboard-format.md`
+11. If the user explicitly asks for JS format, export `<base-dir>/assets/videos/storyboard.js`; otherwise use `<base-dir>/assets/videos/storyboard.json`
 
-### Step 2: Write `production-plan.json`
+## Spec Format
 
-Read `skills/lib/workflow.json`. For each phase, populate:
-- `project_dir`: the actual project directory path
-- `chapter_dir`: use `{project_dir}/chapters/chapter-01` for the default happy path unless the user explicitly wants a different chapter layout
-- `requires`: resolve `{project_dir}` template variables
-- `requires`: resolve `{chapter_dir}` template variables
-- `produces`: resolve `{project_dir}` template variables
-- `produces`: resolve `{chapter_dir}` template variables
-- `status`: initialize to `"pending"` unless artifacts already exist
-- `enabled`: for optional phases, derive whether they should participate in execution
+Save to `<base-dir>/SPEC.md`:
 
-For the `source-assets` phase specifically, do not blindly copy the template values. Rewrite the phase from `video-idea.md`:
+```md
+# Spec: <title>
 
-- `requires`: all declared source assets that must exist before execution can proceed
-- `blocks_if_missing`: the subset of those assets that are still absent
-- `default_skill`:
-  - `aligning-lyrics` for lyric-driven projects with a declared song file plus lyric file
-  - `null` for projects whose source-assets phase is manual intake only
-- `produces` / `verification`: project-specific preprocessing outputs if applicable
-  - lyric-driven example: `aligned_lyrics.json`, `subtitle.srt`, `subtitle.lrc`
-  - non-lyric example: possibly no generated outputs, just confirmation that declared source assets are present
-- `note`: describe the project mode in plain language, for example `This source-assets phase is manual because the project uses screenplay text and reference stills, not lyric alignment.`
+# Status
+- Idea approved / planning draft / revised
 
-```json
-{
-  "$schemaVersion": "1.0",
-  "project_dir": "{project_dir}",
-  "chapter_dir": "{project_dir}/chapters/chapter-01",
-  "generated_at": "{ISO 8601 timestamp}",
-  "source_idea": "{project_dir}/docs/video-idea.md",
-  "phases": [
-    {
-      "id": "project-setup",
-      "title": "Set up project workspace",
-      "default_skill": "setup-video-project",
-      "status": "pending",
-      "enabled": true,
-      "requires": [
-        "{project_dir}/docs/video-idea.md"
-      ],
-      "produces": [
-        "{project_dir}/project.json",
-        "{project_dir}/docs/",
-        "{project_dir}/assets/",
-        "{project_dir}/logs/",
-        "{project_dir}/final/",
-        "{project_dir}/global/",
-        "{project_dir}/characters/",
-        "{project_dir}/chapters/"
-      ],
-      "verification": [
-        "project.json exists and is valid JSON",
-        "assets/, logs/, final/, global/, characters/, and chapters/ directories exist"
-      ],
-      "optional": false,
-      "manual": false
-    }
-  ]
-}
+# Idea
+- Preserve and refine the approved idea content here.
+
+# Project Contract
+- Goal: <what this production must deliver>
+- Platform: <platform>
+- Duration: <duration>
+- Default model: <model>
+- fps: <fps>
+- resolution: <resolution>
+
+# Asset Directories
+- `.`
+- `assets`
+- `assets/images`
+- `assets/videos`
+- `assets/audios`
+- `assets/fonts`
+
+# Style
+- Genre: <genre>
+- Mood: <mood>
+- Visual direction: <what the production should feel like>
+
+# Assets
+| Path | Purpose | Required by | Status |
+|---|---|---|---|
+| assets/... | ... | planning / execution | present / missing / to-generate |
+
+# Characters
+| Name | Role | Visual traits | Continuity method |
+|---|---|---|---|
+| ... | ... | ... | ... |
+
+# Structure
+## Chapter 1 — <title>
+- Summary: <what happens>
+- Source lines / beats: <covered text>
+- Scene intent: <visual / emotional goal>
+- Required assets: <paths or `None`>
+
+# Notes
+- Keep this file text-first.
+- Any machine-readable snippet in this file must use a fenced `json` code block.
+
+# Open Questions
+- <question or `None`>
 ```
 
-Mark phases as `"status": "completed"` for any phase whose `produces` artifacts already exist in the workspace.
+## Plan Format
 
-For optional phases:
+Save to `<base-dir>/PLAN.md`:
 
-- `lyric-scene-reconciliation` — set `"enabled": true` only when the idea doc or existing lyric metadata already indicates a likely mismatch between sung lines and planned scenes.
-- `reference-images` — set `"enabled": true` when a named character appears in 3 or more scenes, or when the design doc explicitly requires reference images or start frames.
+```md
+# Iteration 1
 
-If an optional phase is not needed yet, leave `"status": "pending"` and `"enabled": false`. The executor treats it as non-blocking.
+## Goal
+- Initial planning pass for <title>
 
-If a declared source asset is needed for storyboard authoring and is missing, stop before writing `storyboard.json`. If a declared source asset is only needed later for execution, keep writing the plan and mark `source-assets` as blocked in `production-plan.json`.
+## Current State
+- Project spec: `SPEC.md`
+- Assets root: `assets/`
+- Logs root: `logs/`
+- Inputs present: <lyrics, audio, refs, current assets>
+- Assumptions: <brief list>
 
-### Step 3: Write `video-plan.md`
+## Spec Tasks
+- [ ] Task 1 — <short title>
+  Files: `SPEC.md`
+  Do: <plain-language instructions>
+  Verify: <check against the approved `# Idea` section or the output files>
+  Next: <what this unlocks>
 
-This is the human runbook. A user or agent opening it should immediately know: what exists, what the next step is, and how to verify each phase.
+## Asset Tasks
+- [ ] Task 2 — <short title>
+  Files: <exact paths under `assets/` or related outputs>
+  Do: <plain-language instructions>
+  Verify: <command or check>
+  Next: <what this unlocks>
 
-Structure:
-
-```markdown
-# Video Production Plan: {title}
-
-**Project:** `{project_dir}`
-**Primary chapter:** `{chapter_dir}`
-**Idea doc:** `{project_dir}/docs/video-idea.md`
-**Generated:** {date}
-
-## Current Status
-
-{One sentence: which phase is next and what it needs.}
-
-## Phase Checklist
-
-Render one section per phase from `production-plan.json`, using the actual resolved fields:
-
-### Phase {n}: {phase.title}
-- **Skill:** `{phase.default_skill}` or `manual`
-- **Status:** `[ ] pending`, `[x] completed`, or `[~] skipped`
-- **Enabled:** `yes` or `no` for optional phases
-- **Requires:** {resolved phase.requires}
-- **Produces:** {resolved phase.produces}
-- **Verify:** {phase.verification}
-- **Notes:** {phase.note if present}
-
-## Scene List
-
-| Scene | Section | Character | Lyrics | Prompt summary |
+## Scene Intent
+| Scene | Source lines | Visual beat | Camera / motion | Notes |
 |---|---|---|---|---|
-{storyboard scenes table}
+| 1 | ... | ... | ... | ... |
 
-## Notes
+## Blockers
+- <blocker or `None`>
 
-{Any decisions made during planning: lyric exclusions, reference-image decisions, model parameter choices.}
+## Review Notes
+- <finding or `None`>
+
+## Run Notes
+- <date>: planning updated
+
+## Optional Exports
+- `<base-dir>/assets/videos/storyboard.json` only if downstream tooling needs it now
+
+## Next Step
+- Use `executing-video-plan` to work through `SPEC.md`, asset tasks, and update `<base-dir>/PLAN.md`
 ```
 
-The `Current Status` sentence should be derived from the first actionable phase:
+When the user later asks for changes, append another block like:
 
-- If a required artifact is missing, say which phase is blocked and which file is missing.
-- If an optional phase is disabled, do not describe it as the next step.
-- If a manual phase is next, say exactly what the user must provide or confirm.
+```md
+# Iteration 2
 
-### Step 4: Review `production-plan.json` and `video-plan.md`
+## Trigger
+- User requested: <concise summary of the change>
 
-Use `plan-document-reviewer-prompt.md` to self-review both artifacts before showing them to the user. Fix any issues inline.
+## Current State
+- Carry forward any relevant current artifacts or constraints
 
-## Plan Document Review
+## Spec Tasks
+- [ ] Adjust `SPEC.md` for the requested change
 
-After writing all three artifacts, read `skills/writing-video-plan/plan-document-reviewer-prompt.md` and run the checklist against `video-plan.md` and `production-plan.json`.
+## Asset Tasks
+- [ ] Add or revise the affected asset work
+
+## Blockers
+- <blocker or `None`>
+
+## Review Notes
+- <finding or `None`>
+
+## Run Notes
+- <date>: iteration appended from user feedback
+
+## Next Step
+- Execute the latest iteration and preserve earlier iterations as history
+```
 
 ## After Writing
 
 Tell the user:
-> "Production plan written. Three artifacts are ready:
-> - `{project_dir}/assets/storyboard.json` — {n} scenes
-> - `{project_dir}/docs/video-plan.md` — chapter-aware phase runbook
-> - `{project_dir}/assets/production-plan.json` — execution manifest
->
-> Current status: Phase {next_phase_number} ({next_phase_title}) is next. {what it requires or what is blocking it}
->
-> Run `executing-video-plan` to start execution."
+
+> "Project spec written to `<base-dir>/SPEC.md` and plan updated in `<base-dir>/PLAN.md`. If needed, I can also export `<base-dir>/assets/videos/storyboard.json` for downstream tooling. Next step: run `executing-video-plan` against the latest iteration."
 
 ## Logging
 
 Log to `{project_dir}/logs/production.jsonl`. See `skills/lib/logging-guide.md`.
 
-- **On invocation** — event `invoked`, inputs: `idea_doc_path`, `style`, `aspect_ratio`
-- **On completion** — event `completed`, outputs: `storyboard_path`, `video_plan_path`, `production_plan_path`, `shot_count`
+- **On invocation** — event `invoked`, inputs: `idea_section_present`, `source_assets`, `style`
+- **On completion** — event `completed`, outputs: `spec_path`, `plan_path`, `storyboard_exported` (true/false), `shot_count`

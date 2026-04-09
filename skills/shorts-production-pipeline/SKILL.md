@@ -7,6 +7,10 @@ description: Use to run the complete short drama workflow from screenplay to fin
 
 Top-level orchestrator for a complete short drama production. No lyrics or song phase — screenplay is the primary input. Video generation model is user-chosen.
 
+Maintain these workflow docs throughout the run:
+- `<project-dir>/SPEC.md` — project spec with the approved idea in `# Idea`
+- `<project-dir>/PLAN.md` — iteration-based task plan for `SPEC.md` and `assets/`
+
 ## Inputs
 
 - `--base-dir <path>` — project root
@@ -21,6 +25,7 @@ Top-level orchestrator for a complete short drama production. No lyrics or song 
 [Phase 1: Setup]
 brainstorming-video-idea   (skip with --skip-brainstorm)
   → setup-video-project
+  → writing-video-plan      ← writes `<project-dir>/SPEC.md` and `<project-dir>/PLAN.md` for the run
                            ← CHECKPOINT: confirm before breakdown
 
 [Phase 2: Breakdown]
@@ -40,6 +45,8 @@ brainstorming-video-idea   (skip with --skip-brainstorm)
 ## Checkpoints
 
 Pause for user confirmation after each phase before proceeding. Show what was produced and ask: "Continue to [next phase]? (Y/N)"
+
+Update `<project-dir>/PLAN.md` at each checkpoint with status, outputs, and approval notes in the latest `# Iteration N`, or append a new iteration if the user changes direction.
 
 ## Error Handling
 

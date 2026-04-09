@@ -47,14 +47,14 @@ describe(".agents/skills/upscaling-video/scripts/upscale.js", () => {
 
   describe("buildDefaultOutputPath", () => {
     it("derives output path from local input path", () => {
-      expect(buildDefaultOutputPath("assets/scenes/1.mp4")).toBe(
-        "assets/scenes/1.upscaled.mp4"
+      expect(buildDefaultOutputPath("assets/videos/scenes/1.mp4")).toBe(
+        "assets/videos/scenes/1.upscaled.mp4"
       );
     });
 
     it("uses default output path for remote input", () => {
       expect(buildDefaultOutputPath("https://example.com/clip.mp4")).toBe(
-        "assets/upscaled.mp4"
+        "assets/videos/upscaled.mp4"
       );
     });
   });
@@ -246,4 +246,3 @@ describe(".agents/skills/upscaling-video/scripts/upscale.js", () => {
     });
   });
 });
-

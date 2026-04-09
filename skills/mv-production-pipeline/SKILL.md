@@ -7,6 +7,10 @@ description: Use to run the complete music video workflow from lyrics to final c
 
 Top-level orchestrator for a complete music video production. Runs all skills in sequence with user approval checkpoints between major phases.
 
+Maintain these workflow docs throughout the run:
+- `<project-dir>/SPEC.md` — project spec with the approved idea in `# Idea`
+- `<project-dir>/PLAN.md` — iteration-based task plan for `SPEC.md` and `assets/`
+
 ## Inputs
 
 - `--base-dir <path>` — project root
@@ -22,10 +26,10 @@ Top-level orchestrator for a complete music video production. Runs all skills in
 generating-lyrics          (skip with --skip-lyrics)
   → generating-song        (skip with --skip-song)
   → aligning-lyrics
-                           ← CHECKPOINT: confirm before storyboard
+                           ← CHECKPOINT: confirm before planning
 
-[Phase 2: Storyboard & Breakdown]
-  → writing-video-plan
+[Phase 2: Planning & Breakdown]
+  → writing-video-plan                ← writes `<project-dir>/SPEC.md`, `<project-dir>/PLAN.md`, and optionally exports storyboard JSON
   → running-video-production-pipeline   (per chapter)
                            ← CHECKPOINT: confirm before generation
 
@@ -44,6 +48,8 @@ generating-lyrics          (skip with --skip-lyrics)
 ## Checkpoints
 
 Pause for user confirmation after each phase before proceeding. Show what was produced and ask: "Continue to [next phase]? (Y/N)"
+
+Update `<project-dir>/PLAN.md` at each checkpoint with status, outputs, and approval notes in the latest `# Iteration N`, or append a new iteration if the user changes direction.
 
 ## Error Handling
 

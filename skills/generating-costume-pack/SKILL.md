@@ -16,7 +16,7 @@ source .env && node skills/generating-costume-pack/scripts/costume-pack.js <subc
 ### create
 ```bash
 source .env && node skills/generating-costume-pack/scripts/costume-pack.js create \
-  --base-dir assets/ --name "Punk Outfit" \
+  --base-dir <project-dir> --name "Punk Outfit" \
   --description "Black leather jacket, torn jeans, combat boots, silver chains" \
   --tags '["punk","dark"]'
 ```

@@ -1,6 +1,6 @@
 # Video Idea Spec — Document Reviewer Prompt
 
-Review the written `video-idea.md` spec. Check each item below. Fix any issues inline without re-reviewing. Only block when the written spec would cause the next planning step to build the wrong thing.
+Review the written `SPEC.md`, focusing on the `# Idea` section. Check each item below. Fix any issues inline without re-reviewing. Only block when the written spec would cause the next planning step to build the wrong thing.
 
 ## Checklist
 

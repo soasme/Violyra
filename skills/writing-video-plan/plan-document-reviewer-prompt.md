@@ -1,52 +1,45 @@
-# Video Production Plan — Document Reviewer Prompt
+# Project Spec and Plan — Document Reviewer Prompt
 
-Review `video-plan.md` and `production-plan.json` after they are written. Fix any issues inline. Only block when the plan would cause an agent to execute the wrong thing or get stuck unnecessarily.
+Review `SPEC.md` and `PLAN.md` after they are written. Fix any issues inline. Only block when the spec or plan would cause an agent to execute the wrong thing or get stuck unnecessarily.
 
 ## Checklist
 
-### Completeness
-- [ ] All 13 phases are present in `video-plan.md` (project-setup through delivery)
-- [ ] Each phase in `video-plan.md` has: skill name, requires list, produces list, verification criteria, status
-- [ ] `production-plan.json` phase list matches `video-plan.md` phase list exactly (same IDs, same order)
-- [ ] No phase says "TBD", "to be determined", or "as needed"
+### Spec Completeness
+- [ ] `SPEC.md` keeps the approved idea in a concrete `# Idea` section and states the current status
+- [ ] Project contract fields are present: goal, platform, duration, default model, fps, resolution
+- [ ] Required assets are listed with exact paths or clearly marked gaps
+- [ ] Asset directories are listed in Markdown under `# Asset Directories`
+- [ ] Characters and continuity requirements are captured if the project has recurring characters
+- [ ] Chapter or scene structure is concrete enough to plan from
+- [ ] No placeholder text like `TBD`, `fill later`, or `something here`
 
-### Alignment with `video-idea.md`
-- [ ] Storyboard scene count matches the scene count implied by the lyric-to-scene ratio in `video-idea.md`
-- [ ] Characters listed in `video-plan.md` match `video-idea.md` Characters table
-- [ ] Reference-image phase is marked required/optional consistently with `video-idea.md`
-- [ ] Song file path in plan matches what `video-idea.md` specifies
+### Markdown-First Contract
+- [ ] `SPEC.md` keeps project structure in text instead of assuming `global/`, `characters/`, or `chapters/` directories
+- [ ] Project defaults are expressed as Markdown paragraphs or lists, not a separate JSON config requirement
+- [ ] Any machine-readable snippet inside `SPEC.md` is wrapped in a fenced `json` code block
+- [ ] No standalone JSON artifact is required unless a downstream script actually needs it now
 
-### Phase Ordering and Dependencies
-- [ ] `source-assets` phase precedes `production-pipeline`
-- [ ] `production-pipeline` precedes `reference-images` and `video-prompts`
-- [ ] `scene-generation` precedes `draft-compile`
-- [ ] `draft-compile` precedes `retention-review`
-- [ ] `retention-review` precedes `recompile`
-- [ ] `recompile` precedes `video-review`
-- [ ] `video-review` precedes `thumbnail` and `delivery`
+### Alignment with `# Idea`
+- [ ] Assets, characters, and structure in `SPEC.md` match the approved `# Idea` section
+- [ ] Model, style, and seed assumptions do not contradict the approved `# Idea` section
+- [ ] If `# Idea` marks an input required before planning, the plan reflects that dependency explicitly
 
-### Buildability
-- [ ] Every `requires` artifact in `production-plan.json` can be traced to a `produces` in a prior phase (or is a user-supplied input)
-- [ ] No phase requires an artifact that no prior phase produces (no phantom dependencies)
-- [ ] Status fields in `production-plan.json` reflect actual workspace state (completed phases are marked completed)
+### Plan Buildability
+- [ ] `PLAN.md` is organized by top-level `# Iteration N` sections
+- [ ] The latest iteration reflects the most recent user request without deleting prior iterations
+- [ ] `PLAN.md` references `SPEC.md` and the real asset paths under `assets/`
+- [ ] Tasks are separated clearly enough that an agent can tell spec work from asset work
+- [ ] Every task has exact files, a concrete action, and a verification step
+- [ ] Blockers and next step are explicit
 
-### Scene Count Consistency
-- [ ] Storyboard scene count stated in `video-plan.md` matches actual scene count in `storyboard.json`
-- [ ] Verification criteria in `video-plan.md` reference the exact scene count (no "n scenes" placeholder left unfilled)
-
-### Reference-Image Phase
-- [ ] Phase 5 is explicitly marked `*(required)*` or `*(optional)*`
-- [ ] If required: the characters needing reference images are named
-- [ ] If optional: a reason is stated (e.g., "no recurring characters" or "abstract visual style")
-
-### Retention and Review Placement
-- [ ] `retention-driven-development` appears after `draft-compile` and before `recompile`
-- [ ] `requesting-video-review` appears after `recompile` and before `delivery`
+### Execution Readiness
+- [ ] The first incomplete task in the latest iteration is actionable without guessing
+- [ ] Optional storyboard export is treated as optional unless a downstream script needs it
+- [ ] Nothing in the plan requires hidden repo knowledge outside `SPEC.md` and the declared asset paths
 
 ## Approval Bar
 
-Pass if all required fields are present, phase order is correct, and the plan is internally consistent. Minor style issues do not block. Block if:
-- Any phase is missing from `video-plan.md` or `production-plan.json`
-- A `requires` artifact has no prior `produces` source
-- Retention or review phases are out of order or missing
-- Scene count placeholders are unfilled
+Pass if `SPEC.md` and `PLAN.md` are consistent, actionable, and Markdown-first. Minor phrasing issues do not block. Block if:
+- `SPEC.md` is missing core project contract details
+- `PLAN.md` does not make the next actionable work clear
+- The spec or plan still depends on implicit `global/`, `characters/`, or `chapters/` directories as the primary project contract
