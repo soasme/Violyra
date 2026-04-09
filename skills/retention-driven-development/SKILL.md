@@ -54,7 +54,7 @@ Transition to `requesting-video-review`.
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `project_dir`, `chapter_id`, `threshold` (retention score target)
 **On completion** — key `outputs`: `shots_replaced` (count), `final_retention_score`

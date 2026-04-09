@@ -9,7 +9,7 @@ Unless stated otherwise, paths below are relative to `<project-dir>`.
 Use these Markdown files as the main collaboration surface:
 
 - `SPEC.md` — the project spec; keep it text-first, keep the approved idea in `# Idea`, and wrap any machine-readable snippet in a fenced `json` code block
-- `PLAN.md` — iteration-based task plan for managing `SPEC.md`, `project/assets/`, blockers, review notes, and next steps
+- `PLAN.md` — iteration-based task plan for managing `SPEC.md`, `assets/`, blockers, review notes, and next steps
 
 `PLAN.md` should use top-level sections like `# Iteration 1`, `# Iteration 2`, and so on. The initial planning pass creates `# Iteration 1`. Later user-directed changes append a new iteration instead of overwriting the earlier plan history.
 
@@ -21,16 +21,15 @@ These Markdown files are enough for the workflow layer. Lower-level JSON still e
 <project-dir>/
 ├── SPEC.md
 ├── PLAN.md
-└── project/
-    ├── assets/
-    │   ├── images/
-    │   ├── videos/
-    │   ├── audios/
-    │   └── fonts/
-    └── logs/
+├── assets/
+│   ├── images/
+│   ├── videos/
+│   ├── audios/
+│   └── fonts/
+└── logs/
 ```
 
-Put project-specific inputs under `project/assets/`. Examples:
+Put project-specific inputs under `assets/`. Examples:
 
 - lyrics
 - song audio
@@ -45,11 +44,11 @@ Put project-specific inputs under `project/assets/`. Examples:
 Many projects follow this shape:
 
 1. Run `brainstorming-video-idea` to converge on the concept and write the approved idea into `<project-dir>/SPEC.md`.
-2. Run `setup-video-project` to scaffold the workspace, preserve or scaffold `<project-dir>/SPEC.md`, create `<project-dir>/PLAN.md`, and prepare `<project-dir>/project/`.
-3. Place or generate the required project inputs under `<project-dir>/project/assets/`.
+2. Run `setup-video-project` to scaffold the workspace, preserve or scaffold `<project-dir>/SPEC.md`, create `<project-dir>/PLAN.md`, and prepare `<project-dir>/assets/` plus `<project-dir>/logs/`.
+3. Place or generate the required project inputs under `<project-dir>/assets/`.
 4. Run `writing-video-plan` to refine `<project-dir>/SPEC.md` and write `<project-dir>/PLAN.md` starting at `# Iteration 1`.
 5. Run `executing-video-plan` to execute tasks from the latest iteration in `<project-dir>/PLAN.md`, using `<project-dir>/SPEC.md` as the project contract, and keep `PLAN.md` current.
-6. Run `retention-driven-development` and `requesting-video-review` before delivery, and record review results in `<project-dir>/PLAN.md` plus `<project-dir>/project/logs/` when needed.
+6. Run `retention-driven-development` and `requesting-video-review` before delivery, and record review results in `<project-dir>/PLAN.md` plus `<project-dir>/logs/` when needed.
 
 ## Choosing The Right Workflow
 
@@ -88,7 +87,7 @@ Examples:
 
 The right rule is:
 
-1. Put project inputs under `<project-dir>/project/assets/`
+1. Put project inputs under `<project-dir>/assets/`
 2. Make the required inputs explicit in the `# Idea` section of `<project-dir>/SPEC.md`
 3. Let `writing-video-plan` carry those requirements through the rest of `<project-dir>/SPEC.md`
 4. Let `<project-dir>/PLAN.md` manage the work against `SPEC.md` and the actual asset paths, appending a new `# Iteration N` when the user changes direction
@@ -109,16 +108,16 @@ Project defaults that used to live in rigid config files should be recorded in `
 
 # Asset Directories
 - `.`
-- `project/assets`
-- `project/assets/images`
-- `project/assets/videos`
-- `project/assets/audios`
-- `project/assets/fonts`
+- `assets`
+- `assets/images`
+- `assets/videos`
+- `assets/audios`
+- `assets/fonts`
 ```
 
 Some scripts still require standalone machine-readable files:
 
-- `project/assets/videos/storyboard.json` — compile-time scene manifest when `compiling-video` is used
+- `assets/videos/storyboard.json` — compile-time scene manifest when `compiling-video` is used
 - `shot-list.json`, `shot-details.json`, `extraction-report.json`, `consistency-report.json` — validated pipeline outputs
 
 Rule of thumb: think and collaborate in `SPEC.md` and `PLAN.md` first, then export JSON only when a script genuinely needs it.

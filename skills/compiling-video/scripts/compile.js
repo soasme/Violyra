@@ -14,12 +14,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const CLI_SCRIPT_PATH = ".agents/skills/compiling-video/scripts/compile.js";
-const DEFAULT_STORYBOARD_PATH = "project/assets/videos/storyboard.json";
-const DEFAULT_ALIGNED_PATH = "project/assets/audios/aligned_lyrics.json";
-const DEFAULT_SONG_PATH = "project/assets/audios/song.mp3";
-const DEFAULT_SCENES_DIR = "project/assets/videos/scenes";
-const DEFAULT_WORK_DIR = "project/assets/videos/final/build-compile";
-const DEFAULT_OUTPUT_DIR = "project/assets/videos/final";
+const DEFAULT_STORYBOARD_PATH = "assets/videos/storyboard.json";
+const DEFAULT_ALIGNED_PATH = "assets/audios/aligned_lyrics.json";
+const DEFAULT_SONG_PATH = "assets/audios/song.mp3";
+const DEFAULT_SCENES_DIR = "assets/videos/scenes";
+const DEFAULT_WORK_DIR = "assets/videos/final/build-compile";
+const DEFAULT_OUTPUT_DIR = "assets/videos/final";
 const DEFAULT_OUTPUT_WIDTH = 1920;
 const DEFAULT_OUTPUT_HEIGHT = 1080;
 const DEFAULT_FPS = 24;
@@ -39,7 +39,7 @@ Options:
   --manifest              Optional generation manifest JSON path (uses scene prediction.output_urls for upscale input)
   --scenes-dir            Scene clips directory (default: ${DEFAULT_SCENES_DIR})
   --work-dir              Working directory for intermediates (default: ${DEFAULT_WORK_DIR})
-  --output, -o            Final output mp4 path (default: project/assets/videos/final/<song>.full-song.1080p.mp4)
+  --output, -o            Final output mp4 path (default: assets/videos/final/<song>.full-song.1080p.mp4)
   --width                 Output width (default: ${DEFAULT_OUTPUT_WIDTH})
   --height                Output height (default: ${DEFAULT_OUTPUT_HEIGHT})
   --fps                   Output fps (default: ${DEFAULT_FPS})

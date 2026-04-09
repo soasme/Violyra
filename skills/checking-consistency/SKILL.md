@@ -50,7 +50,7 @@ source .env && node skills/checking-consistency/scripts/validate-consistency-rep
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `shot_list_path`
 **On completion** — key `outputs`: `consistency_report_path`, `drift_count`, `optimized_shot_list_present`, `optimized_shot_list_count`

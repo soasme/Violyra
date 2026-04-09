@@ -7,11 +7,11 @@ description: Compile scene clips into a full-song music video with ffmpeg using 
 
 Use this skill to nail down final assembly from generated scene clips.
 
-`compiling-video` still consumes a machine-readable storyboard. If the workflow has been managed in `<project-dir>/PLAN.md`, export or refresh `<project-dir>/project/assets/videos/storyboard.json` before compiling.
+`compiling-video` still consumes a machine-readable storyboard. If the workflow has been managed in `<project-dir>/PLAN.md`, export or refresh `<project-dir>/assets/videos/storyboard.json` before compiling.
 
 The script handles:
 
-1. Per-scene timing windows from `project/assets/videos/storyboard.json` + `project/assets/audios/aligned_lyrics.json`.
+1. Per-scene timing windows from `assets/videos/storyboard.json` + `assets/audios/aligned_lyrics.json`.
 2. Optional auto-upscale via `topazlabs/video-upscale` for clips below target resolution.
 3. Per-scene time stretch to match lyric timing.
 4. Frame fitting to target output resolution (default `1920x1080`).
@@ -24,13 +24,13 @@ Source `.env` so environment variables are loaded:
 
 ```bash
   source .env && node .agents/skills/compiling-video/scripts/compile.js \
-  --storyboard project/assets/videos/storyboard.json \
-  --aligned project/assets/audios/aligned_lyrics.json \
-  --song project/assets/audios/song.mp3 \
-  --manifest project/assets/videos/storyboard.sea-race.manifest.json \
-  --scenes-dir project/assets/videos/scenes \
-  --work-dir project/assets/videos/final/build-compile \
-  --output project/assets/videos/final/song.full-song.1080p.mp4
+  --storyboard assets/videos/storyboard.json \
+  --aligned assets/audios/aligned_lyrics.json \
+  --song assets/audios/song.mp3 \
+  --manifest assets/videos/storyboard.sea-race.manifest.json \
+  --scenes-dir assets/videos/scenes \
+  --work-dir assets/videos/final/build-compile \
+  --output assets/videos/final/song.full-song.1080p.mp4
 ```
 
 ## Defaults
@@ -51,7 +51,7 @@ Source `.env` so environment variables are loaded:
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `storyboard`, `aligned`, `song`, `output`
 **On completion** — key `outputs`: `output_video`, `duration_s`, `scene_count`

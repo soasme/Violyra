@@ -91,7 +91,7 @@ function readAssetDirsFromSpec(projectDir) {
 export function resolveAsset(projectDir, relativePath) {
   const assetDirs =
     readAssetDirsFromSpec(projectDir) ??
-    ['.', 'project/assets', 'project/assets/images', 'project/assets/videos', 'project/assets/audios', 'project/assets/fonts']
+    ['.', 'assets', 'assets/images', 'assets/videos', 'assets/audios', 'assets/fonts']
 
   for (const dir of assetDirs) {
     const base = isAbsolute(dir) ? dir : join(projectDir, dir)

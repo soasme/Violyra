@@ -80,7 +80,7 @@ If the plan includes explicit retention, review, thumbnail, or delivery tasks, d
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See `skills/lib/logging-guide.md`.
+Log to `{project_dir}/logs/production.jsonl`. See `skills/lib/logging-guide.md`.
 
 - **On invocation** — event `invoked`, inputs: `plan_path`, `task_id`
 - **On completion** — event `completed`, outputs: `plan_path`, `task_status` (`passed`/`failed`), `artifacts` (array of output file paths)

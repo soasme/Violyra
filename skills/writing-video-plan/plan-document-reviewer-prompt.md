@@ -27,7 +27,7 @@ Review `SPEC.md` and `PLAN.md` after they are written. Fix any issues inline. On
 ### Plan Buildability
 - [ ] `PLAN.md` is organized by top-level `# Iteration N` sections
 - [ ] The latest iteration reflects the most recent user request without deleting prior iterations
-- [ ] `PLAN.md` references `SPEC.md` and the real asset paths under `project/assets/`
+- [ ] `PLAN.md` references `SPEC.md` and the real asset paths under `assets/`
 - [ ] Tasks are separated clearly enough that an agent can tell spec work from asset work
 - [ ] Every task has exact files, a concrete action, and a verification step
 - [ ] Blockers and next step are explicit

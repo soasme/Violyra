@@ -54,7 +54,7 @@ Transition to `aligning-lyrics`.
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `lyrics_path`, `style_description`
 **On completion** — key `outputs`: `audio_path`, `duration_s`

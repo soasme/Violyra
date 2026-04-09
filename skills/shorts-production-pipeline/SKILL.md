@@ -9,7 +9,7 @@ Top-level orchestrator for a complete short drama production. No lyrics or song 
 
 Maintain these workflow docs throughout the run:
 - `<project-dir>/SPEC.md` — project spec with the approved idea in `# Idea`
-- `<project-dir>/PLAN.md` — iteration-based task plan for `SPEC.md` and `project/assets/`
+- `<project-dir>/PLAN.md` — iteration-based task plan for `SPEC.md` and `assets/`
 
 ## Inputs
 
@@ -54,7 +54,7 @@ Stop and report at any skill failure. Ask user whether to retry, skip, or abort.
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `project_dir`, `screenplay_path`
 **On completion** — key `outputs`: `final_video_path`, `duration_s`

@@ -26,7 +26,7 @@ Dispatch or perform a structured review with production context so issues are ca
    - **Critical** — missing scenes, broken audio sync, unresolved consistency issues; blocks delivery
    - **Important** — visual quality below bar, shot does not match `SPEC.md` or the plan; fix before next phase
    - **Minor** — style drift or pacing issues; log for the next version
-4. Write `<base-dir>/project/logs/review-feedback.md` with:
+4. Write `<base-dir>/logs/review-feedback.md` with:
    - `Status: pass` or `Status: fail`
    - critical findings
    - important findings
@@ -43,7 +43,7 @@ If no Critical or Important issues remain, the production is ready for delivery.
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `project_dir`, `spec_path`, `plan_path`, `final_render_path`
 **On completion** — key `outputs`: `review_feedback_path`, `critical_count`, `important_count`, `minor_count`, `blocked` (true if critical > 0)

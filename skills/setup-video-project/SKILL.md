@@ -1,6 +1,6 @@
 ---
 name: setup-video-project
-description: Use after idea approval. Creates the project workspace, preserves or scaffolds SPEC.md, creates PLAN.md, and prepares the project scratch area.
+description: Use after idea approval. Creates the project workspace, preserves or scaffolds SPEC.md, creates PLAN.md, and prepares root assets and logs.
 ---
 
 # Setup Video Project
@@ -21,13 +21,12 @@ Creates the isolated workspace for a new video production after idea approval.
    <base-dir>/
    ├── SPEC.md
    ├── PLAN.md
-   └── project/
-       ├── assets/
-       │   ├── images/
-       │   ├── videos/
-       │   ├── audios/
-       │   └── fonts/
-       └── logs/
+   ├── assets/
+   │   ├── images/
+   │   ├── videos/
+   │   ├── audios/
+   │   └── fonts/
+   └── logs/
    ```
 4. If `<base-dir>/SPEC.md` is still missing after migration, create it from the approved direct values:
    ```md
@@ -57,16 +56,16 @@ Creates the isolated workspace for a new video production after idea approval.
 
    # Asset Directories
    - `.`
-   - `project/assets`
-   - `project/assets/images`
-   - `project/assets/videos`
-   - `project/assets/audios`
-   - `project/assets/fonts`
+   - `assets`
+   - `assets/images`
+   - `assets/videos`
+   - `assets/audios`
+   - `assets/fonts`
 
    # Assets
    | Path | Purpose | Required by | Status |
    |---|---|---|---|
-   | project/assets/... | ... | planning / execution | pending |
+   | assets/... | ... | planning / execution | pending |
 
    # Characters
    - Derive from `# Idea`
@@ -88,15 +87,14 @@ Creates the isolated workspace for a new video production after idea approval.
    ## Current State
    - Idea approved in `SPEC.md`
    - Project spec: `SPEC.md`
-   - Scratch root: `project/`
-   - Assets root: `project/assets/`
-   - Logs root: `project/logs/`
+   - Assets root: `assets/`
+   - Logs root: `logs/`
 
    ## Spec Tasks
    - [ ] Refine `SPEC.md` from the approved idea
 
    ## Asset Tasks
-   - [ ] Define first production task against `project/assets/`
+   - [ ] Define first production task against `assets/`
 
    ## Blockers
    - None yet
@@ -108,7 +106,7 @@ Creates the isolated workspace for a new video production after idea approval.
    - <date>: project scaffold created
 
    ## Next Step
-   - Write or refine this plan to manage `SPEC.md` and `project/` before execution
+   - Write or refine this plan to manage `SPEC.md`, `assets/`, and `logs/` before execution
    ```
 7. If the user later asks to change scope, priorities, or deliverables, append `# Iteration 2`, `# Iteration 3`, and so on. Do not erase earlier iterations; keep them as plan history.
 8. Confirm workspace is ready.
@@ -117,12 +115,12 @@ Creates the isolated workspace for a new video production after idea approval.
 
 - `<base-dir>/SPEC.md`
 - `<base-dir>/PLAN.md`
-- `<base-dir>/project/assets/`
-- `<base-dir>/project/assets/images/`
-- `<base-dir>/project/assets/videos/`
-- `<base-dir>/project/assets/audios/`
-- `<base-dir>/project/assets/fonts/`
-- `<base-dir>/project/logs/`
+- `<base-dir>/assets/`
+- `<base-dir>/assets/images/`
+- `<base-dir>/assets/videos/`
+- `<base-dir>/assets/audios/`
+- `<base-dir>/assets/fonts/`
+- `<base-dir>/logs/`
 
 ## After Setup
 
@@ -132,9 +130,9 @@ Transition to `writing-video-plan` to turn the approved idea into a full `SPEC.m
 
 - project spec lives at `<base-dir>/SPEC.md`
 - project plan lives at `<base-dir>/PLAN.md`
-- generated media and media-adjacent artifacts live under `<base-dir>/project/`
-- standard asset buckets are `<base-dir>/project/assets/images/`, `<base-dir>/project/assets/videos/`, `<base-dir>/project/assets/audios/`, and `<base-dir>/project/assets/fonts/`
-- logs live under `<base-dir>/project/logs/`
+- generated media and media-adjacent artifacts live under `<base-dir>/assets/`
+- standard asset buckets are `<base-dir>/assets/images/`, `<base-dir>/assets/videos/`, `<base-dir>/assets/audios/`, and `<base-dir>/assets/fonts/`
+- logs live under `<base-dir>/logs/`
 - project-level characters, chapter structure, and similar planning detail belong in `SPEC.md` as text first
 
 ## Asset Directories
@@ -144,11 +142,11 @@ Record asset lookup order in `SPEC.md` as a Markdown list under `# Asset Directo
 ```md
 # Asset Directories
 - `.`
-- `project/assets`
-- `project/assets/images`
-- `project/assets/videos`
-- `project/assets/audios`
-- `project/assets/fonts`
+- `assets`
+- `assets/images`
+- `assets/videos`
+- `assets/audios`
+- `assets/fonts`
 ```
 
 To reference assets from a shared library without copying them, add more list items:
@@ -156,7 +154,7 @@ To reference assets from a shared library without copying them, add more list it
 ```md
 # Asset Directories
 - `.`
-- `project/assets`
+- `assets`
 - `/Users/me/studio-assets`
 - `/Volumes/NAS/shared`
 ```
@@ -165,7 +163,7 @@ Resolution order: first matching path wins. Skills write output only to the proj
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `project_dir`, `project_name`
 **On completion** — key `outputs`: `spec_path`, `workflow_files_ready` (true/false), `dirs_created` (array of created directory paths)

@@ -75,7 +75,7 @@ If tempo or duration changes happen after normalization, run normalization again
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `script_path`, `voice_style`
 **On completion** — key `outputs`: `audio_path`, `duration_s`, `lufs` (normalized loudness)

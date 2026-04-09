@@ -96,7 +96,7 @@ Save to `<base-dir>/SPEC.md`:
 ## Source Assets
 | Path | Purpose | Required before planning? | Required before execution? | Status |
 |---|---|---|---|---|
-| project/assets/... | lyrics / screenplay / song / stills / footage | yes/no | yes/no | present / to be added / to be generated |
+| assets/... | lyrics / screenplay / song / stills / footage | yes/no | yes/no | present / to be added / to be generated |
 
 ## Chapter Breakdown
 | Chapter | Title | Raw text summary |
@@ -134,7 +134,7 @@ Transition to `setup-video-project` with the approved design already captured in
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See `skills/lib/logging-guide.md`.
+Log to `{project_dir}/logs/production.jsonl`. See `skills/lib/logging-guide.md`.
 
 - **On invocation** — event `invoked`, inputs: `topic`, `constraints`
 - **On completion** — event `completed`, outputs: `spec_path`, `setup_seeds_ready` (true/false)

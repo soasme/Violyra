@@ -38,10 +38,10 @@ Run:
 
 Default outputs:
 
-- Approximate WhisperX segments: `project/assets/audios/approximate-lyric-segmentation.json`
-- Aligned line-level JSON: `project/assets/audios/aligned_lyrics.json`
-- Subtitles: `project/assets/audios/subtitle.srt`
-- LRC: `project/assets/audios/subtitle.lrc`
+- Approximate WhisperX segments: `assets/audios/approximate-lyric-segmentation.json`
+- Aligned line-level JSON: `assets/audios/aligned_lyrics.json`
+- Subtitles: `assets/audios/subtitle.srt`
+- LRC: `assets/audios/subtitle.lrc`
 
 ## Key Options
 
@@ -68,7 +68,7 @@ If the model exposes runtime knobs (for example language hints), pass them via `
 
 1. Transcription / alignment:
 - Upload audio and run Replicate WhisperX model.
-- Save raw approximate segments to `project/assets/audios/approximate-lyric-segmentation.json`.
+- Save raw approximate segments to `assets/audios/approximate-lyric-segmentation.json`.
 
 2. Text normalization:
 - Lowercase, punctuation stripping, apostrophe normalization, whitespace cleanup.
@@ -100,7 +100,7 @@ This guarantees usable output files even when ASR quality is noisy.
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `audio_file`, `lyrics_file`
 **On completion** — key `outputs`: `aligned_json_path`, `line_count`

@@ -114,7 +114,7 @@ The manifest stores and returns local filesystem paths, so caching only works fo
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `model_id`, `version` (if pinned), key input params (e.g. `prompt`, `image`)
 **On completion** — key `outputs`: `output_url`, `prediction_id`

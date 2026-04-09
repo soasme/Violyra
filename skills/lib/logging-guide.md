@@ -1,6 +1,6 @@
 # Production Log — JSONL Logging Guide
 
-Every skill writes to `{project_dir}/project/logs/production.jsonl`. Each line is a JSON object. The file is append-only and never truncated.
+Every skill writes to `{project_dir}/logs/production.jsonl`. Each line is a JSON object. The file is append-only and never truncated.
 
 ## Schema
 
@@ -27,15 +27,15 @@ Every skill writes to `{project_dir}/project/logs/production.jsonl`. Each line i
 The agent appends a single JSON line to the log file. Use this format:
 
 ```
-echo '{"ts":"<iso>","skill":"<name>","event":"invoked","reason":"<why>","inputs":{...}}' >> {project_dir}/project/logs/production.jsonl
+echo '{"ts":"<iso>","skill":"<name>","event":"invoked","reason":"<why>","inputs":{...}}' >> {project_dir}/logs/production.jsonl
 ```
 
 Or write the line using any method that appends without overwriting.
 
-Create the `project/logs/` directory if it does not exist:
+Create the `logs/` directory if it does not exist:
 
 ```
-mkdir -p {project_dir}/project/logs
+mkdir -p {project_dir}/logs
 ```
 
 ## Example — full lifecycle of one skill call
@@ -57,7 +57,7 @@ Each skill's `SKILL.md` ends with a `## Logging` section that specifies the key 
 ```markdown
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `shot_id`, `mode`
 **On completion** — key `outputs`: `prompt_length`, `shot_id`

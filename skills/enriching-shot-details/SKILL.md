@@ -54,7 +54,7 @@ source .env && node skills/enriching-shot-details/scripts/validate-shot-details.
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `shot_list_path`
 **On completion** — key `outputs`: `enriched_shot_list_path`, `shots_enriched` (count)

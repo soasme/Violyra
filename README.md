@@ -14,7 +14,7 @@ Violyra follows a production pipeline modeled on real film workflows:
 
 ```
 brainstorming-video-idea   → <project-dir>/SPEC.md (# Idea)
-  → setup-video-project    → scaffold <project-dir>/PLAN.md + <project-dir>/project/
+  → setup-video-project    → scaffold <project-dir>/PLAN.md + <project-dir>/assets/ + <project-dir>/logs/
   → writing-video-plan     → refine <project-dir>/SPEC.md + <project-dir>/PLAN.md
   → executing-video-plan   → update <project-dir>/PLAN.md
       → [music / script / storyboard export when needed]
@@ -38,7 +38,7 @@ Each step is a composable skill. Run the full pipeline or pick individual skills
 # set up the project workspace
 /setup-video-project
 
-# place project assets under <project-dir>/project/assets/
+# place project assets under <project-dir>/assets/
 
 # write the production plan
 /writing-video-plan
@@ -62,7 +62,7 @@ Full walkthrough: [`docs/usage.md`](docs/usage.md)
 ### Markdown-First Workflow
 - Canonical workflow files live in `<project-dir>/SPEC.md` and `<project-dir>/PLAN.md`
 - The approved idea lives in the `# Idea` section of `SPEC.md`
-- `PLAN.md` manages `SPEC.md` plus the scratch area under `<project-dir>/project/`
+- `PLAN.md` manages `SPEC.md` plus the project-local `assets/` and `logs/`
 - `PLAN.md` is organized as `# Iteration N`; follow-up user-directed changes append a new iteration instead of rewriting history
 - Project defaults such as model, fps, resolution, and asset directories belong in `SPEC.md` as Markdown lists or paragraphs
 - If `SPEC.md` needs a machine-readable snippet, wrap it in a fenced `json` code block
@@ -71,9 +71,10 @@ Full walkthrough: [`docs/usage.md`](docs/usage.md)
 ### Project Layout
 - Each production project owns its own `<project-dir>/SPEC.md`
 - Each production project owns its own `<project-dir>/PLAN.md`
-- Each production project owns its own `<project-dir>/project/` scratch area
-- Standard asset buckets are `<project-dir>/project/assets/images`, `<project-dir>/project/assets/videos`, `<project-dir>/project/assets/audios`, and `<project-dir>/project/assets/fonts`
-- Scratch logs live under `<project-dir>/project/logs/`
+- Each production project owns its own `<project-dir>/assets/`
+- Each production project owns its own `<project-dir>/logs/`
+- Standard asset buckets are `<project-dir>/assets/images`, `<project-dir>/assets/videos`, `<project-dir>/assets/audios`, and `<project-dir>/assets/fonts`
+- Scratch logs live under `<project-dir>/logs/`
 
 ### Production Pipeline
 - **Script breakdown** — any text (lyrics, screenplay, brief) → indexed shot list + chapter

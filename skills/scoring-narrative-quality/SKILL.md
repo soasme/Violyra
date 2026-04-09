@@ -18,7 +18,7 @@ description: Score a compiled video's narrative quality on 5 dimensions (hook, p
 | Input | Required | Description |
 |---|---|---|
 | Compiled video path | yes | The output of `compiling-video` |
-| `production.jsonl` path | yes | `{project_dir}/project/logs/production.jsonl` — pipeline context |
+| `production.jsonl` path | yes | `{project_dir}/logs/production.jsonl` — pipeline context |
 | Storyboard / shot list path | yes | The enriched shot list used during production |
 
 ---
@@ -42,7 +42,7 @@ Score each dimension 0–20. Use the rubric below. Do not round up — assign th
 
 ### Step 4 — Write scored event to production.jsonl
 
-Append a single `scored` line to `{project_dir}/project/logs/production.jsonl`:
+Append a single `scored` line to `{project_dir}/logs/production.jsonl`:
 
 ```
 {"ts":"<iso>","skill":"scoring-narrative-quality","event":"scored","scores":{"hook":<n>,"pacing":<n>,"emotional_arc":<n>,"visual_variety":<n>,"payoff":<n>},"composite":<sum>,"notes":"<observations>"}
@@ -155,7 +155,7 @@ Running `retention-driven-development` before compilation reduces the likelihood
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `video_path`, `production_log_path`, `shot_list_path`
 **On completion** — use event `scored` with `scores` object and `composite` field (not `completed`)

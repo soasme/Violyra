@@ -9,7 +9,7 @@ Top-level orchestrator for a complete music video production. Runs all skills in
 
 Maintain these workflow docs throughout the run:
 - `<project-dir>/SPEC.md` — project spec with the approved idea in `# Idea`
-- `<project-dir>/PLAN.md` — iteration-based task plan for `SPEC.md` and `project/assets/`
+- `<project-dir>/PLAN.md` — iteration-based task plan for `SPEC.md` and `assets/`
 
 ## Inputs
 
@@ -57,7 +57,7 @@ Stop and report at any skill failure. Show which skill failed and what files are
 
 ## Logging
 
-Log to `{project_dir}/project/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
+Log to `{project_dir}/logs/production.jsonl`. See [`skills/lib/logging-guide.md`](../lib/logging-guide.md) for schema.
 
 **On invocation** — key `inputs`: `project_dir`, `lyrics_path`
 **On completion** — key `outputs`: `final_video_path`, `duration_s`

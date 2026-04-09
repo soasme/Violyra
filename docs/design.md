@@ -15,7 +15,7 @@ violyra/
 ├── hooks/           # Session lifecycle hooks
 ├── docs/            # This directory: installation, testing, design
 ├── packages/app/    # Optional: Next.js asset explorer for reviewing outputs
-└── assets/          # Repo-local scratch area only; real projects keep scratch material under <project-dir>/project/
+└── assets/          # Repo-local scratch area only; real projects keep project assets under <project-dir>/assets/
 ```
 
 Generated production projects use this layout:
@@ -24,13 +24,12 @@ Generated production projects use this layout:
 <project-dir>/
 ├── SPEC.md
 ├── PLAN.md
-└── project/
-    ├── assets/
-    │   ├── images/
-    │   ├── videos/
-    │   ├── audios/
-    │   └── fonts/
-    └── logs/
+├── assets/
+│   ├── images/
+│   ├── videos/
+│   ├── audios/
+│   └── fonts/
+└── logs/
 ```
 
 ## Philosophy
@@ -43,7 +42,7 @@ Generated production projects use this layout:
 
 **Spec-driven pipeline.** Define the spec first. Clarity always wins over improvisation.
 
-**Markdown-first workflow.** User-facing workflow state lives in `<project-dir>/SPEC.md` and `<project-dir>/PLAN.md`. The approved idea lives in the `# Idea` section of `SPEC.md`, and `PLAN.md` manages that spec plus the `project/` scratch area. `PLAN.md` is append-only by top-level `# Iteration N` sections so follow-up user changes extend the plan instead of erasing prior decisions. JSON is for lower-level deterministic script I/O, not the primary collaboration surface.
+**Markdown-first workflow.** User-facing workflow state lives in `<project-dir>/SPEC.md` and `<project-dir>/PLAN.md`. The approved idea lives in the `# Idea` section of `SPEC.md`, and `PLAN.md` manages that spec plus the project-local `assets/` and `logs/`. `PLAN.md` is append-only by top-level `# Iteration N` sections so follow-up user changes extend the plan instead of erasing prior decisions. JSON is for lower-level deterministic script I/O, not the primary collaboration surface.
 
 **Project structure belongs in the spec.** Characters, chapter shape, model defaults, and asset directory rules should be written in `SPEC.md` as text first. If structured data is needed inside the spec, wrap it in a fenced `json` code block.
 
@@ -53,7 +52,7 @@ Generated production projects use this layout:
 
 **CLI-first and testable.** Every script has flags, defaults, `--help`, and a `__test__.js` companion. Always run scripts via `source .env && <command>` to load environment variables from `.env`.
 
-**Observable by default.** Every skill invocation is logged to `{project_dir}/project/logs/production.jsonl`. The log is the ground truth for what happened, what was retried, and what was scored.
+**Observable by default.** Every skill invocation is logged to `{project_dir}/logs/production.jsonl`. The log is the ground truth for what happened, what was retried, and what was scored.
 
 ## Harness & Observability
 
@@ -70,7 +69,7 @@ Generated production projects use this layout:
 
 ### JSONL production log (v1.3.0+)
 
-Every skill writes to `{project_dir}/project/logs/production.jsonl` — an append-only log where each line is a JSON event. This creates a traceable audit trail for the entire pipeline run.
+Every skill writes to `{project_dir}/logs/production.jsonl` — an append-only log where each line is a JSON event. This creates a traceable audit trail for the entire pipeline run.
 
 **Log entry schema:**
 
@@ -95,7 +94,7 @@ Each skill's `SKILL.md` has a `## Logging` section (the last section) that speci
 | Skill | When to use |
 |---|---|
 | `brainstorming-video-idea` | Before making any video. Refines rough ideas through questions, explores alternatives, presents design in sections for validation, and writes the approved concept into the `# Idea` section of `<project-dir>/SPEC.md`. |
-| `setup-video-project` | After idea approval. Creates isolated workspace for the project dir, preserves or scaffolds `<project-dir>/SPEC.md`, creates `<project-dir>/PLAN.md`, and prepares `<project-dir>/project/`. |
+| `setup-video-project` | After idea approval. Creates isolated workspace for the project dir, preserves or scaffolds `<project-dir>/SPEC.md`, creates `<project-dir>/PLAN.md`, and prepares `<project-dir>/assets/` plus `<project-dir>/logs/`. |
 | `writing-video-plan` | With approved design in hand. Refines `<project-dir>/SPEC.md`, then breaks work into bite-sized tasks in `<project-dir>/PLAN.md`, with exact file paths, verification commands, and optional storyboard export. |
 | `executing-video-plan` | With plan in hand. Executes tasks from `<project-dir>/PLAN.md` against `<project-dir>/SPEC.md`, records outputs and review notes in `PLAN.md`, and uses checkpoints when needed. |
 | `retention-driven-development` | After execution, before compiling. Simulates 100 viewers per shot, scores retention, replaces weak shots. Replace, don't patch. |
